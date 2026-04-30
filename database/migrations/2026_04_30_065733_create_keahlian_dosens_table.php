@@ -13,6 +13,18 @@ return new class extends Migration
     {
         Schema::create('keahlian_dosens', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('dosen_id')->constrained('dosens')->cascadeOnDelete();
+ 
+            // Bidang keahlian utama, misal: "Machine Learning", "Deep Learning"
+            $table->string('bidang_keahlian');
+ 
+            // Deskripsi lengkap yang akan di-TF-IDF-kan dan dibandingkan dengan judul mhs
+            $table->text('deskripsi_keahlian');
+ 
+            // Bobot kepentingan keahlian ini (core factor vs secondary factor untuk Profile Matching)
+            // 1 = core factor, 2 = secondary factor
+            $table->unsignedTinyInteger('tipe_faktor')->default(1)->comment('1=core, 2=secondary');
+ 
             $table->timestamps();
         });
     }
