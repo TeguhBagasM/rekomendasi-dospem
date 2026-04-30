@@ -1,9 +1,13 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('User Management') }}
-        </h2>
-    </x-slot>
+    <x-page-header
+        title="User Management"
+        description="Kelola role yang dimiliki setiap user."
+        :breadcrumbs="[
+            ['label' => 'Home', 'url' => route('dashboard')],
+            ['label' => 'Akses User', 'url' => route('users.index')],
+            ['label' => 'User Management'],
+        ]"
+    />
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">

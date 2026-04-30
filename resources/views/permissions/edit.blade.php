@@ -1,9 +1,13 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Edit Permission') }}
-        </h2>
-    </x-slot>
+    <x-page-header
+        title="Edit Permission"
+        description="Perbarui nama permission yang sudah ada."
+        :breadcrumbs="[
+            ['label' => 'Home', 'url' => route('dashboard')],
+            ['label' => 'Akses User', 'url' => route('permissions.index')],
+            ['label' => 'Edit Permission'],
+        ]"
+    />
 
     <div class="py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">

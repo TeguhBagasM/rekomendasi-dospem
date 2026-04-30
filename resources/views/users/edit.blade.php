@@ -1,9 +1,13 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Edit User') }}
-        </h2>
-    </x-slot>
+    <x-page-header
+        title="Edit User"
+        description="Ubah data dasar user dan role yang dimilikinya."
+        :breadcrumbs="[
+            ['label' => 'Home', 'url' => route('dashboard')],
+            ['label' => 'Akses User', 'url' => route('users.index')],
+            ['label' => 'Edit User'],
+        ]"
+    />
 
     <div class="py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">

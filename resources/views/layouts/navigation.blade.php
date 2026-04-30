@@ -1,107 +1,103 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+@php
+    $user = Auth::user();
+    $userInitials = $user
+        ? collect(explode(' ', trim($user->name)))->filter()->take(2)->map(fn ($part) => mb_strtoupper(mb_substr($part, 0, 1)))->implode('')
+        : 'U';
+@endphp
+
+<nav x-data="{ open: false }" class="bg-gradient-to-r from-sky-700 via-sky-700 to-cyan-700 text-white shadow-lg">
     <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex">
-                <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="flex items-start justify-between gap-6">
+            <div class="flex items-start gap-4">
+                <div class="shrink-0 rounded-full bg-white/15 p-1 shadow-sm ring-2 ring-white/70">
+                    <a href="{{ route('dashboard') }}" class="block">
+                        <x-application-logo class="block h-12 w-12" />
                     </a>
                 </div>
 
-                <!-- Navigation Links -->
-                <div class="hidden items-center space-x-4 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-
-                    @if (auth()->check() && auth()->user()->hasRole('admin'))
-                        <x-dropdown align="left" width="56">
-                            <x-slot name="trigger">
-                                <button class="inline-flex items-center rounded-md border border-transparent px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none">
-                                    <span>{{ __('Akses') }}</span>
-
-                                    <svg class="ms-2 h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08Z" clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                            </x-slot>
-
-                            <x-slot name="content">
-                                <x-dropdown-link :href="route('roles.index')">
-                                    {{ __('Roles') }}
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('permissions.index')">
-                                    {{ __('Permissions') }}
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('users.index')">
-                                    {{ __('Users') }}
-                                </x-dropdown-link>
-                            </x-slot>
-                        </x-dropdown>
-
-                        <x-dropdown align="left" width="56">
-                            <x-slot name="trigger">
-                                <button class="inline-flex items-center rounded-md border border-transparent px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none">
-                                    <span>{{ __('Data Akademik') }}</span>
-
-                                    <svg class="ms-2 h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08Z" clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                            </x-slot>
-
-                            <x-slot name="content">
-                                <x-dropdown-link :href="route('mahasiswa.index')">
-                                    {{ __('Mahasiswa') }}
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('dosen.index')">
-                                    {{ __('Dosen') }}
-                                </x-dropdown-link>
-                            </x-slot>
-                        </x-dropdown>
-                    @endif
+                <div class="pt-1">
+                    <div class="text-xs font-medium tracking-wide text-white/90">SIM Akademik</div>
+                    <a href="{{ route('dashboard') }}" class="block text-xl font-bold uppercase tracking-wide text-white sm:text-2xl">
+                        Sistem Rekomendasi Dosen Pembimbing
+                    </a>
                 </div>
             </div>
 
-            <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <x-dropdown align="right" width="48">
+            <div class="hidden sm:flex sm:items-start">
+                <x-dropdown align="right" width="44">
                     <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
-
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
+                        <button class="inline-flex h-11 w-11 items-center justify-center rounded-full border-4 border-white/90 bg-sky-400 text-sm font-bold text-white shadow-sm transition hover:bg-sky-300 focus:outline-none">
+                            {{ $userInitials }}
                         </button>
                     </x-slot>
 
                     <x-slot name="content">
+                        <div class="px-4 py-3">
+                            <div class="text-sm font-semibold text-gray-900">{{ $user?->name }}</div>
+                            <div class="text-xs text-gray-500">{{ $user?->email }}</div>
+                        </div>
+
+                        <div class="border-t border-gray-200"></div>
+
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
                         </x-dropdown-link>
 
-                        <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
 
-                            <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
-                                                this.closest('form').submit();">
+                            <x-dropdown-link :href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();">
                                 {{ __('Log Out') }}
                             </x-dropdown-link>
                         </form>
                     </x-slot>
                 </x-dropdown>
             </div>
+        </div>
 
-            <!-- Hamburger -->
-            <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
+        <div class="mt-5 flex items-center justify-between gap-4 border-t border-white/15 pt-4">
+            <div class="hidden sm:flex sm:flex-wrap items-center gap-8 text-sm font-medium text-white">
+                <a href="{{ route('dashboard') }}" class="hover:text-white/80 {{ request()->routeIs('dashboard') ? 'font-bold' : '' }}">Dashboard</a>
+
+                @if (auth()->check() && auth()->user()->hasRole('admin'))
+                    <x-dropdown align="left" width="56">
+                        <x-slot name="trigger">
+                            <button class="inline-flex items-center text-sm font-medium text-white hover:text-white/80 focus:outline-none">
+                                <span>Akses User</span>
+                                <svg class="ms-2 h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08Z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </x-slot>
+
+                        <x-slot name="content">
+                            <x-dropdown-link :href="route('roles.index')">{{ __('Roles') }}</x-dropdown-link>
+                            <x-dropdown-link :href="route('permissions.index')">{{ __('Permissions') }}</x-dropdown-link>
+                            <x-dropdown-link :href="route('users.index')">{{ __('Users') }}</x-dropdown-link>
+                        </x-slot>
+                    </x-dropdown>
+
+                    <x-dropdown align="left" width="56">
+                        <x-slot name="trigger">
+                            <button class="inline-flex items-center text-sm font-medium text-white hover:text-white/80 focus:outline-none">
+                                <span>Data Akademik</span>
+                                <svg class="ms-2 h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08Z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </x-slot>
+
+                        <x-slot name="content">
+                            <x-dropdown-link :href="route('mahasiswa.index')">{{ __('Mahasiswa') }}</x-dropdown-link>
+                            <x-dropdown-link :href="route('dosen.index')">{{ __('Dosen') }}</x-dropdown-link>
+                        </x-slot>
+                    </x-dropdown>
+                @endif
+            </div>
+
+            <div class="sm:hidden">
+                <button @click="open = ! open" class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/40 bg-white/10 text-white focus:outline-none">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -112,79 +108,67 @@
     </div>
 
     <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden border-t border-white/15 bg-sky-800/95">
+        <div class="px-4 py-4 space-y-2 text-white">
+            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-white hover:bg-white/10 hover:text-white">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
 
             @if (auth()->check() && auth()->user()->hasRole('admin'))
-                <div x-data="{ open: {{ request()->routeIs('roles.*', 'permissions.*', 'users.*') ? 'true' : 'false' }} }" class="border-t border-gray-200">
-                    <button type="button" @click="open = ! open" class="flex w-full items-center justify-between px-4 py-3 text-left text-base font-medium text-gray-700 hover:bg-gray-50">
-                        <span>{{ __('Akses') }}</span>
-                        <svg class="h-4 w-4 text-gray-500 transition-transform duration-150" :class="{ 'rotate-180': open }" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <div x-data="{ open: {{ request()->routeIs('roles.*', 'permissions.*', 'users.*') ? 'true' : 'false' }} }" class="rounded-lg bg-white/5">
+                    <button type="button" @click="open = ! open" class="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-semibold text-white">
+                        <span>Akses User</span>
+                        <svg class="h-4 w-4 transition-transform duration-150" :class="{ 'rotate-180': open }" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08Z" clip-rule="evenodd" />
                         </svg>
                     </button>
 
-                    <div x-show="open" x-transition class="space-y-1 pb-3" style="display: none;">
-                        <x-responsive-nav-link :href="route('roles.index')" :active="request()->routeIs('roles.*')">
-                            {{ __('Roles') }}
-                        </x-responsive-nav-link>
-
-                        <x-responsive-nav-link :href="route('permissions.index')" :active="request()->routeIs('permissions.*')">
-                            {{ __('Permissions') }}
-                        </x-responsive-nav-link>
-
-                        <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
-                            {{ __('Users') }}
-                        </x-responsive-nav-link>
+                    <div x-show="open" x-transition class="space-y-1 px-2 pb-2" style="display: none;">
+                        <x-responsive-nav-link :href="route('roles.index')" :active="request()->routeIs('roles.*')" class="text-white hover:bg-white/10 hover:text-white">{{ __('Roles') }}</x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('permissions.index')" :active="request()->routeIs('permissions.*')" class="text-white hover:bg-white/10 hover:text-white">{{ __('Permissions') }}</x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')" class="text-white hover:bg-white/10 hover:text-white">{{ __('Users') }}</x-responsive-nav-link>
                     </div>
                 </div>
 
-                <div x-data="{ open: {{ request()->routeIs('mahasiswa.*', 'dosen.*') ? 'true' : 'false' }} }" class="border-t border-gray-200">
-                    <button type="button" @click="open = ! open" class="flex w-full items-center justify-between px-4 py-3 text-left text-base font-medium text-gray-700 hover:bg-gray-50">
-                        <span>{{ __('Data Akademik') }}</span>
-                        <svg class="h-4 w-4 text-gray-500 transition-transform duration-150" :class="{ 'rotate-180': open }" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <div x-data="{ open: {{ request()->routeIs('mahasiswa.*', 'dosen.*') ? 'true' : 'false' }} }" class="rounded-lg bg-white/5">
+                    <button type="button" @click="open = ! open" class="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-semibold text-white">
+                        <span>Data Akademik</span>
+                        <svg class="h-4 w-4 transition-transform duration-150" :class="{ 'rotate-180': open }" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08Z" clip-rule="evenodd" />
                         </svg>
                     </button>
 
-                    <div x-show="open" x-transition class="space-y-1 pb-3" style="display: none;">
-                        <x-responsive-nav-link :href="route('mahasiswa.index')" :active="request()->routeIs('mahasiswa.*')">
-                            {{ __('Mahasiswa') }}
-                        </x-responsive-nav-link>
-
-                        <x-responsive-nav-link :href="route('dosen.index')" :active="request()->routeIs('dosen.*')">
-                            {{ __('Dosen') }}
-                        </x-responsive-nav-link>
+                    <div x-show="open" x-transition class="space-y-1 px-2 pb-2" style="display: none;">
+                        <x-responsive-nav-link :href="route('mahasiswa.index')" :active="request()->routeIs('mahasiswa.*')" class="text-white hover:bg-white/10 hover:text-white">{{ __('Mahasiswa') }}</x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('dosen.index')" :active="request()->routeIs('dosen.*')" class="text-white hover:bg-white/10 hover:text-white">{{ __('Dosen') }}</x-responsive-nav-link>
                     </div>
                 </div>
             @endif
-        </div>
 
-        <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
-            </div>
+            <div class="mt-4 rounded-xl bg-white/10 p-4">
+                <div class="flex items-center gap-3">
+                    <div class="flex h-11 w-11 items-center justify-center rounded-full border-2 border-white text-sm font-bold text-white">
+                        {{ $userInitials }}
+                    </div>
+                    <div class="min-w-0">
+                        <div class="truncate text-sm font-semibold text-white">{{ $user?->name }}</div>
+                        <div class="truncate text-xs text-white/80">{{ $user?->email }}</div>
+                    </div>
+                </div>
 
-            <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
-
-                <!-- Authentication -->
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-
-                    <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault();
-                                        this.closest('form').submit();">
-                        {{ __('Log Out') }}
+                <div class="mt-3 space-y-1">
+                    <x-responsive-nav-link :href="route('profile.edit')" class="text-white hover:bg-white/10 hover:text-white">
+                        {{ __('Profile') }}
                     </x-responsive-nav-link>
-                </form>
+
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+
+                        <x-responsive-nav-link :href="route('logout')" class="text-white hover:bg-white/10 hover:text-white" onclick="event.preventDefault(); this.closest('form').submit();">
+                            {{ __('Log Out') }}
+                        </x-responsive-nav-link>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

@@ -1,7 +1,13 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ __('Edit Dosen') }}</h2>
-    </x-slot>
+    <x-page-header
+        title="Edit Dosen"
+        description="Perbarui data dosen dan kelola keahliannya di halaman yang sama."
+        :breadcrumbs="[
+            ['label' => 'Home', 'url' => route('dashboard')],
+            ['label' => 'Data Akademik', 'url' => route('dosen.index')],
+            ['label' => 'Edit Dosen'],
+        ]"
+    />
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">

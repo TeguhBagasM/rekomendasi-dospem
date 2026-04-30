@@ -1,9 +1,13 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Edit Role') }}
-        </h2>
-    </x-slot>
+    <x-page-header
+        title="Edit Role"
+        description="Ubah nama role dan daftar permission yang melekat."
+        :breadcrumbs="[
+            ['label' => 'Home', 'url' => route('dashboard')],
+            ['label' => 'Akses User', 'url' => route('roles.index')],
+            ['label' => 'Edit Role'],
+        ]"
+    />
 
     <div class="py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">

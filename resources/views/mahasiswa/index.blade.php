@@ -1,20 +1,19 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Manajemen Mahasiswa') }}
-        </h2>
-    </x-slot>
+    <x-page-header
+        title="Manajemen Mahasiswa"
+        description="Kelola Data Mahasiswa, import Excel, dan export Excel."
+        :breadcrumbs="[
+            ['label' => 'Home', 'url' => route('dashboard')],
+            ['label' => 'Data Akademik', 'url' => route('mahasiswa.index')],
+            ['label' => 'Manajemen Mahasiswa'],
+        ]"
+    />
 
-    <div class="py-12">
+    <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 space-y-6">
-                    <div class="flex flex-wrap items-center justify-between gap-3">
-                        <div>
-                            <h3 class="text-lg font-semibold text-gray-900">Daftar Mahasiswa</h3>
-                            <p class="text-sm text-gray-500">CRUD, import Excel, dan export Excel.</p>
-                        </div>
-
+                    <div class="flex items-center justify-end gap-2">
                         <div class="flex flex-wrap gap-2">
                             <a href="{{ route('mahasiswa.export') }}" class="inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700">
                                 <i class="fa-solid fa-file-export mr-2"></i> Export

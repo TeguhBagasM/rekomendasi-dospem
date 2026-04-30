@@ -1,9 +1,13 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Role Management') }}
-        </h2>
-    </x-slot>
+    <x-page-header
+        title="Role Management"
+        description="Kelola role dan permission yang terpasang."
+        :breadcrumbs="[
+            ['label' => 'Home', 'url' => route('dashboard')],
+            ['label' => 'Akses User', 'url' => route('users.index')],
+            ['label' => 'Role Management'],
+        ]"
+    />
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">

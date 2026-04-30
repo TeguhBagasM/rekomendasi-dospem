@@ -1,9 +1,13 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Tambah Permission') }}
-        </h2>
-    </x-slot>
+    <x-page-header
+        title="Tambah Permission"
+        description="Tambahkan permission baru yang dapat dipakai di role."
+        :breadcrumbs="[
+            ['label' => 'Home', 'url' => route('dashboard')],
+            ['label' => 'Akses User', 'url' => route('permissions.index')],
+            ['label' => 'Tambah Permission'],
+        ]"
+    />
 
     <div class="py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">

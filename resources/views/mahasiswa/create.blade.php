@@ -1,7 +1,13 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ __('Tambah Mahasiswa') }}</h2>
-    </x-slot>
+    <x-page-header
+        title="Tambah Mahasiswa"
+        description="Tambahkan data mahasiswa baru ke sistem."
+        :breadcrumbs="[
+            ['label' => 'Home', 'url' => route('dashboard')],
+            ['label' => 'Data Akademik', 'url' => route('mahasiswa.index')],
+            ['label' => 'Tambah Mahasiswa'],
+        ]"
+    />
 
     <div class="py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
