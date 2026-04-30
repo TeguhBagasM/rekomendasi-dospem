@@ -11,26 +11,56 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                <div class="hidden items-center space-x-4 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
                     @if (auth()->check() && auth()->user()->hasRole('admin'))
-                        <x-nav-link :href="route('roles.index')" :active="request()->routeIs('roles.*')">
-                            {{ __('Roles') }}
-                        </x-nav-link>
+                        <x-dropdown align="left" width="56">
+                            <x-slot name="trigger">
+                                <button class="inline-flex items-center rounded-md border border-transparent px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none">
+                                    <span>{{ __('Akses') }}</span>
 
-                        <x-nav-link :href="route('permissions.index')" :active="request()->routeIs('permissions.*')">
-                            {{ __('Permissions') }}
-                        </x-nav-link>
+                                    <svg class="ms-2 h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08Z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </x-slot>
 
-                        <x-nav-link :href="route('mahasiswa.index')" :active="request()->routeIs('mahasiswa.*')">
-                            {{ __('Mahasiswa') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
-                            {{ __('Users') }}
-                        </x-nav-link>
+                            <x-slot name="content">
+                                <x-dropdown-link :href="route('roles.index')">
+                                    {{ __('Roles') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('permissions.index')">
+                                    {{ __('Permissions') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('users.index')">
+                                    {{ __('Users') }}
+                                </x-dropdown-link>
+                            </x-slot>
+                        </x-dropdown>
+
+                        <x-dropdown align="left" width="56">
+                            <x-slot name="trigger">
+                                <button class="inline-flex items-center rounded-md border border-transparent px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none">
+                                    <span>{{ __('Data Akademik') }}</span>
+
+                                    <svg class="ms-2 h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08Z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </x-slot>
+
+                            <x-slot name="content">
+                                <x-dropdown-link :href="route('mahasiswa.index')">
+                                    {{ __('Mahasiswa') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('dosen.index')">
+                                    {{ __('Dosen') }}
+                                </x-dropdown-link>
+                            </x-slot>
+                        </x-dropdown>
                     @endif
                 </div>
             </div>
@@ -89,17 +119,47 @@
             </x-responsive-nav-link>
 
             @if (auth()->check() && auth()->user()->hasRole('admin'))
-                <x-responsive-nav-link :href="route('roles.index')" :active="request()->routeIs('roles.*')">
-                    {{ __('Roles') }}
-                </x-responsive-nav-link>
+                <div x-data="{ open: {{ request()->routeIs('roles.*', 'permissions.*', 'users.*') ? 'true' : 'false' }} }" class="border-t border-gray-200">
+                    <button type="button" @click="open = ! open" class="flex w-full items-center justify-between px-4 py-3 text-left text-base font-medium text-gray-700 hover:bg-gray-50">
+                        <span>{{ __('Akses') }}</span>
+                        <svg class="h-4 w-4 text-gray-500 transition-transform duration-150" :class="{ 'rotate-180': open }" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08Z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
 
-                <x-responsive-nav-link :href="route('permissions.index')" :active="request()->routeIs('permissions.*')">
-                    {{ __('Permissions') }}
-                </x-responsive-nav-link>
+                    <div x-show="open" x-transition class="space-y-1 pb-3" style="display: none;">
+                        <x-responsive-nav-link :href="route('roles.index')" :active="request()->routeIs('roles.*')">
+                            {{ __('Roles') }}
+                        </x-responsive-nav-link>
 
-                <x-responsive-nav-link :href="route('mahasiswa.index')" :active="request()->routeIs('mahasiswa.*')">
-                    {{ __('Mahasiswa') }}
-                </x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('permissions.index')" :active="request()->routeIs('permissions.*')">
+                            {{ __('Permissions') }}
+                        </x-responsive-nav-link>
+
+                        <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                            {{ __('Users') }}
+                        </x-responsive-nav-link>
+                    </div>
+                </div>
+
+                <div x-data="{ open: {{ request()->routeIs('mahasiswa.*', 'dosen.*') ? 'true' : 'false' }} }" class="border-t border-gray-200">
+                    <button type="button" @click="open = ! open" class="flex w-full items-center justify-between px-4 py-3 text-left text-base font-medium text-gray-700 hover:bg-gray-50">
+                        <span>{{ __('Data Akademik') }}</span>
+                        <svg class="h-4 w-4 text-gray-500 transition-transform duration-150" :class="{ 'rotate-180': open }" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08Z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+
+                    <div x-show="open" x-transition class="space-y-1 pb-3" style="display: none;">
+                        <x-responsive-nav-link :href="route('mahasiswa.index')" :active="request()->routeIs('mahasiswa.*')">
+                            {{ __('Mahasiswa') }}
+                        </x-responsive-nav-link>
+
+                        <x-responsive-nav-link :href="route('dosen.index')" :active="request()->routeIs('dosen.*')">
+                            {{ __('Dosen') }}
+                        </x-responsive-nav-link>
+                    </div>
+                </div>
             @endif
         </div>
 

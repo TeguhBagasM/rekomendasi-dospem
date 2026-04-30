@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\DosenController;
+use App\Http\Controllers\KeahlianDosenController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\RoleController;
@@ -28,6 +30,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('mahasiswa/import', [MahasiswaController::class, 'import'])->name('mahasiswa.import');
     Route::resource('mahasiswa', MahasiswaController::class)->except(['show']);
     Route::resource('users', UserController::class)->only(['index', 'edit', 'update']);
+    Route::resource('dosen', DosenController::class);
+    Route::post('/dosen/{dosen}/keahlian', [KeahlianDosenController::class, 'store'])->name('keahlian.store');
+    Route::put('/keahlian/{id}', [KeahlianDosenController::class, 'update'])->name('keahlian.update');
+    Route::delete('/keahlian/{id}', [KeahlianDosenController::class, 'destroy'])->name('keahlian.destroy');
 });
 
 // Route::middleware(['auth', 'role:mahasiswa'])->group(function () {
