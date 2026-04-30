@@ -61,7 +61,7 @@
                 <a href="{{ route('dashboard') }}" class="hover:text-white/80 {{ request()->routeIs('dashboard') ? 'font-bold' : '' }}">Dashboard</a>
 
                 @if (auth()->check() && auth()->user()->hasRole('admin'))
-                    <x-dropdown align="left" width="60">
+                    <x-dropdown align="left" width="64">
                         <x-slot name="trigger">
                             <button class="inline-flex items-center text-sm font-medium text-white hover:text-white/80 focus:outline-none">
                                 <span>Akses User</span>
@@ -78,7 +78,7 @@
                         </x-slot>
                     </x-dropdown>
 
-                    <x-dropdown align="left" width="60">
+                    <x-dropdown align="left" width="64">
                         <x-slot name="trigger">
                             <button class="inline-flex items-center text-sm font-medium text-white hover:text-white/80 focus:outline-none">
                                 <span>Data Akademik</span>

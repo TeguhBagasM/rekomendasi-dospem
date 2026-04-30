@@ -2,6 +2,7 @@
     'title',
     'description' => null,
     'breadcrumbs' => [],
+    'icon' => null,
 ])
 
 <div class="border-b bg-gray-100">
@@ -24,11 +25,19 @@
             @endforeach
         </nav>
 
-        <div class="mt-3">
-            <h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{{ $title }}</h1>
-            @if ($description)
-                <p class="mt-2 max-w-3xl text-sm leading-6 text-gray-600">{{ $description }}</p>
+        <div class="mt-3 flex items-center gap-4">
+            @if ($icon)
+                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-sky-50 text-sky-700 ring-1 ring-sky-100">
+                    <i class="fa-solid {{ $icon }} text-lg"></i>
+                </div>
             @endif
+
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{{ $title }}</h1>
+                @if ($description)
+                    <p class="mt-2 max-w-3xl text-sm leading-6 text-gray-600">{{ $description }}</p>
+                @endif
+            </div>
         </div>
     </div>
 </div>

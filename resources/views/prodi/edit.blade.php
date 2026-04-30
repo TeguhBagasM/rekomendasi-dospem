@@ -1,46 +1,30 @@
 <x-app-layout>
-    <div class="border-b bg-white">
-        <div class="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div class="flex items-center gap-4">
-                    <div class="flex h-12 w-12 items-center justify-center rounded-full bg-sky-50 text-sky-700 ring-1 ring-sky-100">
-                        <i class="fa-solid fa-pen-to-square text-lg"></i>
-                    </div>
-
-                    <div>
-                        <h1 class="text-2xl font-bold tracking-tight text-gray-900">Edit Program Studi</h1>
-                        <p class="mt-1 text-sm text-gray-500">Perbarui data program studi yang sudah tersimpan.</p>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-2 text-sm text-gray-500">
-                    <a href="{{ route('dashboard') }}" class="hover:text-gray-700">Home</a>
-                    <span>/</span>
-                    <a href="{{ route('prodi.index') }}" class="hover:text-gray-700">Data Akademik</a>
-                    <span>/</span>
-                    <span class="font-medium text-gray-700">Edit Program Studi</span>
-                </div>
-            </div>
-        </div>
-    </div>
+    <x-page-header
+        title="Edit Program Studi"
+        description="Perbarui data program studi yang sudah tersimpan."
+        icon="fa-pen-to-square"
+        :breadcrumbs="[
+            ['label' => 'Home', 'url' => route('dashboard')],
+            ['label' => 'Data Akademik', 'url' => route('prodi.index')],
+            ['label' => 'Edit Program Studi'],
+        ]"
+    />
 
     <div class="py-8">
         <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-            <div class="rounded-2xl border border-gray-200 bg-white shadow-sm">
-                <div class="border-b border-gray-100 px-6 py-5">
-                    <div class="flex items-center gap-3">
-                        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-sky-50 text-sky-700 ring-1 ring-sky-100">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-sky-50 text-sky-700 ring-1 ring-sky-100">
                             <i class="fa-solid fa-gear text-sm"></i>
                         </div>
 
                         <div>
-                            <h2 class="text-lg font-semibold text-gray-900">Form Data Program Studi</h2>
-                            <p class="mt-1 text-sm text-sky-700">Perbarui field program studi di bawah ini.</p>
+                            <h3 class="text-lg font-semibold text-gray-900">Form Data Program Studi</h3>
+                            <p class="text-sm text-gray-500">Perbarui field program studi di bawah ini.</p>
                         </div>
                     </div>
-                </div>
 
-                <div class="p-6 text-gray-900">
                     <form method="POST" action="{{ route('prodi.update', $prodi) }}" class="space-y-6">
                         @csrf
                         @method('PUT')

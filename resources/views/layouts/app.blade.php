@@ -23,21 +23,15 @@
         <div class="min-h-screen bg-gray-100">
             @include('layouts.navigation')
 
-            @if (session('success') || session('error'))
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 space-y-3">
-                    @if (session('success'))
-                        <div class="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-800">
-                            {{ session('success') }}
-                        </div>
-                    @endif
+            <div class="pointer-events-none fixed right-4 top-4 z-50 space-y-3 sm:right-6 sm:top-6">
+                @if (session('success'))
+                    <x-toast type="success" title="Berhasil" :message="session('success')" />
+                @endif
 
-                    @if (session('error'))
-                        <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-800">
-                            {{ session('error') }}
-                        </div>
-                    @endif
-                </div>
-            @endif
+                @if (session('error'))
+                    <x-toast type="error" title="Gagal" :message="session('error')" />
+                @endif
+            </div>
 
             <!-- Page Heading -->
             @isset($header)
