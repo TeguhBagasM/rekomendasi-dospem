@@ -15,6 +15,20 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+
+                    @if (auth()->check() && auth()->user()->hasRole('admin'))
+                        <x-nav-link :href="route('roles.index')" :active="request()->routeIs('roles.*')">
+                            {{ __('Roles') }}
+                        </x-nav-link>
+
+                        <x-nav-link :href="route('permissions.index')" :active="request()->routeIs('permissions.*')">
+                            {{ __('Permissions') }}
+                        </x-nav-link>
+
+                        <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                            {{ __('Users') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -70,6 +84,20 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+
+            @if (auth()->check() && auth()->user()->hasRole('admin'))
+                <x-responsive-nav-link :href="route('roles.index')" :active="request()->routeIs('roles.*')">
+                    {{ __('Roles') }}
+                </x-responsive-nav-link>
+
+                <x-responsive-nav-link :href="route('permissions.index')" :active="request()->routeIs('permissions.*')">
+                    {{ __('Permissions') }}
+                </x-responsive-nav-link>
+
+                <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                    {{ __('Users') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
