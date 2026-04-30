@@ -63,13 +63,13 @@
                                             </div>
                                         </td>
                                     </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="7" class="px-4 py-8 text-center text-sm text-gray-500">Belum ada data role.</td>
+                                    </tr>
                                 @endforelse
                             </tbody>
                         </table>
-
-                        @if ($roles->isEmpty())
-                            <div class="px-4 py-8 text-center text-sm text-gray-500">Belum ada role.</div>
-                        @endif
                     </div>
                 </div>
             </div>

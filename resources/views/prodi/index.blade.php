@@ -31,7 +31,7 @@
                     </div>
 
                     <div class="overflow-x-auto">
-                        <table class="js-datatable min-w-full divide-y divide-gray-200">
+                        <table class="{{ $prodis->isNotEmpty() ? 'js-datatable' : '' }} min-w-full divide-y divide-gray-200">
                             <thead>
                                 <tr class="text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
                                     <th class="px-4 py-3">Program Studi</th>
@@ -65,13 +65,13 @@
                                             </div>
                                         </td>
                                     </tr>
+                                @empty
+                                        <tr>
+                                            <td colspan="6" class="px-4 py-8 text-center text-sm text-gray-500">Belum ada data program studi.</td>
+                                        </tr>
                                 @endforelse
                             </tbody>
                         </table>
-
-                        @if ($prodis->isEmpty())
-                            <div class="px-4 py-8 text-center text-sm text-gray-500">Belum ada data program studi.</div>
-                        @endif
                     </div>
                 </div>
             </div>
