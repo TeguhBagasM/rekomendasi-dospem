@@ -53,4 +53,42 @@ class User extends Authenticatable
     {
         return $this->hasOne(Mahasiswa::class);
     }
+
+     public function dosen(): HasOne
+    {
+        return $this->hasOne(Dosen::class);
+    }
+ 
+    /**
+     * Pengajuan judul yang divalidasi oleh user ini (admin/kaprodi).
+     */
+    // public function pengajuanDivalidasi(): HasMany
+    // {
+    //     return $this->hasMany(PengajuanJudul::class, 'divalidasi_oleh');
+    // }
+ 
+    // /**
+    //  * Batch rekomendasi yang dibuat oleh user ini (admin/kaprodi).
+    //  */
+    // public function batchRekomendasi(): HasMany
+    // {
+    //     return $this->hasMany(BatchRekomendasi::class, 'admin_id');
+    // }
+ 
+    // ==================== HELPERS ====================
+ 
+    public function isMahasiswa(): bool
+    {
+        return $this->hasRole('mahasiswa');
+    }
+ 
+    public function isAdmin(): bool
+    {
+        return $this->hasRole('admin');
+    }
+ 
+    public function isKaprodi(): bool
+    {
+        return $this->hasRole('kaprodi');
+    }
 }
