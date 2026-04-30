@@ -5,7 +5,7 @@
         : 'U';
 @endphp
 
-<nav x-data="{ open: false }" class="bg-gradient-to-r from-sky-700 via-sky-700 to-cyan-700 text-white shadow-lg">
+<nav x-data="{ open: false }" class="bg-sky-700 text-white shadow-lg">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div class="flex items-start justify-between gap-6">
@@ -17,7 +17,7 @@
                 </div>
 
                 <div class="pt-1">
-                    <div class="text-xs font-medium tracking-wide text-white/90">SIM Akademik</div>
+                    <div class="text-xs font-medium tracking-wide text-white/90">SIREKDOM</div>
                     <a href="{{ route('dashboard') }}" class="block text-xl font-bold uppercase tracking-wide text-white sm:text-2xl">
                         Sistem Rekomendasi Dosen Pembimbing
                     </a>
