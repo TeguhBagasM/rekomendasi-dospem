@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-page-header
         title="Manajemen Dosen"
-        description="CRUD dosen dengan ringkasan keahlian dan kuota bimbingan."
+        description="Mengelola data Dosen dengan ringkasan keahlian dan kuota bimbingan."
         :breadcrumbs="[
             ['label' => 'Home', 'url' => route('dashboard')],
             ['label' => 'Data Akademik', 'url' => route('dosen.index')],
@@ -16,7 +16,7 @@
                     <div class="flex flex-wrap items-center justify-between gap-3">
                         <div>
                             <h3 class="text-lg font-semibold text-gray-900">Daftar Dosen</h3>
-                            <p class="text-sm text-gray-500">CRUD dosen dengan ringkasan keahlian dan kuota bimbingan.</p>
+                            <p class="text-sm text-gray-500">Total Dosen: {{ $dosens->count() }}</p>
                         </div>
 
                         <a href="{{ route('dosen.create') }}" class="inline-flex items-center rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700">

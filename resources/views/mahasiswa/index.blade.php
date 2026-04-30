@@ -13,7 +13,11 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 space-y-6">
-                    <div class="flex items-center justify-end gap-2">
+                    <div class="flex items-center justify-between gap-2">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Daftar Mahasiswa</h3>
+                            <p class="text-sm text-gray-500">Total Mahasiswa: {{ $mahasiswas->count() }}</p>
+                        </div>
                         <div class="flex flex-wrap gap-2">
                             <a href="{{ route('mahasiswa.export') }}" class="inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700">
                                 <i class="fa-solid fa-file-export mr-2"></i> Export

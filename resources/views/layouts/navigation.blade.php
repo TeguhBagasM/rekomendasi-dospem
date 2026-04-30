@@ -5,21 +5,21 @@
         : 'U';
 @endphp
 
-<nav x-data="{ open: false }" class="bg-sky-700 text-white shadow-lg">
+<nav x-data="{ open: false }" class="bg-sky-800 text-white shadow-lg">
     <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div class="flex items-start justify-between gap-6">
             <div class="flex items-start gap-4">
-                <div class="shrink-0 rounded-full bg-white/15 p-1 shadow-sm ring-2 ring-white/70">
+                <div class="shrink-0 rounded-full bg-white p-1 shadow-sm">
                     <a href="{{ route('dashboard') }}" class="block">
-                        <x-application-logo class="block h-12 w-12" />
+                        <x-application-logo class="block h-16 w-16" />
                     </a>
                 </div>
 
                 <div class="pt-1">
-                    <div class="text-xs font-medium tracking-wide text-white/90">SIREKDOM</div>
+                    <div class="text-sm font-medium tracking-wide text-white/90">Sistem Rekomendasi Dosen Pembimbing</div>
                     <a href="{{ route('dashboard') }}" class="block text-xl font-bold uppercase tracking-wide text-white sm:text-2xl">
-                        Sistem Rekomendasi Dosen Pembimbing
+                        STMIK MARDIRA INDONESIA
                     </a>
                 </div>
             </div>
@@ -61,7 +61,7 @@
                 <a href="{{ route('dashboard') }}" class="hover:text-white/80 {{ request()->routeIs('dashboard') ? 'font-bold' : '' }}">Dashboard</a>
 
                 @if (auth()->check() && auth()->user()->hasRole('admin'))
-                    <x-dropdown align="left" width="56">
+                    <x-dropdown align="left" width="60">
                         <x-slot name="trigger">
                             <button class="inline-flex items-center text-sm font-medium text-white hover:text-white/80 focus:outline-none">
                                 <span>Akses User</span>
@@ -78,7 +78,7 @@
                         </x-slot>
                     </x-dropdown>
 
-                    <x-dropdown align="left" width="56">
+                    <x-dropdown align="left" width="60">
                         <x-slot name="trigger">
                             <button class="inline-flex items-center text-sm font-medium text-white hover:text-white/80 focus:outline-none">
                                 <span>Data Akademik</span>
@@ -90,6 +90,7 @@
 
                         <x-slot name="content">
                             <x-dropdown-link :href="route('mahasiswa.index')">{{ __('Mahasiswa') }}</x-dropdown-link>
+                            <x-dropdown-link :href="route('prodi.index')">{{ __('Program Studi') }}</x-dropdown-link>
                             <x-dropdown-link :href="route('dosen.index')">{{ __('Dosen') }}</x-dropdown-link>
                         </x-slot>
                     </x-dropdown>
@@ -140,6 +141,7 @@
 
                     <div x-show="open" x-transition class="space-y-1 px-2 pb-2" style="display: none;">
                         <x-responsive-nav-link :href="route('mahasiswa.index')" :active="request()->routeIs('mahasiswa.*')" class="text-white hover:bg-white/10 hover:text-white">{{ __('Mahasiswa') }}</x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('prodi.index')" :active="request()->routeIs('prodi.*')" class="text-white hover:bg-white/10 hover:text-white">{{ __('Program Studi') }}</x-responsive-nav-link>
                         <x-responsive-nav-link :href="route('dosen.index')" :active="request()->routeIs('dosen.*')" class="text-white hover:bg-white/10 hover:text-white">{{ __('Dosen') }}</x-responsive-nav-link>
                     </div>
                 </div>
