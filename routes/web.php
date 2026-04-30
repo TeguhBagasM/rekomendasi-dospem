@@ -17,4 +17,15 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Route::middleware(['auth', 'role:mahasiswa'])->group(function () {
+//     Route::get('/mahasiswa/judul', [JudulController::class, 'index'])->name('mahasiswa.judul');
+//     Route::post('/mahasiswa/judul', [JudulController::class, 'store'])->name('mahasiswa.judul.store');
+// });
+
+// Route::middleware(['auth', 'role:admin'])->group(function () {
+//     Route::get('/admin/judul', [JudulController::class, 'adminIndex'])->name('admin.judul');
+//     Route::post('/admin/judul/{id}/approve', [JudulController::class, 'approve'])->name('admin.judul.approve');
+//     Route::post('/admin/judul/{id}/reject', [JudulController::class, 'reject'])->name('admin.judul.reject');
+// });
+
 require __DIR__.'/auth.php';
