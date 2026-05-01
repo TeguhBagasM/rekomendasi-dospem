@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder
             DosenSeeder::class,
             KeahlianDosenSeeder::class,
             MahasiswaSeeder::class,
+            PengajuanSeeder::class,
         ]);
     }
 }
