@@ -16,7 +16,7 @@ class Mahasiswa extends Model
         'user_id',
         'nim',
         'nama',
-        'program_studi',
+        'program_studi_id',
         'angkatan',
         'no_hp',
     ];
@@ -26,6 +26,11 @@ class Mahasiswa extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function programStudi(): BelongsTo
+    {
+        return $this->belongsTo(ProgramStudi::class);
     }
 
     // public function pengajuanJudul(): HasMany

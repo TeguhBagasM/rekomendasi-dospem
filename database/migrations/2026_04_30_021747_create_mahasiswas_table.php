@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->string('nim')->unique();
             $table->string('nama');
-            $table->string('program_studi');
+            $table->foreignId('program_studi_id')->constrained('program_studis')->restrictOnDelete();
             $table->string('angkatan', 4);
             $table->string('no_hp')->nullable();
             $table->timestamps();
