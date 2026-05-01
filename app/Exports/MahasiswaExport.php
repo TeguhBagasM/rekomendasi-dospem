@@ -10,14 +10,15 @@ class MahasiswaExport implements FromCollection, WithHeadings
 {
     public function collection()
     {
-        return Mahasiswa::with('user')
+        return Mahasiswa::with(['user', 'programStudi'])
             ->orderBy('nama')
             ->get()
             ->map(function (Mahasiswa $mahasiswa) {
                 return [
                     'nim' => $mahasiswa->nim,
                     'nama' => $mahasiswa->nama,
-                    'program_studi' => $mahasiswa->program_studi,
+                    'program_studi_id' => $mahasiswa->program_studi_id,
+                    'program_studi_nama' => $mahasiswa->programStudi?->program_studi,
                     'angkatan' => $mahasiswa->angkatan,
                     'email' => $mahasiswa->user?->email,
                     'no_hp' => $mahasiswa->no_hp,
@@ -27,6 +28,6 @@ class MahasiswaExport implements FromCollection, WithHeadings
 
     public function headings(): array
     {
-        return ['nim', 'nama', 'program_studi', 'angkatan', 'email', 'no_hp'];
+        return ['nim', 'nama', 'program_studi_id', 'program_studi_nama', 'angkatan', 'email', 'no_hp'];
     }
 }

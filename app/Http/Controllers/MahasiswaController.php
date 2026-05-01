@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\MahasiswaExport;
 use App\Imports\MahasiswaImport;
 use App\Models\Mahasiswa;
+use App\Models\ProgramStudi;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -16,14 +17,16 @@ class MahasiswaController extends Controller
 {
     public function index()
     {
-        $mahasiswas = Mahasiswa::with('user')->orderBy('nama')->get();
+        $mahasiswas = Mahasiswa::with(['user', 'programStudi'])->orderBy('nama')->get();
 
         return view('mahasiswa.index', compact('mahasiswas'));
     }
 
     public function create()
     {
-        return view('mahasiswa.create');
+        $programStudis = ProgramStudi::orderBy('program_studi')->get();
+
+        return view('mahasiswa.create', compact('programStudis'));
     }
 
     public function store(Request $request)
@@ -31,7 +34,7 @@ class MahasiswaController extends Controller
         $validated = $request->validate([
             'nim' => ['required', 'string', 'max:255', 'unique:mahasiswas,nim'],
             'nama' => ['required', 'string', 'max:255'],
-            'program_studi' => ['required', 'string', 'max:255'],
+            'program_studi_id' => ['required', 'integer', 'exists:program_studis,id'],
             'angkatan' => ['required', 'digits:4'],
             'email' => ['nullable', 'email', 'max:255', 'unique:users,email'],
             'no_hp' => ['nullable', 'string', 'max:20'],
@@ -51,7 +54,7 @@ class MahasiswaController extends Controller
             'user_id' => $user->id,
             'nim' => $validated['nim'],
             'nama' => $validated['nama'],
-            'program_studi' => $validated['program_studi'],
+            'program_studi_id' => $validated['program_studi_id'],
             'angkatan' => $validated['angkatan'],
             'no_hp' => $validated['no_hp'] ?? null,
         ]);
@@ -61,7 +64,9 @@ class MahasiswaController extends Controller
 
     public function edit(Mahasiswa $mahasiswa)
     {
-        return view('mahasiswa.edit', compact('mahasiswa'));
+        $programStudis = ProgramStudi::orderBy('program_studi')->get();
+
+        return view('mahasiswa.edit', compact('mahasiswa', 'programStudis'));
     }
 
     public function update(Request $request, Mahasiswa $mahasiswa)
@@ -69,7 +74,7 @@ class MahasiswaController extends Controller
         $validated = $request->validate([
             'nim' => ['required', 'string', 'max:255', Rule::unique('mahasiswas', 'nim')->ignore($mahasiswa->id)],
             'nama' => ['required', 'string', 'max:255'],
-            'program_studi' => ['required', 'string', 'max:255'],
+            'program_studi_id' => ['required', 'integer', 'exists:program_studis,id'],
             'angkatan' => ['required', 'digits:4'],
             'email' => ['nullable', 'email', 'max:255', Rule::unique('users', 'email')->ignore(optional($mahasiswa->user)->id)],
             'no_hp' => ['nullable', 'string', 'max:20'],
@@ -80,7 +85,7 @@ class MahasiswaController extends Controller
         $mahasiswa->update([
             'nim' => $validated['nim'],
             'nama' => $validated['nama'],
-            'program_studi' => $validated['program_studi'],
+            'program_studi_id' => $validated['program_studi_id'],
             'angkatan' => $validated['angkatan'],
             'no_hp' => $validated['no_hp'] ?? null,
         ]);

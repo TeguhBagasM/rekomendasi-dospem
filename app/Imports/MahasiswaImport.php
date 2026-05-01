@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\Mahasiswa;
+use App\Models\ProgramStudi;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\OnEachRow;
@@ -16,7 +17,11 @@ class MahasiswaImport implements OnEachRow, WithHeadingRow
     {
         $data = $row->toArray();
 
-        if (empty($data['nim']) || empty($data['nama']) || empty($data['program_studi']) || empty($data['angkatan'])) {
+        $programStudi = ! empty($data['program_studi_id'])
+            ? ProgramStudi::find($data['program_studi_id'])
+            : null;
+
+        if (empty($data['nim']) || empty($data['nama']) || ! $programStudi || empty($data['angkatan'])) {
             return;
         }
 
@@ -42,7 +47,7 @@ class MahasiswaImport implements OnEachRow, WithHeadingRow
             [
                 'user_id' => $user->id,
                 'nama' => $data['nama'],
-                'program_studi' => $data['program_studi'],
+                'program_studi_id' => $programStudi->id,
                 'angkatan' => $data['angkatan'],
                 'no_hp' => $data['no_hp'] ?? null,
             ]
