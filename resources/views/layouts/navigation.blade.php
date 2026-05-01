@@ -60,6 +60,10 @@
             <div class="hidden sm:flex sm:flex-wrap items-center gap-8 text-sm font-medium text-white">
                 <a href="{{ route('dashboard') }}" class="hover:text-white/80 {{ request()->routeIs('dashboard') ? 'font-bold' : '' }}">Dashboard</a>
 
+                @if (auth()->check() && auth()->user()->hasRole('mahasiswa'))
+                    <a href="{{ route('pengajuan.index') }}" class="hover:text-white/80 {{ request()->routeIs('pengajuan.*') ? 'font-bold' : '' }}">Pengajuan Judul</a>
+                @endif
+
                 @if (auth()->check() && auth()->user()->hasRole('admin'))
                     <x-dropdown align="left" width="64">
                         <x-slot name="trigger">
@@ -94,6 +98,8 @@
                             <x-dropdown-link :href="route('dosen.index')">{{ __('Dosen') }}</x-dropdown-link>
                         </x-slot>
                     </x-dropdown>
+
+                    <a href="{{ route('admin.pengajuan.index') }}" class="hover:text-white/80 {{ request()->routeIs('admin.pengajuan.*') ? 'font-bold' : '' }}">Validasi Pengajuan</a>
                 @endif
             </div>
 
@@ -114,6 +120,12 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-white hover:bg-white/10 hover:text-white">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+
+            @if (auth()->check() && auth()->user()->hasRole('mahasiswa'))
+                <x-responsive-nav-link :href="route('pengajuan.index')" :active="request()->routeIs('pengajuan.*')" class="text-white hover:bg-white/10 hover:text-white">
+                    {{ __('Pengajuan Judul') }}
+                </x-responsive-nav-link>
+            @endif
 
             @if (auth()->check() && auth()->user()->hasRole('admin'))
                 <div x-data="{ open: {{ request()->routeIs('roles.*', 'permissions.*', 'users.*') ? 'true' : 'false' }} }" class="rounded-lg bg-white/5">
@@ -145,6 +157,10 @@
                         <x-responsive-nav-link :href="route('dosen.index')" :active="request()->routeIs('dosen.*')" class="text-white hover:bg-white/10 hover:text-white">{{ __('Dosen') }}</x-responsive-nav-link>
                     </div>
                 </div>
+
+                <x-responsive-nav-link :href="route('admin.pengajuan.index')" :active="request()->routeIs('admin.pengajuan.*')" class="text-white hover:bg-white/10 hover:text-white">
+                    {{ __('Validasi Pengajuan') }}
+                </x-responsive-nav-link>
             @endif
 
             <div class="mt-4 rounded-xl bg-white/10 p-4">
