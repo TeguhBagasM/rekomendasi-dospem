@@ -19,9 +19,15 @@
                         </div>
 
                         @if (auth()->user()->isMahasiswa())
-                            <a href="{{ route('pengajuan.create') }}" class="inline-flex items-center rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700">
-                                <i class="fa-solid fa-plus mr-2"></i> Tambah Pengajuan
-                            </a>
+                            @if (auth()->user()->mahasiswa?->bolehMengajukanBaru())
+                                <a href="{{ route('pengajuan.create') }}" class="inline-flex items-center rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700">
+                                    <i class="fa-solid fa-plus mr-2"></i> Tambah Pengajuan
+                                </a>
+                            @else
+                                <div class="rounded-md bg-amber-50 px-4 py-2 text-sm font-medium text-amber-800 ring-1 ring-inset ring-amber-200">
+                                    Pengajuan baru hanya tersedia jika status terakhir ditolak.
+                                </div>
+                            @endif
                         @endif
                     </div>
 
@@ -42,7 +48,7 @@
                                             <div class="font-medium text-gray-900">{{ $pengajuan->mahasiswa?->nama ?? '-' }}</div>
                                             <div class="text-xs text-gray-500">{{ $pengajuan->mahasiswa?->nim ?? '-' }}</div>
                                         </td>
-                                        <td class="px-4 py-4">{{ $pengajuan->judul_skripsi }}</td>
+                                        <td class="px-4 py-4 w-200">{{ $pengajuan->judul_skripsi }}</td>
                                         <td class="px-4 py-4">
                                             <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold bg-{{ $pengajuan->status_badge }}-100 text-{{ $pengajuan->status_badge }}-700">
                                                 {{ ucfirst($pengajuan->status) }}
@@ -51,19 +57,19 @@
                                         <td class="px-4 py-4">
                                             <div class="flex justify-end gap-3 flex-wrap">
                                                 <a href="{{ route('pengajuan.show', $pengajuan) }}" class="inline-flex items-center font-medium text-indigo-600 hover:text-indigo-800">
-                                                    <i class="fa-solid fa-eye mr-1"></i> Detail
+                                                    <i class="fa-solid fa-eye mr-1"></i>
                                                 </a>
 
                                                 @if ((auth()->user()->isAdmin() || auth()->user()->isKaprodi() || (auth()->user()->isMahasiswa() && $pengajuan->mahasiswa?->user_id === auth()->id())) && $pengajuan->isPending())
                                                     <a href="{{ route('pengajuan.edit', $pengajuan) }}" class="inline-flex items-center font-medium text-emerald-600 hover:text-emerald-800">
-                                                        <i class="fa-solid fa-pen-to-square mr-1"></i> Edit
+                                                        <i class="fa-solid fa-pen-to-square mr-1"></i>
                                                     </a>
 
                                                     <form action="{{ route('pengajuan.destroy', $pengajuan) }}" method="POST" onsubmit="return confirm('Hapus pengajuan ini?')">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="inline-flex items-center font-medium text-red-600 hover:text-red-800">
-                                                            <i class="fa-solid fa-trash mr-1"></i> Hapus
+                                                            <i class="fa-solid fa-trash mr-1"></i>
                                                         </button>
                                                     </form>
                                                 @endif

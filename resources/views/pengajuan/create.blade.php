@@ -32,7 +32,7 @@
                         </div>
 
                         <div>
-                            <x-input-label for="file_proposal" value="File Proposal PDF (opsional)" />
+                            <x-input-label for="file_proposal" value="File Proposal PDF" />
                             <input id="file_proposal" name="file_proposal" type="file" accept="application/pdf" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" />
                             <x-input-error :messages="$errors->get('file_proposal')" class="mt-2" />
                         </div>
