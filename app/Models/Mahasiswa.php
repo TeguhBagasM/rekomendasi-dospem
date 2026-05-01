@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 // use Illuminate\Database\Eloquent\Relations\HasMany;
 // use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -31,6 +32,11 @@ class Mahasiswa extends Model
     public function programStudi(): BelongsTo
     {
         return $this->belongsTo(ProgramStudi::class);
+    }
+    
+    public function pengajuanJuduls(): HasMany
+    {
+        return $this->hasMany(PengajuanJudul::class);
     }
 
     // public function pengajuanJudul(): HasMany
@@ -60,8 +66,27 @@ class Mahasiswa extends Model
 
     public function sudahMengajukan(): bool
     {
-        return $this->pengajuanJudul()
+        return $this->pengajuanJuduls()
                     ->whereIn('status', ['pending', 'disetujui'])
                     ->exists();
+    }
+    
+    public function punyaPengajuanDisetujui(): bool
+    {
+        return $this->pengajuanJuduls()
+            ->where('status', 'disetujui')
+            ->exists();
+    }
+    
+    public function punyaPengajuanPending(): bool
+    {
+        return $this->pengajuanJuduls()
+            ->where('status', 'pending')
+            ->exists();
+    }
+    
+    public function bolehMengajukanBaru(): bool
+    {
+        return ! $this->punyaPengajuanDisetujui() && ! $this->punyaPengajuanPending();
     }
 }

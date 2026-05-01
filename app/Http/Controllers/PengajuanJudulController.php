@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\PengajuanJudul;
+use App\Services\TextSimilarityService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class PengajuanJudulController extends Controller
 {
@@ -33,17 +35,28 @@ class PengajuanJudulController extends Controller
     public function create()
     {
         $this->ensureMahasiswa();
+        
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        abort_unless($user, 403);
+        
+        $mahasiswa = $user->mahasiswa;
+        abort_unless($mahasiswa, 403);
+        
+        if (! $mahasiswa->bolehMengajukanBaru()) {
+            return redirect()->route('pengajuan.index')->with('error', 'Anda sudah memiliki pengajuan yang disetujui atau masih pending.');
+        }
 
         return view('pengajuan.create');
     }
 
-    public function store(Request $request)
+    public function store(Request $request, TextSimilarityService $textSimilarityService)
     {
         $this->ensureMahasiswa();
 
         $validated = $request->validate([
             'judul_skripsi' => ['required', 'string', 'max:255'],
-            'file_proposal' => ['nullable', 'file', 'mimes:pdf', 'max:2048'],
+            'file_proposal' => ['required', 'file', 'mimes:pdf', 'max:2048'],
         ]);
 
         /** @var \App\Models\User $user */
@@ -52,11 +65,28 @@ class PengajuanJudulController extends Controller
 
         $mahasiswa = $user->mahasiswa;
         abort_unless($mahasiswa, 403);
+        
+        if (! $mahasiswa->bolehMengajukanBaru()) {
+            return redirect()->route('pengajuan.index')->with('error', 'Anda sudah memiliki pengajuan yang disetujui atau masih pending.');
+        }
+
+        $similarityResult = $textSimilarityService->checkSimilarity($validated['judul_skripsi']);
+
+        logger([
+            'judul_baru' => $validated['judul_skripsi'],
+            'hasil' => $similarityResult,
+        ]);
+
+        if ($similarityResult['is_similar']) {
+            return back()->withErrors([
+                'judul_skripsi' => 'Judul memiliki kemiripan ' . round($similarityResult['percent'], 2) . '% dengan: "' . $similarityResult['matched_title'] . '". Gunakan judul lain.',
+            ])->withInput();
+        }
 
         $filePath = null;
 
         if ($request->hasFile('file_proposal')) {
-            $filePath = $request->file('file_proposal')->store('proposal', 'public');
+            $filePath = $this->storeProposalFile($request->file('file_proposal'), $mahasiswa->nim, $mahasiswa->nama);
         }
 
         PengajuanJudul::create([
@@ -105,7 +135,7 @@ class PengajuanJudulController extends Controller
                 Storage::disk('public')->delete($pengajuan->file_proposal);
             }
 
-            $data['file_proposal'] = $request->file('file_proposal')->store('proposal', 'public');
+            $data['file_proposal'] = $this->storeProposalFile($request->file('file_proposal'), $pengajuan->mahasiswa?->nim ?? '', $pengajuan->mahasiswa?->nama ?? 'proposal');
         }
 
         $pengajuan->update($data);
@@ -204,5 +234,13 @@ class PengajuanJudulController extends Controller
     private function ensurePending(PengajuanJudul $pengajuan): void
     {
         abort_unless($pengajuan->isPending(), 403);
+    }
+
+    private function storeProposalFile(\Illuminate\Http\UploadedFile $file, string $nim, string $nama): string
+    {
+        $safeName = Str::slug(trim($nim . ' ' . $nama), '_');
+        $filename = $safeName . '.' . $file->getClientOriginalExtension();
+
+        return $file->storeAs('proposal', $filename, 'public');
     }
 }
