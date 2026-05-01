@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         Role::firstOrCreate(['name' => 'admin']);
+        Role::firstOrCreate(['name' => 'dosen']);
         Role::firstOrCreate(['name' => 'mahasiswa']);
 
         $admin = User::firstOrCreate(
@@ -29,5 +30,12 @@ class DatabaseSeeder extends Seeder
         );
 
         $admin->assignRole('admin');
+
+        $this->call([
+            ProdiSeeder::class,
+            DosenSeeder::class,
+            KeahlianDosenSeeder::class,
+            MahasiswaSeeder::class,
+        ]);
     }
 }
