@@ -21,7 +21,7 @@
                     <div class="overflow-x-auto">
                         <table class="{{ $users->isNotEmpty() ? 'js-datatable' : '' }} min-w-full divide-y divide-gray-200">
                             <thead>
-                                <tr class="text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                                <tr class="text-left text-xs font-semibold uppercase tracking-wider text-white bg-gray-900">
                                     <th class="px-4 py-3">Nama</th>
                                     <th class="px-4 py-3">Email</th>
                                     <th class="px-4 py-3">Roles</th>

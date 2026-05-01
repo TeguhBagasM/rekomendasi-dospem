@@ -40,9 +40,9 @@
                     </form>
 
                     <div class="overflow-x-auto">
-                        <table class="{{ $prodis->isNotEmpty() ? 'js-datatable' : '' }} min-w-full divide-y divide-gray-200">
+                        <table class="{{ $mahasiswas->isNotEmpty() ? 'js-datatable' : '' }} min-w-full divide-y divide-gray-200">
                             <thead>
-                                <tr class="text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                                <tr class="text-left text-xs font-semibold uppercase tracking-wider text-white bg-gray-900">
                                     <th class="px-4 py-3">NIM</th>
                                     <th class="px-4 py-3">Nama</th>
                                     <th class="px-4 py-3">Prodi</th>
@@ -57,7 +57,7 @@
                                     <tr class="text-sm text-gray-700">
                                         <td class="px-4 py-4 font-medium">{{ $mahasiswa->nim }}</td>
                                         <td class="px-4 py-4">{{ $mahasiswa->nama }}</td>
-                                        <td class="px-4 py-4">{{ $mahasiswa->program_studi }}</td>
+                                        <td class="px-4 py-4">{{ $mahasiswa->programStudi?->program_studi ?? $mahasiswa->program_studi ?? '-' }}</td>
                                         <td class="px-4 py-4">{{ $mahasiswa->angkatan }}</td>
                                         <td class="px-4 py-4">{{ $mahasiswa->user?->email ?? '-' }}</td>
                                         <td class="px-4 py-4">{{ $mahasiswa->no_hp ?? '-' }}</td>

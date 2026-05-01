@@ -27,9 +27,16 @@
                             <x-input-error :messages="$errors->get('nama')" class="mt-2" />
                         </div>
                         <div>
-                            <x-input-label for="program_studi" value="Program Studi" />
-                            <x-text-input id="program_studi" name="program_studi" type="text" class="mt-1 block w-full" :value="old('program_studi', $mahasiswa->program_studi)" required />
-                            <x-input-error :messages="$errors->get('program_studi')" class="mt-2" />
+                            <x-input-label for="program_studi_id" value="Program Studi" />
+                            <select id="program_studi_id" name="program_studi_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                <option value="">Pilih program studi</option>
+                                @foreach ($programStudis as $programStudi)
+                                    <option value="{{ $programStudi->id }}" @selected(old('program_studi_id', $mahasiswa->program_studi_id) == $programStudi->id)>
+                                        {{ $programStudi->program_studi }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <x-input-error :messages="$errors->get('program_studi_id')" class="mt-2" />
                         </div>
                         <div>
                             <x-input-label for="angkatan" value="Angkatan" />
