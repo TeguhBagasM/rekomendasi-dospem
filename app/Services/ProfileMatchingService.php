@@ -4,109 +4,187 @@ namespace App\Services;
 
 use App\Models\Dosen;
 use App\Models\PengajuanJudul;
+use Illuminate\Support\Collection;
 
 class ProfileMatchingService
 {
-    private const CORE_WEIGHT      = 0.6;
+    private const CORE_WEIGHT = 0.6;
+
     private const SECONDARY_WEIGHT = 0.4;
 
     public function __construct(
         private readonly TextSimilarityService $similarityService
     ) {}
 
-    /**
-     * Rekomendasikan dospem 1 & 2 untuk satu pengajuan judul.
-     *
-     * @return array{dospem1: Dosen|null, dospem2: Dosen|null, ranking: array}
-     */
-    public function rekomendasikan(PengajuanJudul $pengajuan): array
+    public function recommend(PengajuanJudul $pengajuan): array
     {
-        $judul = $pengajuan->judul_skripsi;
+        $pengajuan->loadMissing('mahasiswa.programStudi');
 
-        $dosens = Dosen::with(['keahlianCore', 'keahlianSecondary'])
-            ->get()
-            ->filter(fn (Dosen $dosen) => $dosen->masihAdaKuota());
+        $dosens = Dosen::with([
+            'keahlianDosens',
+            'dospem1Pengajuan' => fn ($query) => $query->where('status', 'disetujui'),
+            'dospem2Pengajuan' => fn ($query) => $query->where('status', 'disetujui'),
+        ])->get();
 
-        $ranking = $dosens
-            ->map(fn (Dosen $dosen) => [
-                'dosen' => $dosen,
-                'skor'  => $this->hitungSkor($judul, $dosen),
-            ])
-            ->sortByDesc('skor')
+        $scores = $dosens
+            ->map(fn (Dosen $dosen) => $this->buildScoreRow($pengajuan->judul_skripsi, $dosen))
             ->values();
 
+        $rankedForDospem1 = $scores->sortByDesc('nilai_akhir_dospem1')->values();
+        $rankedForDospem2 = $scores->sortByDesc('nilai_akhir_dospem2')->values();
+
+        // Debug point: dd($rankedForDospem1->take(5)->toArray()) if the ranking needs inspection.
+
+        $dospem1Row = $rankedForDospem1->first(function (array $row): bool {
+            return $row['remaining_kuota_dospem1'] > 0;
+        });
+
+        $dospem2Row = $rankedForDospem2->first(function (array $row) use ($dospem1Row): bool {
+            if (! $dospem1Row) {
+                return false;
+            }
+
+            return $row['dosen']->id !== $dospem1Row['dosen']->id
+                && $row['remaining_kuota_dospem2'] > 0;
+        });
+
         return [
-            'dospem1' => $ranking->get(0)?->get('dosen'),
-            'dospem2' => $ranking->get(1)?->get('dosen'),
-            'ranking' => $ranking->toArray(),
+            'dospem1' => $dospem1Row['dosen'] ?? null,
+            'dospem2' => $dospem2Row['dosen'] ?? null,
+            'scores' => $scores->map(fn (array $row) => $this->formatScoreRow($row))->all(),
         ];
     }
 
-    /**
-     * Rekomendasikan untuk banyak pengajuan sekaligus (untuk export).
-     *
-     * @param  \Illuminate\Support\Collection<int, PengajuanJudul>  $pengajuans
-     */
-    public function rekomendasikanBulk(\Illuminate\Support\Collection $pengajuans): \Illuminate\Support\Collection
+    public function rekomendasikan(PengajuanJudul $pengajuan): array
     {
-        // Load semua dosen sekali saja agar tidak N+1
-        $dosens = Dosen::with(['keahlianCore', 'keahlianSecondary'])
-            ->get()
-            ->filter(fn (Dosen $dosen) => $dosen->masihAdaKuota());
-
-        return $pengajuans->map(function (PengajuanJudul $pengajuan) use ($dosens) {
-            $judul = $pengajuan->judul_skripsi;
-
-            $ranking = $dosens
-                ->map(fn (Dosen $dosen) => [
-                    'dosen' => $dosen,
-                    'skor'  => $this->hitungSkor($judul, $dosen),
-                ])
-                ->sortByDesc('skor')
-                ->values();
-
-            return [
-                'pengajuan' => $pengajuan,
-                'dospem1'   => $ranking->get(0),
-                'dospem2'   => $ranking->get(1),
-            ];
-        });
+        return $this->recommend($pengajuan);
     }
 
-    private function hitungSkor(string $judul, Dosen $dosen): float
+    public function rekomendasikanBulk(Collection $pengajuans): Collection
     {
-        $nilaiCore      = $this->hitungNilaiPerTipe($judul, $dosen->keahlianCore);
-        $nilaiSecondary = $this->hitungNilaiPerTipe($judul, $dosen->keahlianSecondary);
-
-        // Jika tidak punya secondary factor, skor = 100% core
-        if ($dosen->keahlianSecondary->isEmpty()) {
-            return $nilaiCore;
-        }
-
-        // Jika tidak punya core factor, skor = 100% secondary
-        if ($dosen->keahlianCore->isEmpty()) {
-            return $nilaiSecondary;
-        }
-
-        return (self::CORE_WEIGHT * $nilaiCore) + (self::SECONDARY_WEIGHT * $nilaiSecondary);
+        return $pengajuans->map(fn (PengajuanJudul $pengajuan) => $this->recommend($pengajuan));
     }
 
-    /**
-     * Rata-rata cosine similarity judul terhadap semua keahlian dalam satu tipe.
-     */
-    private function hitungNilaiPerTipe(string $judul, \Illuminate\Database\Eloquent\Collection $keahlians): float
+    private function buildScoreRow(string $judul, Dosen $dosen): array
     {
-        if ($keahlians->isEmpty()) {
-            return 0.0;
-        }
+        $coreKeahlian = $dosen->keahlianDosens->pluck('deskripsi_keahlian')->filter()->values()->all();
+        $topicSimilarity = $this->similarityService->getSimilarityScore($judul, $coreKeahlian);
+        $topicScale = $this->similarityToScale($topicSimilarity);
 
-        $total = $keahlians->sum(function ($keahlian) use ($judul) {
-            // Gabungkan bidang + deskripsi agar matching lebih kaya konteks
-            $teks = $keahlian->bidang_keahlian . ' ' . $keahlian->deskripsi_keahlian;
+        $remainingKuotaDospem1 = $dosen->getRemainingKuotaDospem1();
+        $remainingKuotaDospem2 = $dosen->getRemainingKuotaDospem2();
 
-            return $this->similarityService->calculateSimilarity($judul, $teks);
-        });
+        $quotaScaleDospem1 = $this->quotaToScale($remainingKuotaDospem1);
+        $quotaScaleDospem2 = $this->quotaToScale($remainingKuotaDospem2);
+        $jabatanScale = $this->jabatanToScale($dosen->jabatan_fungsional);
+        $pendidikanScale = $this->pendidikanToScale($dosen->pendidikan_terakhir);
 
-        return $total / $keahlians->count();
+        $cfDospem1 = $this->coreFactor($topicScale, $quotaScaleDospem1);
+        $cfDospem2 = $this->coreFactor($topicScale, $quotaScaleDospem2);
+        $sf = $this->secondaryFactor($jabatanScale, $pendidikanScale);
+
+        return [
+            'dosen' => $dosen,
+            'dosen_id' => $dosen->id,
+            'dosen_nama' => $dosen->nama,
+            'topic_similarity' => $topicSimilarity,
+            'topic_scale' => $topicScale,
+            'quota_scale_dospem1' => $quotaScaleDospem1,
+            'quota_scale_dospem2' => $quotaScaleDospem2,
+            'jabatan_scale' => $jabatanScale,
+            'pendidikan_scale' => $pendidikanScale,
+            'cf_dospem1' => $cfDospem1,
+            'cf_dospem2' => $cfDospem2,
+            'sf' => $sf,
+            'nilai_akhir_dospem1' => $this->finalScore($cfDospem1, $sf),
+            'nilai_akhir_dospem2' => $this->finalScore($cfDospem2, $sf),
+            'remaining_kuota_dospem1' => $remainingKuotaDospem1,
+            'remaining_kuota_dospem2' => $remainingKuotaDospem2,
+        ];
+    }
+
+    private function formatScoreRow(array $row): array
+    {
+        unset($row['dosen']);
+
+        return $row;
+    }
+
+    private function coreFactor(int $topicScale, int $quotaScale): float
+    {
+        $topicBobot = $this->gapToWeight($topicScale - 5);
+        $quotaBobot = $this->gapToWeight($quotaScale - 5);
+
+        return ($topicBobot + $quotaBobot) / 2;
+    }
+
+    private function secondaryFactor(int $jabatanScale, int $pendidikanScale): float
+    {
+        $jabatanBobot = $this->gapToWeight($jabatanScale - 3);
+        $pendidikanBobot = $this->gapToWeight($pendidikanScale - 3);
+
+        return ($jabatanBobot + $pendidikanBobot) / 2;
+    }
+
+    private function finalScore(float $cf, float $sf): float
+    {
+        return ($cf * self::CORE_WEIGHT) + ($sf * self::SECONDARY_WEIGHT);
+    }
+
+    private function similarityToScale(float $similarity): int
+    {
+        return match (true) {
+            $similarity >= 0.75 => 5,
+            $similarity >= 0.50 => 4,
+            $similarity >= 0.30 => 3,
+            $similarity >= 0.15 => 2,
+            default => 1,
+        };
+    }
+
+    private function jabatanToScale(?string $jabatan): int
+    {
+        return match (trim((string) $jabatan)) {
+            'Guru Besar' => 5,
+            'Lektor Kepala' => 4,
+            'Lektor' => 3,
+            'Asisten Ahli' => 2,
+            default => 1,
+        };
+    }
+
+    private function pendidikanToScale(?string $pendidikan): int
+    {
+        return match (trim((string) $pendidikan)) {
+            'S3' => 5,
+            'S2' => 3,
+            default => 1,
+        };
+    }
+
+    private function quotaToScale(int $remainingQuota): int
+    {
+        return match (true) {
+            $remainingQuota >= 5 => 5,
+            $remainingQuota >= 3 => 4,
+            $remainingQuota >= 1 => 3,
+            default => 1,
+        };
+    }
+
+    private function gapToWeight(int $gap): float
+    {
+        return match ($gap) {
+            0 => 5.0,
+            1 => 4.5,
+            -1 => 4.0,
+            2 => 3.5,
+            -2 => 3.0,
+            3 => 2.5,
+            -3 => 2.0,
+            4 => 1.5,
+            -4 => 1.0,
+            default => 0.5,
+        };
     }
 }

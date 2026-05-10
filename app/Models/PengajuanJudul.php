@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Dosen;
 use App\Models\Mahasiswa;
 use App\Models\User;
 // use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -21,6 +22,8 @@ class PengajuanJudul extends Model
         'alasan_penolakan',
         'divalidasi_oleh',
         'validated_at',
+        'dospem1_id',
+        'dospem2_id',
     ];
 
     protected $casts = [
@@ -32,6 +35,16 @@ class PengajuanJudul extends Model
     public function mahasiswa(): BelongsTo
     {
         return $this->belongsTo(Mahasiswa::class);
+    }
+
+    public function dospem1(): BelongsTo
+    {
+        return $this->belongsTo(Dosen::class, 'dospem1_id');
+    }
+
+    public function dospem2(): BelongsTo
+    {
+        return $this->belongsTo(Dosen::class, 'dospem2_id');
     }
 
     /**

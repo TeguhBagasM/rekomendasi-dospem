@@ -16,9 +16,13 @@ class Dosen extends Model
         'nidn',
         'nama',
         'jabatan',
+        'jabatan_fungsional',
+        'pendidikan_terakhir',
         'program_studi',
         'kuota_bimbingan',
         'kuota_terisi',
+        'kuota_dospem1',
+        'kuota_dospem2',
         'no_hp',
     ];
 
@@ -34,19 +38,34 @@ class Dosen extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function keahlian(): HasMany
+    public function keahlianDosens(): HasMany
     {
         return $this->hasMany(KeahlianDosen::class);
     }
 
+    public function keahlian(): HasMany
+    {
+        return $this->keahlianDosens();
+    }
+
     public function keahlianCore(): HasMany
     {
-        return $this->hasMany(KeahlianDosen::class)->where('tipe_faktor', 1);
+        return $this->keahlianDosens()->where('tipe_faktor', 1);
     }
 
     public function keahlianSecondary(): HasMany
     {
-        return $this->hasMany(KeahlianDosen::class)->where('tipe_faktor', 2);
+        return $this->keahlianDosens()->where('tipe_faktor', 2);
+    }
+
+    public function dospem1Pengajuan(): HasMany
+    {
+        return $this->hasMany(PengajuanJudul::class, 'dospem1_id');
+    }
+
+    public function dospem2Pengajuan(): HasMany
+    {
+        return $this->hasMany(PengajuanJudul::class, 'dospem2_id');
     }
 
     /**
@@ -69,12 +88,12 @@ class Dosen extends Model
 
     public function masihAdaKuota(): bool
     {
-        return $this->kuota_terisi < $this->kuota_bimbingan;
+        return $this->getRemainingKuotaDospem1() > 0 || $this->getRemainingKuotaDospem2() > 0;
     }
 
     public function sisaKuota(): int
     {
-        return max(0, $this->kuota_bimbingan - $this->kuota_terisi);
+        return max($this->getRemainingKuotaDospem1(), $this->getRemainingKuotaDospem2());
     }
 
     public function tambahKuota(): void
@@ -98,5 +117,48 @@ class Dosen extends Model
         return $this->keahlian
             ->pluck('deskripsi_keahlian')
             ->implode(' ');
+    }
+
+    public function getJabatanFungsionalAttribute(): ?string
+    {
+        return $this->attributes['jabatan_fungsional'] ?? $this->attributes['jabatan'] ?? null;
+    }
+
+    public function getPendidikanTerakhirAttribute(): ?string
+    {
+        return $this->attributes['pendidikan_terakhir'] ?? null;
+    }
+
+    public function getKuotaDospem1Attribute(): int
+    {
+        return (int) ($this->attributes['kuota_dospem1'] ?? $this->attributes['kuota_bimbingan'] ?? 0);
+    }
+
+    public function getKuotaDospem2Attribute(): int
+    {
+        return (int) ($this->attributes['kuota_dospem2'] ?? $this->attributes['kuota_bimbingan'] ?? 0);
+    }
+
+    public function getRemainingKuotaDospem1(): int
+    {
+        return max(0, $this->kuota_dospem1 - $this->countApprovedAssignments('dospem1Pengajuan'));
+    }
+
+    public function getRemainingKuotaDospem2(): int
+    {
+        return max(0, $this->kuota_dospem2 - $this->countApprovedAssignments('dospem2Pengajuan'));
+    }
+
+    private function countApprovedAssignments(string $relation): int
+    {
+        $query = $this->relationLoaded($relation)
+            ? $this->getRelation($relation)
+            : $this->{$relation}();
+
+        if ($query instanceof HasMany) {
+            return $query->where('status', 'disetujui')->count();
+        }
+
+        return $query->where('status', 'disetujui')->count();
     }
 }
