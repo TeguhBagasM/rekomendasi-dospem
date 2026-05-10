@@ -49,9 +49,12 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::post('pengajuan/{pengajuan}/approve', [PengajuanValidasiController::class, 'approve'])->name('pengajuan.approve');
         Route::post('pengajuan/{pengajuan}/reject', [PengajuanValidasiController::class, 'reject'])->name('pengajuan.reject');
     });
+});
 
-    Route::get('/rekomendasi/export', [RekomendasiController::class, 'export'])
-    ->name('rekomendasi.export');
+Route::middleware(['auth', 'role:admin|kaprodi'])->group(function () {
+    Route::get('/rekomendasi', [RekomendasiController::class, 'index'])->name('rekomendasi.index');
+    Route::post('/rekomendasi/{pengajuan}/generate', [RekomendasiController::class, 'generate'])->name('rekomendasi.generate');
+    Route::get('/rekomendasi/export', [RekomendasiController::class, 'exportExcel'])->name('rekomendasi.export');
 });
 
 // Route::middleware(['auth', 'role:mahasiswa'])->group(function () {
