@@ -9,39 +9,106 @@ class TextSimilarityService
     private float $threshold = 0.75;
 
     private array $stopwords = [
-        'dan', 'yang', 'di', 'ke', 'dari', 'untuk', 'pada', 'dengan', 'atau', 'sebagai',
-        'dalam', 'adalah', 'itu', 'ini', 'karena', 'saat', 'oleh', 'tentang', 'antara',
-        'the', 'a', 'an', 'of', 'to', 'in', 'on', 'for', 'with', 'is', 'are',
+        'dan', 'untuk', 'pada', 'dengan', 'yang', 'menggunakan', 'dalam', 'adalah', 'di', 'ke', 'dari',
+        'ini', 'itu', 'atau', 'juga', 'sudah', 'akan', 'bisa', 'dapat', 'sebagai', 'karena', 'oleh',
+        'tentang', 'antara', 'the', 'a', 'an', 'of', 'to', 'in', 'on', 'for', 'with', 'is', 'are',
     ];
 
-    public function calculateSimilarity(string $text1, string $text2): float
+    public function buildCorpus(array $documents): array
     {
-        if ($this->normalize($text1) === $this->normalize($text2)) {
-            return 1.0;
+        $tokenizedDocuments = [];
+
+        foreach ($documents as $document) {
+            $tokenizedDocuments[] = $this->preprocess((string) $document);
         }
 
-        $tokens1 = $this->preprocess($text1);
-        $tokens2 = $this->preprocess($text2);
+        $documentCount = count($tokenizedDocuments);
 
-        if ($tokens1 === [] || $tokens2 === []) {
+        if ($documentCount === 0) {
+            return [];
+        }
+
+        $documentFrequency = [];
+
+        foreach ($tokenizedDocuments as $tokens) {
+            foreach (array_unique($tokens) as $term) {
+                $documentFrequency[$term] = ($documentFrequency[$term] ?? 0) + 1;
+            }
+        }
+
+        $matrix = [];
+
+        foreach ($tokenizedDocuments as $documentIndex => $tokens) {
+            if ($tokens === []) {
+                continue;
+            }
+
+            $termFrequency = $this->termFrequency($tokens);
+
+            foreach ($termFrequency as $term => $frequency) {
+                $idf = log(($documentCount + 1) / (($documentFrequency[$term] ?? 0) + 1)) + 1;
+                $matrix[$term][$documentIndex] = $frequency * $idf;
+            }
+        }
+
+        return $matrix;
+    }
+
+    public function cosineSimilarity(array $vecA, array $vecB): float
+    {
+        $dotProduct = 0.0;
+        $magnitudeA = 0.0;
+        $magnitudeB = 0.0;
+
+        $allTerms = array_unique(array_merge(array_keys($vecA), array_keys($vecB)));
+
+        foreach ($allTerms as $term) {
+            $valueA = $vecA[$term] ?? 0.0;
+            $valueB = $vecB[$term] ?? 0.0;
+
+            $dotProduct += $valueA * $valueB;
+            $magnitudeA += $valueA ** 2;
+            $magnitudeB += $valueB ** 2;
+        }
+
+        $magnitudeA = sqrt($magnitudeA);
+        $magnitudeB = sqrt($magnitudeB);
+
+        if ($magnitudeA === 0.0 || $magnitudeB === 0.0) {
             return 0.0;
         }
 
-        // Gunakan kedua dokumen sebagai corpus agar IDF bermakna
-        $documents = [$tokens1, $tokens2];
-        $vocabulary = $this->buildVocabulary($documents);
-
-        $vector1 = $this->buildTfIdfVector($tokens1, $documents, $vocabulary);
-        $vector2 = $this->buildTfIdfVector($tokens2, $documents, $vocabulary);
-
-        return $this->cosineSimilarity($vector1, $vector2);
+        return $dotProduct / ($magnitudeA * $magnitudeB);
     }
 
-    /**
-     * Cek similarity judul baru terhadap seluruh corpus existing.
-     * Ini yang paling penting: semua judul diload dulu, lalu IDF dihitung
-     * dari seluruh corpus, bukan pair by pair.
-     */
+    public function getSimilarityScore(string $judulMahasiswa, array $dosenCorpusTexts): float
+    {
+        $judulMahasiswa = trim($judulMahasiswa);
+
+        if ($judulMahasiswa === '') {
+            return 0.0;
+        }
+
+        $joinedCorpus = trim(implode(' ', array_filter(array_map('trim', $dosenCorpusTexts))));
+
+        if ($joinedCorpus === '') {
+            return 0.0;
+        }
+
+        $corpus = [$judulMahasiswa, $joinedCorpus];
+        $matrix = $this->buildCorpus($corpus);
+
+        return $this->cosineSimilarity(
+            $this->extractDocumentVector($matrix, 0),
+            $this->extractDocumentVector($matrix, 1)
+        );
+    }
+
+    public function calculateSimilarity(string $text1, string $text2): float
+    {
+        return $this->getSimilarityScore($text1, [$text2]);
+    }
+
     public function checkSimilarity(string $judulBaru, ?int $excludeId = null): array
     {
         $judulBaru = trim($judulBaru);
@@ -49,87 +116,65 @@ class TextSimilarityService
         if ($judulBaru === '') {
             return [
                 'is_similar' => false,
-                'percent'     => 0,
+                'percent' => 0,
                 'matched_title' => null,
             ];
         }
 
         $existingTitles = PengajuanJudul::query()
-            ->when($excludeId, fn ($q) => $q->where('id', '!=', $excludeId))
-            ->pluck('judul_skripsi', 'id')
+            ->when($excludeId, fn ($query) => $query->where('id', '!=', $excludeId))
+            ->pluck('judul_skripsi')
             ->filter()
             ->values();
 
         if ($existingTitles->isEmpty()) {
             return [
-                'is_similar'    => false,
-                'percent'       => 0,
+                'is_similar' => false,
+                'percent' => 0,
                 'matched_title' => null,
             ];
         }
 
         $normalizedBaru = $this->normalize($judulBaru);
 
-        // Exact match check dulu
         foreach ($existingTitles as $existingTitle) {
             if ($normalizedBaru === $this->normalize($existingTitle)) {
                 return [
-                    'is_similar'    => true,
-                    'percent'       => 100.0,
+                    'is_similar' => true,
+                    'percent' => 100.0,
                     'matched_title' => $existingTitle,
                 ];
             }
         }
 
-        // Bangun corpus dari seluruh judul existing + judul baru
-        // agar IDF dihitung secara representatif
-        $allTokens = $existingTitles
-            ->map(fn ($title) => $this->preprocess($title))
-            ->filter(fn ($tokens) => $tokens !== [])
-            ->values()
-            ->toArray();
-
-        $newTokens = $this->preprocess($judulBaru);
-
-        if ($newTokens === []) {
-            return [
-                'is_similar'    => false,
-                'percent'       => 0,
-                'matched_title' => null,
-            ];
-        }
-
-        // Corpus = semua judul existing + judul baru
-        $corpus    = array_merge($allTokens, [$newTokens]);
-        $vocabulary = $this->buildVocabulary($corpus);
-
-        // Hitung vektor judul baru sekali saja
-        $vectorBaru = $this->buildTfIdfVector($newTokens, $corpus, $vocabulary);
-
         $highestSimilarity = 0.0;
-        $matchedTitle      = null;
+        $matchedTitle = null;
 
         foreach ($existingTitles as $existingTitle) {
-            $tokens = $this->preprocess($existingTitle);
-
-            if ($tokens === []) {
-                continue;
-            }
-
-            $vectorExisting = $this->buildTfIdfVector($tokens, $corpus, $vocabulary);
-            $similarity     = $this->cosineSimilarity($vectorBaru, $vectorExisting);
+            $similarity = $this->getSimilarityScore($judulBaru, [$existingTitle]);
 
             if ($similarity > $highestSimilarity) {
                 $highestSimilarity = $similarity;
-                $matchedTitle      = $existingTitle;
+                $matchedTitle = $existingTitle;
             }
         }
 
         return [
-            'is_similar'    => $highestSimilarity >= $this->threshold,
-            'percent'       => round($highestSimilarity * 100, 2),
+            'is_similar' => $highestSimilarity >= $this->threshold,
+            'percent' => round($highestSimilarity * 100, 2),
             'matched_title' => $matchedTitle,
         ];
+    }
+
+    private function extractDocumentVector(array $matrix, int $documentIndex): array
+    {
+        $vector = [];
+
+        foreach ($matrix as $term => $weights) {
+            $vector[$term] = $weights[$documentIndex] ?? 0.0;
+        }
+
+        return $vector;
     }
 
     private function normalize(string $text): string
@@ -150,85 +195,21 @@ class TextSimilarityService
 
         $tokens = preg_split('/\s+/', $text) ?: [];
 
-        return array_values(array_filter($tokens, function (string $token) {
+        return array_values(array_filter($tokens, function (string $token): bool {
             return $token !== '' && ! in_array($token, $this->stopwords, true);
         }));
-    }
-
-    private function buildVocabulary(array $documents): array
-    {
-        $vocabulary = [];
-
-        foreach ($documents as $document) {
-            foreach ($document as $token) {
-                $vocabulary[$token] = true;
-            }
-        }
-
-        return array_keys($vocabulary);
-    }
-
-    private function buildTfIdfVector(array $document, array $documents, array $vocabulary): array
-    {
-        $tf     = $this->termFrequency($document);
-        $total  = count($documents);
-        $vector = [];
-
-        foreach ($vocabulary as $term) {
-            $docsWithTerm = 0;
-
-            foreach ($documents as $doc) {
-                if (in_array($term, $doc, true)) {
-                    $docsWithTerm++;
-                }
-            }
-
-            $idf            = $docsWithTerm > 0
-                ? log(($total + 1) / ($docsWithTerm + 1)) + 1
-                : 0.0;
-
-            $vector[$term] = ($tf[$term] ?? 0.0) * $idf;
-        }
-
-        return $vector;
     }
 
     private function termFrequency(array $document): array
     {
         $counts = array_count_values($document);
-        $total  = max(count($document), 1);
-        $tf     = [];
+        $total = max(count($document), 1);
+        $tf = [];
 
         foreach ($counts as $term => $count) {
             $tf[$term] = $count / $total;
         }
 
         return $tf;
-    }
-
-    private function cosineSimilarity(array $vector1, array $vector2): float
-    {
-        $dotProduct = 0.0;
-        $magnitude1 = 0.0;
-        $magnitude2 = 0.0;
-
-        foreach ($vector1 as $term => $value1) {
-            $value2      = $vector2[$term] ?? 0.0;
-            $dotProduct += $value1 * $value2;
-            $magnitude1 += $value1 ** 2;
-        }
-
-        foreach ($vector2 as $value2) {
-            $magnitude2 += $value2 ** 2;
-        }
-
-        $magnitude1 = sqrt($magnitude1);
-        $magnitude2 = sqrt($magnitude2);
-
-        if ($magnitude1 === 0.0 || $magnitude2 === 0.0) {
-            return 0.0;
-        }
-
-        return $dotProduct / ($magnitude1 * $magnitude2);
     }
 }
