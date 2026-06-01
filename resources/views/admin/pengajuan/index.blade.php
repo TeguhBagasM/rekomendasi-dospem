@@ -146,16 +146,18 @@
 
                                 <div class="flex flex-wrap items-center gap-3">
                                     <template x-if="selected.status === 'pending'">
-                                        <form :action="approveAction()" method="POST">
-                                            @csrf
-                                            <button type="submit" class="inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700">
-                                                ACC
-                                            </button>
-                                        </form>
+                                        <div class="flex flex-wrap items-center gap-3">
+                                            <form :action="approveAction()" method="POST">
+                                                @csrf
+                                                <button type="submit" class="inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700">
+                                                    ACC
+                                                </button>
+                                            </form>
 
-                                        <button type="button" @click="rejectOpen = !rejectOpen" class="inline-flex items-center rounded-md bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600">
-                                            TOLAK
-                                        </button>
+                                            <button type="button" @click="rejectOpen = !rejectOpen" class="inline-flex items-center rounded-md bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600">
+                                                TOLAK
+                                            </button>
+                                        </div>
                                     </template>
                                 </div>
 
