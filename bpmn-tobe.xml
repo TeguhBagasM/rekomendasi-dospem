@@ -1,0 +1,237 @@
+<mxGraphModel>
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+
+    <!-- POOL TO-BE -->
+    <mxCell id="pool2" value="Proses Rekomendasi Dosen Pembimbing Skripsi (TO-BE)"
+      style="shape=pool;startSize=20;horizontal=1;childLayout=stackLayout;
+             horizontalStack=0;resizeParent=1;resizeParentMax=0;
+             collapsible=0;marginBottom=0;"
+      vertex="1" parent="1">
+      <mxGeometry x="30" y="30" width="1200" height="600" as="geometry"/>
+    </mxCell>
+
+    <!-- LANE: Mahasiswa -->
+    <mxCell id="laneA" value="Mahasiswa"
+      style="swimlane;startSize=30;horizontal=0;"
+      vertex="1" parent="pool2">
+      <mxGeometry x="0" y="0" width="1200" height="200" as="geometry"/>
+    </mxCell>
+
+    <!-- LANE: Sistem Rekomendasi -->
+    <mxCell id="laneB" value="Sistem Rekomendasi Dosen Pembimbing"
+      style="swimlane;startSize=30;horizontal=0;
+             fillColor=#dae8fc;strokeColor=#6c8ebf;"
+      vertex="1" parent="pool2">
+      <mxGeometry x="0" y="200" width="1200" height="200" as="geometry"/>
+    </mxCell>
+
+    <!-- LANE: Tim Program Studi -->
+    <mxCell id="laneC" value="Tim Program Studi"
+      style="swimlane;startSize=30;horizontal=0;"
+      vertex="1" parent="pool2">
+      <mxGeometry x="0" y="400" width="1200" height="200" as="geometry"/>
+    </mxCell>
+
+    <!-- ===== MAHASISWA LANE ===== -->
+    <mxCell id="tse01" value="Mulai"
+      style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;
+             fillColor=#d5e8d4;strokeColor=#82b366;"
+      vertex="1" parent="laneA">
+      <mxGeometry x="30" y="85" width="40" height="40" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="tut01" value="Melakukan Login&#xa;ke Sistem"
+      style="rounded=1;whiteSpace=wrap;html=1;"
+      vertex="1" parent="laneA">
+      <mxGeometry x="110" y="75" width="120" height="60" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="tut02" value="Mengisi Data&#xa;Pengajuan Skripsi"
+      style="rounded=1;whiteSpace=wrap;html=1;"
+      vertex="1" parent="laneA">
+      <mxGeometry x="270" y="75" width="120" height="60" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="tut03" value="Mengunggah Berkas&#xa;Proposal Skripsi"
+      style="rounded=1;whiteSpace=wrap;html=1;"
+      vertex="1" parent="laneA">
+      <mxGeometry x="420" y="75" width="120" height="60" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="tut04" value="Mengirim&#xa;Pengajuan Skripsi"
+      style="rounded=1;whiteSpace=wrap;html=1;"
+      vertex="1" parent="laneA">
+      <mxGeometry x="570" y="75" width="120" height="60" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="tie01" value="Menerima Notifikasi&#xa;Penolakan"
+      style="ellipse;whiteSpace=wrap;html=1;
+             fillColor=#ffe6cc;strokeColor=#d79b00;"
+      vertex="1" parent="laneA">
+      <mxGeometry x="870" y="85" width="120" height="60" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="tut08" value="Melihat Alasan&#xa;Penolakan"
+      style="rounded=1;whiteSpace=wrap;html=1;"
+      vertex="1" parent="laneA">
+      <mxGeometry x="870" y="155" width="120" height="60" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="tut09" value="Melakukan Perbaikan&#xa;Proposal atau Judul"
+      style="rounded=1;whiteSpace=wrap;html=1;"
+      vertex="1" parent="laneA">
+      <mxGeometry x="1010" y="155" width="120" height="60" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="tgw02" value="Ajukan&#xa;Ulang?"
+      style="rhombus;whiteSpace=wrap;html=1;
+             fillColor=#fff2cc;strokeColor=#d6b656;"
+      vertex="1" parent="laneA">
+      <mxGeometry x="1010" y="65" width="100" height="80" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="tut14" value="Menerima Informasi&#xa;Dosen Pembimbing"
+      style="rounded=1;whiteSpace=wrap;html=1;"
+      vertex="1" parent="laneA">
+      <mxGeometry x="110" y="75" width="130" height="60" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="tee01" value="Selesai"
+      style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;
+             fillColor=#f8cecc;strokeColor=#b85450;"
+      vertex="1" parent="laneA">
+      <mxGeometry x="30" y="85" width="40" height="40" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="tee02" value="Batal"
+      style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;
+             fillColor=#f8cecc;strokeColor=#b85450;"
+      vertex="1" parent="laneA">
+      <mxGeometry x="1150" y="85" width="40" height="40" as="geometry"/>
+    </mxCell>
+
+    <!-- ===== SISTEM LANE ===== -->
+    <mxCell id="tst01" value="Menyimpan Data&#xa;Pengajuan ke Database"
+      style="rounded=1;whiteSpace=wrap;html=1;
+             fillColor=#dae8fc;strokeColor=#6c8ebf;"
+      vertex="1" parent="laneB">
+      <mxGeometry x="570" y="75" width="130" height="60" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="tst02" value="Mengirim Notifikasi&#xa;Penolakan"
+      style="rounded=1;whiteSpace=wrap;html=1;
+             fillColor=#dae8fc;strokeColor=#6c8ebf;"
+      vertex="1" parent="laneB">
+      <mxGeometry x="870" y="75" width="130" height="60" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="tst03" value="Menjalankan&#xa;Preprocessing Teks"
+      style="rounded=1;whiteSpace=wrap;html=1;
+             fillColor=#dae8fc;strokeColor=#6c8ebf;"
+      vertex="1" parent="laneB">
+      <mxGeometry x="270" y="75" width="130" height="60" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="tst04" value="Menghitung Bobot&#xa;TF-IDF"
+      style="rounded=1;whiteSpace=wrap;html=1;
+             fillColor=#dae8fc;strokeColor=#6c8ebf;"
+      vertex="1" parent="laneB">
+      <mxGeometry x="420" y="75" width="130" height="60" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="tst05" value="Menghitung&#xa;Cosine Similarity"
+      style="rounded=1;whiteSpace=wrap;html=1;
+             fillColor=#dae8fc;strokeColor=#6c8ebf;"
+      vertex="1" parent="laneB">
+      <mxGeometry x="570" y="75" width="130" height="60" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="tst06" value="Menghitung Skor&#xa;Profile Matching"
+      style="rounded=1;whiteSpace=wrap;html=1;
+             fillColor=#dae8fc;strokeColor=#6c8ebf;"
+      vertex="1" parent="laneB">
+      <mxGeometry x="720" y="75" width="130" height="60" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="tst07" value="Menghasilkan Ranking&#xa;Rekomendasi Dosen"
+      style="rounded=1;whiteSpace=wrap;html=1;
+             fillColor=#dae8fc;strokeColor=#6c8ebf;"
+      vertex="1" parent="laneB">
+      <mxGeometry x="870" y="75" width="130" height="60" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="tst08" value="Menghasilkan File&#xa;Excel Rekomendasi"
+      style="rounded=1;whiteSpace=wrap;html=1;
+             fillColor=#dae8fc;strokeColor=#6c8ebf;"
+      vertex="1" parent="laneB">
+      <mxGeometry x="420" y="75" width="130" height="60" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="tst09" value="Mengirim Notifikasi&#xa;Informasi Dosen"
+      style="rounded=1;whiteSpace=wrap;html=1;
+             fillColor=#dae8fc;strokeColor=#6c8ebf;"
+      vertex="1" parent="laneB">
+      <mxGeometry x="270" y="75" width="130" height="60" as="geometry"/>
+    </mxCell>
+
+    <!-- ===== TIM PRODI LANE ===== -->
+    <mxCell id="tut05" value="Melihat Daftar&#xa;Pengajuan Masuk"
+      style="rounded=1;whiteSpace=wrap;html=1;"
+      vertex="1" parent="laneC">
+      <mxGeometry x="120" y="75" width="130" height="60" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="tut06" value="Melakukan Review&#xa;Proposal Skripsi"
+      style="rounded=1;whiteSpace=wrap;html=1;"
+      vertex="1" parent="laneC">
+      <mxGeometry x="280" y="75" width="130" height="60" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="tgw01" value="Proposal&#xa;Disetujui?"
+      style="rhombus;whiteSpace=wrap;html=1;
+             fillColor=#fff2cc;strokeColor=#d6b656;"
+      vertex="1" parent="laneC">
+      <mxGeometry x="440" y="65" width="110" height="80" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="tut07" value="Mengisi Alasan&#xa;Penolakan"
+      style="rounded=1;whiteSpace=wrap;html=1;"
+      vertex="1" parent="laneC">
+      <mxGeometry x="580" y="135" width="130" height="60" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="tut10" value="Melakukan Validasi&#xa;Hasil Rekomendasi"
+      style="rounded=1;whiteSpace=wrap;html=1;"
+      vertex="1" parent="laneC">
+      <mxGeometry x="580" y="75" width="130" height="60" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="tgw03" value="Rekomendasi&#xa;Diterima?"
+      style="rhombus;whiteSpace=wrap;html=1;
+             fillColor=#fff2cc;strokeColor=#d6b656;"
+      vertex="1" parent="laneC">
+      <mxGeometry x="740" y="65" width="110" height="80" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="tut11" value="Menyesuaikan&#xa;Rekomendasi"
+      style="rounded=1;whiteSpace=wrap;html=1;"
+      vertex="1" parent="laneC">
+      <mxGeometry x="740" y="155" width="130" height="60" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="tut12" value="Menekan Tombol&#xa;Generate Excel"
+      style="rounded=1;whiteSpace=wrap;html=1;"
+      vertex="1" parent="laneC">
+      <mxGeometry x="900" y="75" width="130" height="60" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="tut13" value="Mengunduh File Excel&#xa;sebagai Dasar SK"
+      style="rounded=1;whiteSpace=wrap;html=1;"
+      vertex="1" parent="laneC">
+      <mxGeometry x="280" y="75" width="130" height="60" as="geometry"/>
+    </mxCell>
+
+  </root>
+</mxGraphModel>
