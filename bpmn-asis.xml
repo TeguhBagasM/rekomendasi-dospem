@@ -1,0 +1,154 @@
+<mxGraphModel>
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+
+    <!-- POOL -->
+    <mxCell id="pool1" value="Proses Pengajuan Skripsi (AS-IS)"
+      style="shape=pool;startSize=20;horizontal=1;childLayout=stackLayout;
+             horizontalStack=0;resizeParent=1;resizeParentMax=0;
+             collapsible=0;marginBottom=0;"
+      vertex="1" parent="1">
+      <mxGeometry x="30" y="30" width="900" height="400" as="geometry"/>
+    </mxCell>
+
+    <!-- LANE: Tim Program Studi -->
+    <mxCell id="lane1" value="Tim Program Studi"
+      style="swimlane;startSize=30;horizontal=0;"
+      vertex="1" parent="pool1">
+      <mxGeometry x="0" y="0" width="900" height="200" as="geometry"/>
+    </mxCell>
+
+    <!-- LANE: Mahasiswa -->
+    <mxCell id="lane2" value="Mahasiswa"
+      style="swimlane;startSize=30;horizontal=0;"
+      vertex="1" parent="pool1">
+      <mxGeometry x="0" y="200" width="900" height="200" as="geometry"/>
+    </mxCell>
+
+    <!-- START EVENT -->
+    <mxCell id="se01" value="Mulai"
+      style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;
+             fillColor=#d5e8d4;strokeColor=#82b366;"
+      vertex="1" parent="lane1">
+      <mxGeometry x="40" y="85" width="40" height="40" as="geometry"/>
+    </mxCell>
+
+    <!-- UT-01 -->
+    <mxCell id="ut01" value="Membagikan Link&#xa;Google Form"
+      style="rounded=1;whiteSpace=wrap;html=1;"
+      vertex="1" parent="lane1">
+      <mxGeometry x="120" y="75" width="120" height="60" as="geometry"/>
+    </mxCell>
+
+    <!-- UT-05 -->
+    <mxCell id="ut05" value="Menerima Data&#xa;Pengajuan"
+      style="rounded=1;whiteSpace=wrap;html=1;"
+      vertex="1" parent="lane1">
+      <mxGeometry x="420" y="75" width="120" height="60" as="geometry"/>
+    </mxCell>
+
+    <!-- UT-06 -->
+    <mxCell id="ut06" value="Memeriksa Proposal&#xa;dan Data Secara Manual"
+      style="rounded=1;whiteSpace=wrap;html=1;"
+      vertex="1" parent="lane1">
+      <mxGeometry x="570" y="75" width="130" height="60" as="geometry"/>
+    </mxCell>
+
+    <!-- GW-01 -->
+    <mxCell id="gw01" value="Pengajuan&#xa;Diterima?"
+      style="rhombus;whiteSpace=wrap;html=1;
+             fillColor=#fff2cc;strokeColor=#d6b656;"
+      vertex="1" parent="lane1">
+      <mxGeometry x="730" y="65" width="100" height="80" as="geometry"/>
+    </mxCell>
+
+    <!-- UT-07 -->
+    <mxCell id="ut07" value="Menentukan Dosen&#xa;Pembimbing Secara&#xa;Konvensional"
+      style="rounded=1;whiteSpace=wrap;html=1;"
+      vertex="1" parent="lane1">
+      <mxGeometry x="570" y="10" width="130" height="60" as="geometry"/>
+    </mxCell>
+
+    <!-- UT-08 -->
+    <mxCell id="ut08" value="Menerbitkan Informasi&#xa;Dosen Pembimbing / SK"
+      style="rounded=1;whiteSpace=wrap;html=1;"
+      vertex="1" parent="lane1">
+      <mxGeometry x="420" y="10" width="130" height="60" as="geometry"/>
+    </mxCell>
+
+    <!-- UT-02 (Mahasiswa) -->
+    <mxCell id="ut02" value="Membuka&#xa;Google Form"
+      style="rounded=1;whiteSpace=wrap;html=1;"
+      vertex="1" parent="lane2">
+      <mxGeometry x="120" y="75" width="120" height="60" as="geometry"/>
+    </mxCell>
+
+    <!-- UT-03 -->
+    <mxCell id="ut03" value="Mengisi Data&#xa;Pengajuan Skripsi"
+      style="rounded=1;whiteSpace=wrap;html=1;"
+      vertex="1" parent="lane2">
+      <mxGeometry x="270" y="75" width="120" height="60" as="geometry"/>
+    </mxCell>
+
+    <!-- UT-04 -->
+    <mxCell id="ut04" value="Mengirim Formulir&#xa;Pengajuan"
+      style="rounded=1;whiteSpace=wrap;html=1;"
+      vertex="1" parent="lane2">
+      <mxGeometry x="420" y="75" width="120" height="60" as="geometry"/>
+    </mxCell>
+
+    <!-- UT-09 -->
+    <mxCell id="ut09" value="Menerima Informasi&#xa;Penolakan"
+      style="rounded=1;whiteSpace=wrap;html=1;"
+      vertex="1" parent="lane2">
+      <mxGeometry x="730" y="75" width="120" height="60" as="geometry"/>
+    </mxCell>
+
+    <!-- UT-10 -->
+    <mxCell id="ut10" value="Memperbaiki Proposal&#xa;atau Mengganti Judul"
+      style="rounded=1;whiteSpace=wrap;html=1;"
+      vertex="1" parent="lane2">
+      <mxGeometry x="730" y="155" width="120" height="60" as="geometry"/>
+    </mxCell>
+
+    <!-- GW-02 -->
+    <mxCell id="gw02" value="Ajukan&#xa;Ulang?"
+      style="rhombus;whiteSpace=wrap;html=1;
+             fillColor=#fff2cc;strokeColor=#d6b656;"
+      vertex="1" parent="lane2">
+      <mxGeometry x="580" y="145" width="100" height="80" as="geometry"/>
+    </mxCell>
+
+    <!-- UT-11 -->
+    <mxCell id="ut11" value="Menunggu Informasi&#xa;Dosen Pembimbing"
+      style="rounded=1;whiteSpace=wrap;html=1;"
+      vertex="1" parent="lane2">
+      <mxGeometry x="270" y="75" width="120" height="60" as="geometry"/>
+    </mxCell>
+
+    <!-- UT-12 -->
+    <mxCell id="ut12" value="Menerima Informasi&#xa;Dosen Pembimbing"
+      style="rounded=1;whiteSpace=wrap;html=1;"
+      vertex="1" parent="lane2">
+      <mxGeometry x="120" y="75" width="120" height="60" as="geometry"/>
+    </mxCell>
+
+    <!-- END EVENT 1 -->
+    <mxCell id="ee01" value="Selesai"
+      style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;
+             fillColor=#f8cecc;strokeColor=#b85450;"
+      vertex="1" parent="lane2">
+      <mxGeometry x="40" y="85" width="40" height="40" as="geometry"/>
+    </mxCell>
+
+    <!-- END EVENT 2 -->
+    <mxCell id="ee02" value="Selesai&#xa;(Batal)"
+      style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;
+             fillColor=#f8cecc;strokeColor=#b85450;"
+      vertex="1" parent="lane2">
+      <mxGeometry x="460" y="155" width="40" height="40" as="geometry"/>
+    </mxCell>
+
+  </root>
+</mxGraphModel>
