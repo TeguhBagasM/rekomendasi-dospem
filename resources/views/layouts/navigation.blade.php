@@ -65,7 +65,7 @@
                 @endif
 
                 @if (auth()->check() && auth()->user()->hasRole('admin'))
-                    <x-dropdown align="left" width="64">
+                    {{-- <x-dropdown align="left" width="64">
                         <x-slot name="trigger">
                             <button class="inline-flex items-center text-sm font-medium text-white hover:text-white/80 focus:outline-none">
                                 <span>Akses User</span>
@@ -80,7 +80,7 @@
                             <x-dropdown-link :href="route('permissions.index')">{{ __('Permissions') }}</x-dropdown-link>
                             <x-dropdown-link :href="route('users.index')">{{ __('Users') }}</x-dropdown-link>
                         </x-slot>
-                    </x-dropdown>
+                    </x-dropdown> --}}
 
                     <x-dropdown align="left" width="64">
                         <x-slot name="trigger">
@@ -128,7 +128,7 @@
             @endif
 
             @if (auth()->check() && auth()->user()->hasRole('admin'))
-                <div x-data="{ open: {{ request()->routeIs('roles.*', 'permissions.*', 'users.*') ? 'true' : 'false' }} }" class="rounded-lg bg-white/5">
+                {{-- <div x-data="{ open: {{ request()->routeIs('roles.*', 'users.*') ? 'true' : 'false' }} }" class="rounded-lg bg-white/5">
                     <button type="button" @click="open = ! open" class="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-semibold text-white">
                         <span>Akses User</span>
                         <svg class="h-4 w-4 transition-transform duration-150" :class="{ 'rotate-180': open }" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -141,7 +141,7 @@
                         <x-responsive-nav-link :href="route('permissions.index')" :active="request()->routeIs('permissions.*')" class="text-white hover:bg-white/10 hover:text-white">{{ __('Permissions') }}</x-responsive-nav-link>
                         <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')" class="text-white hover:bg-white/10 hover:text-white">{{ __('Users') }}</x-responsive-nav-link>
                     </div>
-                </div>
+                </div> --}}
 
                 <div x-data="{ open: {{ request()->routeIs('mahasiswa.*', 'dosen.*') ? 'true' : 'false' }} }" class="rounded-lg bg-white/5">
                     <button type="button" @click="open = ! open" class="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-semibold text-white">

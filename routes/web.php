@@ -33,7 +33,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('roles', RoleController::class)->except(['show']);
-    Route::resource('permissions', PermissionController::class)->except(['show']);
+    // Route::resource('permissions', PermissionController::class)->except(['show']);
     Route::get('mahasiswa/export', [MahasiswaController::class, 'export'])->name('mahasiswa.export');
     Route::post('mahasiswa/import', [MahasiswaController::class, 'import'])->name('mahasiswa.import');
     Route::resource('mahasiswa', MahasiswaController::class)->except(['show']);

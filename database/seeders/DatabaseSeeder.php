@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
         Role::firstOrCreate(['name' => 'mahasiswa']);
 
         $admin = User::firstOrCreate(
-            ['email' => 'admin@gmail.com'], // cek biar tidak duplicate
+            ['email' => 'admin@gmail.com'], 
             [
                 'name' => 'Admin',
                 'password' => Hash::make('111'),
