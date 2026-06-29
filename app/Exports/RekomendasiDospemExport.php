@@ -2,8 +2,7 @@
 
 namespace App\Exports;
 
-use App\Models\PengajuanJudul;
-use App\Services\ProfileMatchingService;
+use App\Models\RiwayatRekomendasi;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
@@ -16,39 +15,40 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 class RekomendasiDospemExport implements FromCollection, WithHeadings, WithStyles, ShouldAutoSize
 {
     public function __construct(
-        private readonly ProfileMatchingService $profileMatchingService
+        private readonly RiwayatRekomendasi $riwayatRekomendasi
     ) {}
 
     public function collection(): Collection
     {
-        $pengajuans = PengajuanJudul::with([
-            'mahasiswa.programStudi',
-            'dospem1.keahlianDosens',
-            'dospem2.keahlianDosens',
-        ])
-            ->where('status', 'disetujui')
-            ->latest()
-            ->get();
+        $rekomendasi = $this->riwayatRekomendasi->loadMissing([
+            'rekomendasiDospembings.pengajuan.mahasiswa.programStudi',
+            'rekomendasiDospembings.rekomendasiDospem1',
+            'rekomendasiDospembings.rekomendasiDospem2',
+            'rekomendasiDospembings.penetapanDospembing.dospem1',
+            'rekomendasiDospembings.penetapanDospembing.dospem2',
+        ])->rekomendasiDospembings;
 
-        return $pengajuans->values()->map(function (PengajuanJudul $pengajuan, int $index) {
-            $recommendation = $this->profileMatchingService->recommend($pengajuan);
-
-            $scoreDospem1 = $this->scoreForDosen($recommendation['scores'], $pengajuan->dospem1_id, 'nilai_akhir_dospem1');
-            $scoreDospem2 = $this->scoreForDosen($recommendation['scores'], $pengajuan->dospem2_id, 'nilai_akhir_dospem2');
+        return $rekomendasi->values()->map(function ($rekomendasi, int $index) {
+            $pengajuan = $rekomendasi->pengajuan;
+            $penetapan = $rekomendasi->penetapanDospembing;
 
             return [
                 'no' => $index + 1,
-                'nim' => $pengajuan->mahasiswa?->nim ?? '-',
-                'nama_mahasiswa' => $pengajuan->mahasiswa?->nama ?? '-',
-                'program_studi' => $pengajuan->mahasiswa?->programStudi?->program_studi ?? '-',
-                'judul_skripsi' => $pengajuan->judul_skripsi,
-                'dosen_pembimbing_1' => $pengajuan->dospem1?->nama ?? '-',
-                'bidang_keahlian_dospem_1' => $this->getCoreSkillLabel($pengajuan->dospem1),
-                'skor_kesesuaian_dospem_1' => $this->formatPercent($scoreDospem1),
-                'dosen_pembimbing_2' => $pengajuan->dospem2?->nama ?? '-',
-                'bidang_keahlian_dospem_2' => $this->getCoreSkillLabel($pengajuan->dospem2),
-                'skor_kesesuaian_dospem_2' => $this->formatPercent($scoreDospem2),
-                'tanggal_ditetapkan' => $pengajuan->validated_at?->format('d-m-Y H:i') ?? '-',
+                'rekomendasi_dospembing_id' => $rekomendasi->id,
+                'pengajuan_id' => $pengajuan?->id,
+                'nim' => $pengajuan?->mahasiswa?->nim ?? '-',
+                'nama_mahasiswa' => $pengajuan?->mahasiswa?->nama ?? '-',
+                'program_studi' => $pengajuan?->mahasiswa?->programStudi?->program_studi ?? '-',
+                'judul_skripsi' => $pengajuan?->judul_skripsi ?? '-',
+                'rekomendasi_dospem1_nama' => $rekomendasi->rekomendasiDospem1?->nama ?? '-',
+                'rekomendasi_dospem1_nidn' => $rekomendasi->rekomendasiDospem1?->nidn ?? '-',
+                'rekomendasi_dospem2_nama' => $rekomendasi->rekomendasiDospem2?->nama ?? '-',
+                'rekomendasi_dospem2_nidn' => $rekomendasi->rekomendasiDospem2?->nidn ?? '-',
+                'final_dospem1_nidn' => $penetapan?->dospem1?->nidn ?? $rekomendasi->rekomendasiDospem1?->nidn ?? '-',
+                'final_dospem2_nidn' => $penetapan?->dospem2?->nidn ?? $rekomendasi->rekomendasiDospem2?->nidn ?? '-',
+                'status_final' => $penetapan ? 'finalized' : 'draft',
+                'catatan' => $penetapan?->catatan ?? '-',
+                'generated_at' => $this->riwayatRekomendasi->generated_at?->format('d-m-Y H:i') ?? '-',
             ];
         });
     }
@@ -57,17 +57,21 @@ class RekomendasiDospemExport implements FromCollection, WithHeadings, WithStyle
     {
         return [
             'No',
+            'Rekomendasi ID',
+            'Pengajuan ID',
             'NIM',
             'Nama Mahasiswa',
             'Program Studi',
             'Judul Skripsi',
-            'Dosen Pembimbing 1',
-            'Bidang Keahlian Dospem 1',
-            'Skor Kesesuaian Dospem 1',
-            'Dosen Pembimbing 2',
-            'Bidang Keahlian Dospem 2',
-            'Skor Kesesuaian Dospem 2',
-            'Tanggal Ditetapkan',
+            'Rekomendasi Dospem 1',
+            'Rekomendasi NIDN Dospem 1',
+            'Rekomendasi Dospem 2',
+            'Rekomendasi NIDN Dospem 2',
+            'Final NIDN Dospem 1',
+            'Final NIDN Dospem 2',
+            'Status Final',
+            'Catatan',
+            'Generated At',
         ];
     }
 
@@ -85,39 +89,4 @@ class RekomendasiDospemExport implements FromCollection, WithHeadings, WithStyle
         ];
     }
 
-    private function scoreForDosen(array $scores, ?int $dosenId, string $key): ?float
-    {
-        if ($dosenId === null) {
-            return null;
-        }
-
-        foreach ($scores as $score) {
-            if (($score['dosen_id'] ?? null) === $dosenId) {
-                return isset($score[$key]) ? (float) $score[$key] : null;
-            }
-        }
-
-        return null;
-    }
-
-    private function formatPercent(?float $score): string
-    {
-        if ($score === null) {
-            return '-';
-        }
-
-        return number_format(($score / 5) * 100, 2) . '%';
-    }
-
-    private function getCoreSkillLabel($dosen): string
-    {
-        if (! $dosen) {
-            return '-';
-        }
-
-        return $dosen->keahlianDosens
-            ->firstWhere('tipe_faktor', 1)?->bidang_keahlian
-            ?? $dosen->keahlianDosens->first()?->bidang_keahlian
-            ?? '-';
-    }
 }

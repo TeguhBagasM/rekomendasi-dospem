@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Dosen;
+use App\Models\ProgramStudi;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -38,6 +39,14 @@ class DosenController extends Controller
         ]);
 
         DB::transaction(function () use ($validated) {
+            $programStudi = null;
+
+            if (! empty($validated['program_studi'])) {
+                $programStudi = ProgramStudi::where('program_studi', $validated['program_studi'])
+                    ->orWhere('kode_prodi', $validated['program_studi'])
+                    ->first();
+            }
+
             $user = User::create([
                 'name' => $validated['nama'],
                 'email' => $validated['nidn'].'@dosen.local',
@@ -46,6 +55,7 @@ class DosenController extends Controller
 
             Dosen::create([
                 'user_id' => $user->id,
+                'program_studi_id' => $programStudi?->id,
                 'nidn' => $validated['nidn'],
                 'nama' => $validated['nama'],
                 'jabatan' => $validated['jabatan'] ?? null,
@@ -83,10 +93,19 @@ class DosenController extends Controller
         ]);
 
         DB::transaction(function () use ($dosen, $validated) {
+            $programStudi = null;
+
+            if (! empty($validated['program_studi'])) {
+                $programStudi = ProgramStudi::where('program_studi', $validated['program_studi'])
+                    ->orWhere('kode_prodi', $validated['program_studi'])
+                    ->first();
+            }
+
             $dosen->update([
                 'nidn' => $validated['nidn'],
                 'nama' => $validated['nama'],
                 'jabatan' => $validated['jabatan'] ?? null,
+                'program_studi_id' => $programStudi?->id,
                 'program_studi' => $validated['program_studi'] ?? null,
                 'kuota_bimbingan' => $validated['kuota_bimbingan'],
                 'no_hp' => $validated['no_hp'] ?? null,
