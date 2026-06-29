@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Dosen;
+use App\Models\ProgramStudi;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -10,9 +11,6 @@ use Spatie\Permission\Models\Role;
 
 class DosenSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $dosenList = [
@@ -22,10 +20,11 @@ class DosenSeeder extends Seeder
                 'password' => '12345678',
                 'nidn' => '11010101',
                 'nama' => 'Feri Alpiyasin, M.Kom.',
-                'jabatan' => 'Kaprodi',
                 'program_studi' => 'Teknik Informatika',
-                'kuota_bimbingan' => 5,
-                'kuota_terisi' => 1,
+                'jabatan_fungsional' => 'Lektor',
+                'pendidikan_terakhir' => 'S2',
+                'kuota_dospem1' => 10,
+                'kuota_dospem2' => 15,
                 'no_hp' => '081234567801',
             ],
             [
@@ -33,11 +32,12 @@ class DosenSeeder extends Seeder
                 'email' => 'hasanah.amijaya@dosen.local',
                 'password' => '12345678',
                 'nidn' => '11010102',
-                'nama' => 'Hasanah Tisna Amijaya, S.Pd., M.Ak',
-                'jabatan' => 'Dosen',
+                'nama' => 'Hasanah Tisna Amijaya, S.Pd., M.Ak.',
                 'program_studi' => 'Komputerisasi Akuntansi',
-                'kuota_bimbingan' => 4,
-                'kuota_terisi' => 0,
+                'jabatan_fungsional' => 'Asisten Ahli',
+                'pendidikan_terakhir' => 'S2',
+                'kuota_dospem1' => 10,
+                'kuota_dospem2' => 15,
                 'no_hp' => '081234567802',
             ],
             [
@@ -46,10 +46,11 @@ class DosenSeeder extends Seeder
                 'password' => '12345678',
                 'nidn' => '11010103',
                 'nama' => 'Jajat Sudrajat, M.Kom.',
-                'jabatan' => 'Dosen',
                 'program_studi' => 'Manajemen Informatika',
-                'kuota_bimbingan' => 6,
-                'kuota_terisi' => 2,
+                'jabatan_fungsional' => 'Lektor',
+                'pendidikan_terakhir' => 'S2',
+                'kuota_dospem1' => 10,
+                'kuota_dospem2' => 15,
                 'no_hp' => '081234567803',
             ],
             [
@@ -58,15 +59,21 @@ class DosenSeeder extends Seeder
                 'password' => '12345678',
                 'nidn' => '11010104',
                 'nama' => 'Dr. Toni Kusnandar, M.T.',
-                'jabatan' => 'Kaprodi',
                 'program_studi' => 'Teknik Informatika',
-                'kuota_bimbingan' => 5,
-                'kuota_terisi' => 0,
+                'jabatan_fungsional' => 'Lektor Kepala',
+                'pendidikan_terakhir' => 'S3',
+                'kuota_dospem1' => 10,
+                'kuota_dospem2' => 15,
                 'no_hp' => '081234567804',
             ],
         ];
 
         foreach ($dosenList as $item) {
+            $prodi = ProgramStudi::where(
+                'program_studi',
+                $item['program_studi']
+            )->first();
+
             $user = User::updateOrCreate(
                 ['email' => $item['email']],
                 [
@@ -75,17 +82,20 @@ class DosenSeeder extends Seeder
                 ]
             );
 
-            $user->assignRole(Role::firstOrCreate(['name' => 'dosen']));
+            $user->assignRole(
+                Role::firstOrCreate(['name' => 'dosen'])
+            );
 
             Dosen::updateOrCreate(
                 ['nidn' => $item['nidn']],
                 [
                     'user_id' => $user->id,
+                    'program_studi_id' => $prodi?->id,
                     'nama' => $item['nama'],
-                    'jabatan' => $item['jabatan'],
-                    'program_studi' => $item['program_studi'],
-                    'kuota_bimbingan' => $item['kuota_bimbingan'],
-                    'kuota_terisi' => $item['kuota_terisi'],
+                    'jabatan_fungsional' => $item['jabatan_fungsional'],
+                    'pendidikan_terakhir' => $item['pendidikan_terakhir'],
+                    'kuota_dospem1' => $item['kuota_dospem1'],
+                    'kuota_dospem2' => $item['kuota_dospem2'],
                     'no_hp' => $item['no_hp'],
                 ]
             );

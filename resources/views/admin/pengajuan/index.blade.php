@@ -20,12 +20,12 @@
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="mb-4 flex flex-wrap items-center justify-end gap-3">
-                <a
-                    href="{{ route('rekomendasi.export') }}"
-                    class="inline-flex items-center rounded-md bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700"
-                >
-                    Export Rekomendasi
-                </a>
+                <form method="POST" action="{{ route('rekomendasi.generate') }}">
+                    @csrf
+                    <button type="submit" class="inline-flex items-center rounded-md bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700">
+                        Generate Rekomendasi
+                    </button>
+                </form>
             </div>
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
