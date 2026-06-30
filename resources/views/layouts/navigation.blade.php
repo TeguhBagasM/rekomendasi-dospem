@@ -63,6 +63,9 @@
                 @if (auth()->check() && auth()->user()->hasRole('mahasiswa'))
                     <a href="{{ route('pengajuan.index') }}" class="hover:text-white/80 {{ request()->routeIs('pengajuan.*') ? 'font-bold' : '' }}">Pengajuan Judul</a>
                 @endif
+                @if (auth()->check() && auth()->user()->hasRole('dosen'))
+                    <a href="{{ route('profile-dosen.edit') }}" class="hover:text-white/80 {{ request()->routeIs('profile-dosen.*') ? 'font-bold' : '' }}">Profile Saya</a>
+                @endif
 
                 @if (auth()->check() && auth()->user()->hasRole('admin'))
                     {{-- <x-dropdown align="left" width="64">
@@ -94,8 +97,24 @@
 
                         <x-slot name="content">
                             <x-dropdown-link :href="route('mahasiswa.index')">{{ __('Mahasiswa') }}</x-dropdown-link>
-                            <x-dropdown-link :href="route('prodi.index')">{{ __('Program Studi') }}</x-dropdown-link>
                             <x-dropdown-link :href="route('dosen.index')">{{ __('Dosen') }}</x-dropdown-link>
+                        </x-slot>
+                    </x-dropdown>
+
+                    <x-dropdown align="left" width="64">
+                        <x-slot name="trigger">
+                            <button class="inline-flex items-center text-sm font-medium text-white hover:text-white/80 focus:outline-none">
+                                <span>Data Master</span>
+                                <svg class="ms-2 h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08Z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </x-slot>
+
+                        <x-slot name="content">
+                            <x-dropdown-link :href="route('prodi.index')">{{ __('Program Studi') }}</x-dropdown-link>
+                            <x-dropdown-link :href="route('bidang-keahlian.index')">{{ __('Bidang Keahlian') }}</x-dropdown-link>
+                            <x-dropdown-link :href="route('gelombang.index')">{{ __('Gelombang') }}</x-dropdown-link>
                         </x-slot>
                     </x-dropdown>
 
@@ -153,13 +172,31 @@
 
                     <div x-show="open" x-transition class="space-y-1 px-2 pb-2" style="display: none;">
                         <x-responsive-nav-link :href="route('mahasiswa.index')" :active="request()->routeIs('mahasiswa.*')" class="text-white hover:bg-white/10 hover:text-white">{{ __('Mahasiswa') }}</x-responsive-nav-link>
-                        <x-responsive-nav-link :href="route('prodi.index')" :active="request()->routeIs('prodi.*')" class="text-white hover:bg-white/10 hover:text-white">{{ __('Program Studi') }}</x-responsive-nav-link>
                         <x-responsive-nav-link :href="route('dosen.index')" :active="request()->routeIs('dosen.*')" class="text-white hover:bg-white/10 hover:text-white">{{ __('Dosen') }}</x-responsive-nav-link>
+                    </div>
+                </div>
+                <div x-data="{ open: {{ request()->routeIs('mahasiswa.*', 'dosen.*') ? 'true' : 'false' }} }" class="rounded-lg bg-white/5">
+                    <button type="button" @click="open = ! open" class="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-semibold text-white">
+                        <span>Data Master</span>
+                        <svg class="h-4 w-4 transition-transform duration-150" :class="{ 'rotate-180': open }" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08Z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+
+                    <div x-show="open" x-transition class="space-y-1 px-2 pb-2" style="display: none;">
+                        <x-responsive-nav-link :href="route('prodi.index')" :active="request()->routeIs('prodi.*')" class="text-white hover:bg-white/10 hover:text-white">{{ __('Program Studi') }}</x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('bidang-keahlian.index')" :active="request()->routeIs('bidang-keahlian.*')" class="text-white hover:bg-white/10 hover:text-white">{{ __('Bidang Keahlian') }}</x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('gelombang.index')" :active="request()->routeIs('gelombang.*')" class="text-white hover:bg-white/10 hover:text-white">{{ __('Gelombang') }}</x-responsive-nav-link>
                     </div>
                 </div>
 
                 <x-responsive-nav-link :href="route('admin.pengajuan.index')" :active="request()->routeIs('admin.pengajuan.*')" class="text-white hover:bg-white/10 hover:text-white">
                     {{ __('Validasi Pengajuan') }}
+                </x-responsive-nav-link>
+            @endif
+            @if (auth()->check() && auth()->user()->hasRole('dosen'))
+                <x-responsive-nav-link :href="route('profile-dosen.edit')" :active="request()->routeIs('profile-dosen.*')" class="text-white hover:bg-white/10 hover:text-white">
+                    {{ __('Profile Saya') }}
                 </x-responsive-nav-link>
             @endif
 
