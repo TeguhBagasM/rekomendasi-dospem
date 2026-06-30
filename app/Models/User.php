@@ -59,7 +59,22 @@ class User extends Authenticatable
         return $this->hasOne(Dosen::class);
     }
  
-    /**
+    public function isMahasiswa(): bool
+    {
+        return $this->hasRole('mahasiswa');
+    }
+ 
+    public function isAdmin(): bool
+    {
+        return $this->hasRole('admin');
+    }
+ 
+    public function isDosen(): bool
+    {
+        return $this->hasRole('dosen');
+    }
+
+        /**
      * Pengajuan judul yang divalidasi oleh user ini (admin/kaprodi).
      */
     // public function pengajuanDivalidasi(): HasMany
@@ -76,19 +91,4 @@ class User extends Authenticatable
     // }
  
     // ==================== HELPERS ====================
- 
-    public function isMahasiswa(): bool
-    {
-        return $this->hasRole('mahasiswa');
-    }
- 
-    public function isAdmin(): bool
-    {
-        return $this->hasRole('admin');
-    }
- 
-    public function isKaprodi(): bool
-    {
-        return $this->hasRole('kaprodi');
-    }
 }
