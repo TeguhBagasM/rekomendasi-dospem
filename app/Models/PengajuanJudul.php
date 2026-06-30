@@ -28,6 +28,8 @@ class PengajuanJudul extends Model
 
     protected $casts = [
         'validated_at' => 'datetime',
+        'dospem1_generated_at' => 'datetime',
+        'dospem2_generated_at' => 'datetime',
     ];
 
     // ==================== RELATIONS ====================
@@ -53,6 +55,16 @@ class PengajuanJudul extends Model
     public function validator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'divalidasi_oleh');
+    }
+
+    public function rekomendasiDospembing()
+    {
+        return $this->hasOne(RekomendasiDospembing::class, 'pengajuan_id');
+    }
+
+    public function penetapanDospembing()
+    {
+        return $this->hasOne(PenetapanDospembing::class, 'pengajuan_id');
     }
 
     /**

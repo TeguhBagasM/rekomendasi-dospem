@@ -9,8 +9,6 @@ class ProgramStudi extends Model
 {
     use HasFactory;
 
-    protected $table = 'program_studis';
-
     protected $fillable = [
         'program_studi',
         'kode_prodi',
@@ -18,4 +16,9 @@ class ProgramStudi extends Model
         'jenjang',
         'kaprodi',
     ];
+
+    public function dosens()
+    {
+        return $this->hasMany(Dosen::class);
+    }
 }
