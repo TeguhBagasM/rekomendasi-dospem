@@ -197,18 +197,11 @@ class DosenController extends Controller
         return Excel::download(new DosenExport, 'data-dosen-' . now()->format('Ymd_His') . '.xlsx');
     }
 
-    /**
-     * Unduh template kosong untuk import data dosen.
-     */
     public function downloadTemplate()
     {
         return Excel::download(new DosenTemplateExport, 'template-import-dosen.xlsx');
     }
 
-    /**
-     * Import data dosen dari file Excel.
-     * NIDN sebagai unique key: jika sudah ada -> update, jika belum -> buat user + dosen baru.
-     */
     public function import(ImportDosenRequest $request)
     {
         $import = new DosenImport;
