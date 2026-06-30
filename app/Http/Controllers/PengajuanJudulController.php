@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PengajuanJudul;
 use App\Services\TextSimilarityService;
+use App\Services\PengajuanJudulService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -11,6 +12,10 @@ use Illuminate\Support\Str;
 
 class PengajuanJudulController extends Controller
 {
+    public function __construct(
+        private readonly PengajuanJudulService $pengajuanJudulService
+    ) {}
+
     public function index()
     {
         /** @var \App\Models\User $user */
@@ -18,7 +23,7 @@ class PengajuanJudulController extends Controller
 
         abort_unless($user, 403);
 
-        abort_unless($user->isMahasiswa() || $user->isAdmin() || $user->isKaprodi(), 403);
+        abort_unless($user->isMahasiswa() || $user->isAdmin() || $user->isDosen(), 403);
 
         $pengajuans = PengajuanJudul::with(['mahasiswa.user', 'validator'])
             ->when($user->isMahasiswa(), function ($query) use ($user) {
@@ -50,7 +55,7 @@ class PengajuanJudulController extends Controller
         return view('pengajuan.create');
     }
 
-    public function store(Request $request, TextSimilarityService $textSimilarityService)
+    public function store(Request $request)
     {
         $this->ensureMahasiswa();
 
@@ -70,31 +75,15 @@ class PengajuanJudulController extends Controller
             return redirect()->route('pengajuan.index')->with('error', 'Anda sudah memiliki pengajuan yang disetujui atau masih pending.');
         }
 
-        $similarityResult = $textSimilarityService->checkSimilarity($validated['judul_skripsi']);
-
-        logger([
-            'judul_baru' => $validated['judul_skripsi'],
-            'hasil' => $similarityResult,
-        ]);
-
-        if ($similarityResult['is_similar']) {
-            return back()->withErrors([
-                'judul_skripsi' => 'Judul memiliki kemiripan ' . round($similarityResult['percent'], 2) . '% dengan: "' . $similarityResult['matched_title'] . '". Gunakan judul lain.',
-            ])->withInput();
+        try {
+            $this->pengajuanJudulService->create(
+                $mahasiswa,
+                $validated['judul_skripsi'],
+                $request->file('file_proposal')
+            );
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
         }
-
-        $filePath = null;
-
-        if ($request->hasFile('file_proposal')) {
-            $filePath = $this->storeProposalFile($request->file('file_proposal'), $mahasiswa->nim, $mahasiswa->nama);
-        }
-
-        PengajuanJudul::create([
-            'mahasiswa_id' => $mahasiswa->id,
-            'judul_skripsi' => $validated['judul_skripsi'],
-            'file_proposal' => $filePath,
-            'status' => 'pending',
-        ]);
 
         return redirect()->route('pengajuan.index')->with('success', 'Pengajuan judul berhasil dikirim.');
     }
@@ -126,19 +115,15 @@ class PengajuanJudulController extends Controller
             'file_proposal' => ['nullable', 'file', 'mimes:pdf', 'max:2048'],
         ]);
 
-        $data = [
-            'judul_skripsi' => $validated['judul_skripsi'],
-        ];
-
-        if ($request->hasFile('file_proposal')) {
-            if ($pengajuan->file_proposal) {
-                Storage::disk('public')->delete($pengajuan->file_proposal);
-            }
-
-            $data['file_proposal'] = $this->storeProposalFile($request->file('file_proposal'), $pengajuan->mahasiswa?->nim ?? '', $pengajuan->mahasiswa?->nama ?? 'proposal');
+        try {
+            $this->pengajuanJudulService->update(
+                $pengajuan,
+                $validated['judul_skripsi'],
+                $request->file('file_proposal')
+            );
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
         }
-
-        $pengajuan->update($data);
 
         return redirect()->route('pengajuan.index')->with('success', 'Pengajuan judul berhasil diperbarui.');
     }
@@ -148,11 +133,7 @@ class PengajuanJudulController extends Controller
         $this->ensureCanManage($pengajuan);
         $this->ensurePending($pengajuan);
 
-        if ($pengajuan->file_proposal) {
-            Storage::disk('public')->delete($pengajuan->file_proposal);
-        }
-
-        $pengajuan->delete();
+        $this->pengajuanJudulService->delete($pengajuan);
 
         return redirect()->route('pengajuan.index')->with('success', 'Pengajuan judul berhasil dihapus.');
     }
@@ -166,7 +147,7 @@ class PengajuanJudulController extends Controller
         $user = Auth::user();
         abort_unless($user, 403);
 
-        $pengajuan->approve($user);
+        $this->pengajuanJudulService->approve($pengajuan, $user);
 
         return back()->with('success', 'Pengajuan judul berhasil disetujui.');
     }
@@ -184,7 +165,7 @@ class PengajuanJudulController extends Controller
         $user = Auth::user();
         abort_unless($user, 403);
 
-        $pengajuan->reject($user, $validated['alasan_penolakan']);
+        $this->pengajuanJudulService->reject($pengajuan, $user, $validated['alasan_penolakan']);
 
         return back()->with('success', 'Pengajuan judul berhasil ditolak.');
     }
@@ -202,7 +183,7 @@ class PengajuanJudulController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        abort_unless($user && ($user->isAdmin() || $user->isKaprodi()), 403);
+        abort_unless($user && ($user->isAdmin() || $user->isDosen()), 403);
     }
 
     private function ensureCanView(PengajuanJudul $pengajuan): void
@@ -213,7 +194,7 @@ class PengajuanJudulController extends Controller
         abort_unless($user, 403);
 
         abort_unless(
-            $user->isAdmin() || $user->isKaprodi() || ($user->isMahasiswa() && $pengajuan->mahasiswa?->user_id === $user->id),
+            $user->isAdmin() || $user->isDosen() || ($user->isMahasiswa() && $pengajuan->mahasiswa?->user_id === $user->id),
             403
         );
     }
@@ -226,7 +207,7 @@ class PengajuanJudulController extends Controller
         abort_unless($user, 403);
 
         abort_unless(
-            $user->isAdmin() || $user->isKaprodi() || ($user->isMahasiswa() && $pengajuan->mahasiswa?->user_id === $user->id),
+            $user->isAdmin() || $user->isDosen() || ($user->isMahasiswa() && $pengajuan->mahasiswa?->user_id === $user->id),
             403
         );
     }
@@ -236,11 +217,5 @@ class PengajuanJudulController extends Controller
         abort_unless($pengajuan->isPending(), 403);
     }
 
-    private function storeProposalFile(\Illuminate\Http\UploadedFile $file, string $nim, string $nama): string
-    {
-        $safeName = Str::slug(trim($nim . ' ' . $nama), '_');
-        $filename = $safeName . '.' . $file->getClientOriginalExtension();
 
-        return $file->storeAs('proposal', $filename, 'public');
-    }
 }
