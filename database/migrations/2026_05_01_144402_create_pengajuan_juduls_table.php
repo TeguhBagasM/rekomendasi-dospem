@@ -15,6 +15,9 @@ return new class extends Migration
             $table->string('file_proposal')->nullable()->comment('Path file proposal PDF');
             $table->enum('status', ['pending', 'disetujui', 'ditolak'])->default('pending');
             $table->text('alasan_penolakan')->nullable();
+            $table->foreignId('gelombang_id')
+                ->constrained('gelombangs')
+                ->restrictOnDelete();
 
             // Admin/kaprodi yang memvalidasi
             $table->foreignId('divalidasi_oleh')
