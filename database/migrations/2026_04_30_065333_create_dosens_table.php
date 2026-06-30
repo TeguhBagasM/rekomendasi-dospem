@@ -13,14 +13,37 @@ return new class extends Migration
     {
          Schema::create('dosens', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+
+            $table->foreignId('user_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
+
+            $table->foreignId('program_studi_id')
+                ->nullable()
+                ->constrained('program_studis')
+                ->nullOnDelete();
+
             $table->string('nidn')->unique();
             $table->string('nama');
-            $table->string('jabatan')->nullable();
-            $table->string('program_studi')->nullable();
-            $table->unsignedInteger('kuota_bimbingan')->default(5);
-            $table->unsignedInteger('kuota_terisi')->default(0);
+
+            $table->string('pendidikan_terakhir', 50)->nullable();
+            $table->string('jabatan_fungsional', 50)->nullable();
+
+            $table->unsignedInteger('kuota_dospem1')
+                ->default(15);
+
+            $table->unsignedInteger('kuota_dospem2')
+                ->default(10);
+
+            $table->unsignedInteger('kuota_terpakai_dospem1')
+                ->default(0);
+
+            $table->unsignedInteger('kuota_terpakai_dospem2')
+                ->default(0);
+
             $table->string('no_hp')->nullable();
+
             $table->timestamps();
         });
     }

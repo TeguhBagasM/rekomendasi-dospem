@@ -104,6 +104,35 @@ class TextSimilarityService
         );
     }
 
+    public function getSimilarityScoresBatch(string $queryDocument, array $targetDocuments): array
+    {
+        $queryDocument = trim($queryDocument);
+        if ($queryDocument === '' || empty($targetDocuments)) {
+            return array_fill(0, count($targetDocuments), 0.0);
+        }
+
+        $corpus = [$queryDocument];
+        foreach ($targetDocuments as $target) {
+            $corpus[] = trim((string) $target);
+        }
+
+        $matrix = $this->buildCorpus($corpus);
+        if (empty($matrix)) {
+            return array_fill(0, count($targetDocuments), 0.0);
+        }
+
+        $queryVector = $this->extractDocumentVector($matrix, 0);
+        $scores = [];
+
+        foreach ($targetDocuments as $index => $target) {
+            $docIndex = $index + 1;
+            $targetVector = $this->extractDocumentVector($matrix, $docIndex);
+            $scores[$index] = $this->cosineSimilarity($queryVector, $targetVector);
+        }
+
+        return $scores;
+    }
+
     public function calculateSimilarity(string $text1, string $text2): float
     {
         return $this->getSimilarityScore($text1, [$text2]);
@@ -150,12 +179,13 @@ class TextSimilarityService
         $highestSimilarity = 0.0;
         $matchedTitle = null;
 
-        foreach ($existingTitles as $existingTitle) {
-            $similarity = $this->getSimilarityScore($judulBaru, [$existingTitle]);
+        $titlesArray = $existingTitles->toArray();
+        $similarities = $this->getSimilarityScoresBatch($judulBaru, $titlesArray);
 
+        foreach ($similarities as $index => $similarity) {
             if ($similarity > $highestSimilarity) {
                 $highestSimilarity = $similarity;
-                $matchedTitle = $existingTitle;
+                $matchedTitle = $titlesArray[$index];
             }
         }
 
