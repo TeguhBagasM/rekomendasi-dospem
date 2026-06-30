@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-// use Illuminate\Database\Eloquent\Relations\HasMany;
-// use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Mahasiswa extends Model
 {
@@ -46,34 +44,11 @@ class Mahasiswa extends Model
             'id'
         );
     }
-    
+
     public function pengajuanJuduls(): HasMany
     {
         return $this->hasMany(PengajuanJudul::class);
     }
-
-    // public function pengajuanJudul(): HasMany
-    // {
-    //     return $this->hasMany(PengajuanJudul::class);
-    // }
-
-    /**
-     * Pengajuan judul aktif/terbaru mahasiswa ini.
-     */
-    // public function pengajuanAktif(): HasOne
-    // {
-    //     return $this->hasOne(PengajuanJudul::class)->latestOfMany();
-    // }
-
-    /**
-     * Hasil rekomendasi dospem yang sudah diterima mahasiswa ini.
-     */
-    // public function hasilRekomendasi(): HasMany
-    // {
-    //     return $this->hasMany(HasilRekomendasi::class, 'pengajuan_id', 'id')
-    //                 ->join('pengajuan_juduls', 'hasil_rekomendasis.pengajuan_id', '=', 'pengajuan_juduls.id')
-    //                 ->where('pengajuan_juduls.mahasiswa_id', $this->id);
-    // }
 
     // ==================== HELPERS ====================
 
@@ -83,24 +58,29 @@ class Mahasiswa extends Model
                     ->whereIn('status', ['pending', 'disetujui'])
                     ->exists();
     }
-    
+
     public function punyaPengajuanDisetujui(): bool
     {
         return $this->pengajuanJuduls()
             ->where('status', 'disetujui')
             ->exists();
     }
-    
+
     public function punyaPengajuanPending(): bool
     {
         return $this->pengajuanJuduls()
             ->where('status', 'pending')
             ->exists();
     }
-    
+
+    /**
+     * Mahasiswa boleh mengajukan baru selama tidak ada pengajuan
+     * yang masih berstatus pending. Pengajuan disetujui ataupun
+     * ditolak pada gelombang sebelumnya tidak menghalangi pengajuan baru.
+     */
     public function bolehMengajukanBaru(): bool
     {
-        return ! $this->punyaPengajuanDisetujui() && ! $this->punyaPengajuanPending();
+        return ! $this->punyaPengajuanPending();
     }
 
     public function sudahMemilikiPenetapanFinal(): bool

@@ -20,6 +20,7 @@ class PengajuanJudul extends Model
         'file_proposal',
         'status',
         'alasan_penolakan',
+        'gelombang_id',
         'divalidasi_oleh',
         'validated_at',
         'dospem1_id',
@@ -67,6 +68,11 @@ class PengajuanJudul extends Model
         return $this->hasOne(PenetapanDospembing::class, 'pengajuan_id');
     }
 
+    public function gelombang(): BelongsTo
+    {
+        return $this->belongsTo(Gelombang::class);
+    }
+    
     /**
      * Hasil rekomendasi dospem untuk pengajuan ini.
      */
