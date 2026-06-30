@@ -71,10 +71,28 @@
                             <dt class="text-sm font-medium text-gray-500">Tanggal Validasi</dt>
                             <dd class="mt-1 text-sm text-gray-900">{{ $pengajuan->validated_at?->format('d M Y H:i') ?? '-' }}</dd>
                         </div>
+
+                        @if ($pengajuan->dospem1 || $pengajuan->dospem2)
+                            <div class="rounded-lg border border-indigo-200 bg-indigo-50 p-4 sm:col-span-2">
+                                <h4 class="text-sm font-semibold text-indigo-900 mb-2">Dosen Pembimbing Final</h4>
+                                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 bg-white rounded-md p-3 border border-indigo-100">
+                                    <div>
+                                        <span class="text-xs font-medium text-indigo-500 block">Dosen Pembimbing 1</span>
+                                        <span class="text-sm font-semibold text-gray-900 block mt-1">{{ $pengajuan->dospem1?->nama ?? '-' }}</span>
+                                        <span class="text-xs text-gray-500 block mt-0.5">NIDN: {{ $pengajuan->dospem1?->nidn ?? '-' }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs font-medium text-indigo-500 block">Dosen Pembimbing 2</span>
+                                        <span class="text-sm font-semibold text-gray-900 block mt-1">{{ $pengajuan->dospem2?->nama ?? '-' }}</span>
+                                        <span class="text-xs text-gray-500 block mt-0.5">NIDN: {{ $pengajuan->dospem2?->nidn ?? '-' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     </dl>
 
                     <div class="flex flex-wrap items-center gap-3">
-                        @if ((auth()->user()->isAdmin() || auth()->user()->isKaprodi() || (auth()->user()->isMahasiswa() && $pengajuan->mahasiswa?->user_id === auth()->id())) && $pengajuan->isPending())
+                        @if ((auth()->user()->isAdmin() || auth()->user()->isDosen() || (auth()->user()->isMahasiswa() && $pengajuan->mahasiswa?->user_id === auth()->id())) && $pengajuan->isPending())
                             <a href="{{ route('pengajuan.edit', $pengajuan) }}" class="inline-flex items-center rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700">Edit</a>
 
                             <form action="{{ route('pengajuan.destroy', $pengajuan) }}" method="POST" onsubmit="return confirm('Hapus pengajuan ini?')">
@@ -84,7 +102,7 @@
                             </form>
                         @endif
 
-                        @if ((auth()->user()->isAdmin() || auth()->user()->isKaprodi()) && $pengajuan->isPending())
+                        @if ((auth()->user()->isAdmin() || auth()->user()->isDosen()) && $pengajuan->isPending())
                             <form action="{{ route('pengajuan.approve', $pengajuan) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700">Approve</button>
@@ -96,7 +114,7 @@
                         @endif
                     </div>
 
-                    @if ((auth()->user()->isAdmin() || auth()->user()->isKaprodi()) && $pengajuan->isPending())
+                    @if ((auth()->user()->isAdmin() || auth()->user()->isDosen()) && $pengajuan->isPending())
                         <div x-data="{ open: false }" x-on:open-reject.window="open = true" x-show="open" x-transition class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6" style="display: none;">
                             <div class="w-full max-w-lg rounded-lg bg-white p-6 shadow-xl">
                                 <div class="flex items-center justify-between gap-3">

@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\BidangKeahlianController;
 use App\Http\Controllers\DosenController;
-use App\Http\Controllers\KeahlianDosenController;
-use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\GelombangController;
+// use App\Http\Controllers\KeahlianDosenController;
+// use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\PengajuanJudulController;
 use App\Http\Controllers\PengajuanValidasiController;
@@ -10,11 +12,12 @@ use App\Http\Controllers\ProdiController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProfileDosenController;
 use App\Http\Controllers\RekomendasiController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
 Route::get('/dashboard', function () {
@@ -37,12 +40,22 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('mahasiswa/export', [MahasiswaController::class, 'export'])->name('mahasiswa.export');
     Route::post('mahasiswa/import', [MahasiswaController::class, 'import'])->name('mahasiswa.import');
     Route::resource('mahasiswa', MahasiswaController::class)->except(['show']);
+    
     Route::resource('users', UserController::class)->only(['index', 'edit', 'update']);
     Route::resource('prodi', ProdiController::class)->except(['show']);
+    Route::resource('bidang-keahlian', BidangKeahlianController::class)->except(['show']);
+
+    Route::get('dosen/export', [DosenController::class, 'export'])->name('dosen.export');
+    Route::get('dosen/template', [DosenController::class, 'downloadTemplate'])->name('dosen.template');
+    Route::post('dosen/import', [DosenController::class, 'import'])->name('dosen.import');
     Route::resource('dosen', DosenController::class);
-    Route::post('/dosen/{dosen}/keahlian', [KeahlianDosenController::class, 'store'])->name('keahlian.store');
-    Route::put('/keahlian/{id}', [KeahlianDosenController::class, 'update'])->name('keahlian.update');
-    Route::delete('/keahlian/{id}', [KeahlianDosenController::class, 'destroy'])->name('keahlian.destroy');
+    Route::resource('gelombang', GelombangController::class);
+    Route::patch('gelombang/{gelombang}/toggle-status', [GelombangController::class, 'toggleStatus'])
+    ->name('gelombang.toggle-status');
+    // Route::post('/dosen/{dosen}/keahlian', [KeahlianDosenController::class, 'store'])->name('keahlian.store');
+    
+    // Route::put('/keahlian/{id}', [KeahlianDosenController::class, 'update'])->name('keahlian.update');
+    // Route::delete('/keahlian/{id}', [KeahlianDosenController::class, 'destroy'])->name('keahlian.destroy');
 
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('pengajuan', [PengajuanValidasiController::class, 'index'])->name('pengajuan.index');
@@ -51,10 +64,16 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     });
 });
 
-Route::middleware(['auth', 'role:admin|kaprodi'])->group(function () {
+Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/rekomendasi', [RekomendasiController::class, 'index'])->name('rekomendasi.index');
-    Route::post('/rekomendasi/{pengajuan}/generate', [RekomendasiController::class, 'generate'])->name('rekomendasi.generate');
+    Route::post('/rekomendasi/generate', [RekomendasiController::class, 'generate'])->name('rekomendasi.generate');
     Route::get('/rekomendasi/export', [RekomendasiController::class, 'exportExcel'])->name('rekomendasi.export');
+    Route::post('/rekomendasi/import', [RekomendasiController::class, 'importExcel'])->name('rekomendasi.import');
+});
+
+Route::middleware(['auth', 'role:dosen'])->group(function () {
+    Route::get('profile-saya', [ProfileDosenController::class, 'edit'])->name('profile-dosen.edit');
+    Route::put('profile-saya', [ProfileDosenController::class, 'update'])->name('profile-dosen.update');
 });
 
 // Route::middleware(['auth', 'role:mahasiswa'])->group(function () {
