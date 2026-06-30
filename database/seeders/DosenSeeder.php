@@ -16,7 +16,7 @@ class DosenSeeder extends Seeder
         $dosenList = [
             [
                 'name' => 'Feri Alpiyasin',
-                'email' => 'feri.alpiyasin@dosen.local',
+                'email' => 'feri.alpiyasin@stmik-mi.ac.id',
                 'password' => '12345678',
                 'nidn' => '11010101',
                 'nama' => 'Feri Alpiyasin, M.Kom.',
@@ -29,7 +29,7 @@ class DosenSeeder extends Seeder
             ],
             [
                 'name' => 'Hasanah Tisna Amijaya',
-                'email' => 'hasanah.amijaya@dosen.local',
+                'email' => 'hasanah.amijaya@stmik-mi.ac.id',
                 'password' => '12345678',
                 'nidn' => '11010102',
                 'nama' => 'Hasanah Tisna Amijaya, S.Pd., M.Ak.',
@@ -42,7 +42,7 @@ class DosenSeeder extends Seeder
             ],
             [
                 'name' => 'Jajat Sudrajat',
-                'email' => 'jajat.sudrajat@dosen.local',
+                'email' => 'jajat.sudrajat@stmik-mi.ac.id',
                 'password' => '12345678',
                 'nidn' => '11010103',
                 'nama' => 'Jajat Sudrajat, M.Kom.',
@@ -55,7 +55,7 @@ class DosenSeeder extends Seeder
             ],
             [
                 'name' => 'Toni Kusnandar',
-                'email' => 'toni.kusnandar@dosen.local',
+                'email' => 'toni.kusnandar@stmik-mi.ac.id',
                 'password' => '12345678',
                 'nidn' => '11010104',
                 'nama' => 'Dr. Toni Kusnandar, M.T.',
