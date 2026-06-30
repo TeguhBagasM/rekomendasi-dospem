@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Mahasiswa;
+use App\Models\ProgramStudi;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -35,6 +36,10 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'nim' => ['nullable', 'string', 'max:255'],
+            'nama' => ['nullable', 'string', 'max:255'],
+            'prodi' => ['nullable', 'string', 'max:255'],
+            'angkatan' => ['nullable', 'digits:4'],
         ]);
 
         $user = User::create([
@@ -43,13 +48,23 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
         $user->assignRole('mahasiswa');
-        Mahasiswa::create([
-            'user_id' => $user->id,
-            'nim' => $request['nim'],
-            'nama' => $request['nama'],
-            'program_studi' => $request['prodi'],
-            'angkatan' => $request['angkatan'],
-        ]);
+
+        if ($request->filled(['nim', 'nama', 'prodi', 'angkatan'])) {
+            $prodiValue = $request->string('prodi')->toString();
+            $programStudi = ProgramStudi::where('kode_prodi', $prodiValue)
+                ->orWhere('program_studi', $prodiValue)
+                ->first();
+
+            if ($programStudi) {
+                Mahasiswa::create([
+                    'user_id' => $user->id,
+                    'nim' => $request->string('nim'),
+                    'nama' => $request->string('nama'),
+                    'program_studi_id' => $programStudi->id,
+                    'angkatan' => $request->string('angkatan'),
+                ]);
+            }
+        }
 
         event(new Registered($user));
 

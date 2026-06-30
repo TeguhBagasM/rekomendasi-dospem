@@ -4,11 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\PengajuanJudul;
 use App\Models\User;
+use App\Services\PengajuanJudulService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class PengajuanValidasiController extends Controller
 {
+    public function __construct(
+        private readonly PengajuanJudulService $pengajuanJudulService
+    ) {}
+
     public function index(Request $request)
     {
         $pengajuans = PengajuanJudul::with(['mahasiswa.user'])
@@ -28,7 +33,7 @@ class PengajuanValidasiController extends Controller
         $user = Auth::user();
         abort_unless($user && $user->hasRole('admin'), 403);
 
-        $pengajuan->approve($user);
+        $this->pengajuanJudulService->approve($pengajuan, $user);
 
         return redirect()->route('admin.pengajuan.index', ['id' => $pengajuan->id])
             ->with('success', 'Pengajuan berhasil disetujui.');
@@ -44,7 +49,7 @@ class PengajuanValidasiController extends Controller
             'alasan_penolakan' => ['required', 'string', 'max:1000'],
         ]);
 
-        $pengajuan->reject($user, $validated['alasan_penolakan']);
+        $this->pengajuanJudulService->reject($pengajuan, $user, $validated['alasan_penolakan']);
 
         return redirect()->route('admin.pengajuan.index', ['id' => $pengajuan->id])
             ->with('success', 'Pengajuan berhasil ditolak.');
