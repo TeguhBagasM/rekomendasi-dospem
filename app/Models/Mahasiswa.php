@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 // use Illuminate\Database\Eloquent\Relations\HasMany;
 // use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -32,6 +33,18 @@ class Mahasiswa extends Model
     public function programStudi(): BelongsTo
     {
         return $this->belongsTo(ProgramStudi::class);
+    }
+
+    public function penetapanDospembing(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            PenetapanDospembing::class,
+            PengajuanJudul::class,
+            'mahasiswa_id',
+            'pengajuan_id',
+            'id',
+            'id'
+        );
     }
     
     public function pengajuanJuduls(): HasMany
@@ -88,5 +101,10 @@ class Mahasiswa extends Model
     public function bolehMengajukanBaru(): bool
     {
         return ! $this->punyaPengajuanDisetujui() && ! $this->punyaPengajuanPending();
+    }
+
+    public function sudahMemilikiPenetapanFinal(): bool
+    {
+        return $this->pengajuanJuduls()->whereHas('penetapanDospembing')->exists();
     }
 }
