@@ -57,7 +57,7 @@
                                     <tr class="text-sm text-gray-700">
                                         <td class="px-4 py-4 font-medium">{{ $mahasiswa->nim }}</td>
                                         <td class="px-4 py-4">{{ $mahasiswa->nama }}</td>
-                                        <td class="px-4 py-4">{{ $mahasiswa->programStudi?->program_studi ?? '-' }}</td>
+                                        <td class="px-4 py-4">{{ $mahasiswa->programStudi?->program_studi ?? '-' }} {{ $mahasiswa->programStudi?->jenjang }}</td>
                                         <td class="px-4 py-4">{{ $mahasiswa->angkatan }}</td>
                                         <td class="px-4 py-4">{{ $mahasiswa->user?->email ?? '-' }}</td>
                                         <td class="px-4 py-4">{{ $mahasiswa->no_hp ?? '-' }}</td>

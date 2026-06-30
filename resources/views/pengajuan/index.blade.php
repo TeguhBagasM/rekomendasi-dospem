@@ -25,7 +25,7 @@
                                 </a>
                             @else
                                 <div class="rounded-md bg-amber-50 px-4 py-2 text-sm font-medium text-amber-800 ring-1 ring-inset ring-amber-200">
-                                    Pengajuan baru hanya tersedia jika status terakhir ditolak.
+                                    Anda masih memiliki pengajuan berstatus pending.
                                 </div>
                             @endif
                         @endif
@@ -37,7 +37,11 @@
                                 <tr class="text-left text-xs font-semibold uppercase tracking-wider text-white bg-gray-900">
                                     <th class="px-4 py-3">Mahasiswa</th>
                                     <th class="px-4 py-3">Judul</th>
+                                    <th class="px-4 py-3">Gelombang</th>
                                     <th class="px-4 py-3">Status</th>
+                                    <th class="px-4 py-3">Tgl Pengajuan</th>
+                                    <th class="px-4 py-3">Tgl Validasi</th>
+                                    <th class="px-4 py-3">Validator</th>
                                     <th class="px-4 py-3 text-right">Aksi</th>
                                 </tr>
                             </thead>
@@ -50,17 +54,25 @@
                                         </td>
                                         <td class="px-4 py-4 w-200">{{ $pengajuan->judul_skripsi }}</td>
                                         <td class="px-4 py-4">
+                                            <span class="inline-flex items-center rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold text-sky-700">
+                                                {{ $pengajuan->gelombang?->nama ?? '-' }}
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-4">
                                             <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold bg-{{ $pengajuan->status_badge }}-100 text-{{ $pengajuan->status_badge }}-700">
                                                 {{ ucfirst($pengajuan->status) }}
                                             </span>
                                         </td>
+                                        <td class="px-4 py-4 whitespace-nowrap">{{ $pengajuan->created_at?->format('d M Y') ?? '-' }}</td>
+                                        <td class="px-4 py-4 whitespace-nowrap">{{ $pengajuan->validated_at?->format('d M Y') ?? '-' }}</td>
+                                        <td class="px-4 py-4">{{ $pengajuan->validator?->name ?? '-' }}</td>
                                         <td class="px-4 py-4">
                                             <div class="flex justify-end gap-3 flex-wrap">
                                                 <a href="{{ route('pengajuan.show', $pengajuan) }}" class="inline-flex items-center font-medium text-indigo-600 hover:text-indigo-800">
                                                     <i class="fa-solid fa-eye mr-1"></i>
                                                 </a>
 
-                                                @if ((auth()->user()->isAdmin() || auth()->user()->isKaprodi() || (auth()->user()->isMahasiswa() && $pengajuan->mahasiswa?->user_id === auth()->id())) && $pengajuan->isPending())
+                                                @if ((auth()->user()->isAdmin() || auth()->user()->isDosen() || (auth()->user()->isMahasiswa() && $pengajuan->mahasiswa?->user_id === auth()->id())) && $pengajuan->isPending())
                                                     <a href="{{ route('pengajuan.edit', $pengajuan) }}" class="inline-flex items-center font-medium text-emerald-600 hover:text-emerald-800">
                                                         <i class="fa-solid fa-pen-to-square mr-1"></i>
                                                     </a>
@@ -74,7 +86,7 @@
                                                     </form>
                                                 @endif
 
-                                                @if ((auth()->user()->isAdmin() || auth()->user()->isKaprodi()) && $pengajuan->isPending())
+                                                @if ((auth()->user()->isAdmin() || auth()->user()->isDosen()) && $pengajuan->isPending())
                                                     <form action="{{ route('pengajuan.approve', $pengajuan) }}" method="POST">
                                                         @csrf
                                                         <button type="submit" class="inline-flex items-center font-medium text-blue-600 hover:text-blue-800">
@@ -90,9 +102,9 @@
                                         </td>
                                     </tr>
 
-                                    @if ((auth()->user()->isAdmin() || auth()->user()->isKaprodi()) && $pengajuan->isPending())
+                                    @if ((auth()->user()->isAdmin() || auth()->user()->isDosen()) && $pengajuan->isPending())
                                         <tr class="bg-gray-50">
-                                            <td colspan="4" class="px-4 py-0">
+                                            <td colspan="8" class="px-4 py-0">
                                                 <div id="rejectForm{{ $pengajuan->id }}" class="collapse py-4">
                                                     <form action="{{ route('pengajuan.reject', $pengajuan) }}" method="POST" class="space-y-3 rounded-lg border border-amber-200 bg-white p-4">
                                                         @csrf
@@ -110,7 +122,7 @@
                                     @endif
                                 @empty
                                     <tr>
-                                        <td colspan="4" class="px-4 py-8 text-center text-sm text-gray-500">Belum ada pengajuan.</td>
+                                        <td colspan="8" class="px-4 py-8 text-center text-sm text-gray-500">Belum ada pengajuan.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
