@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Gelombang;
 use App\Models\PengajuanJudul;
 use App\Models\User;
 use App\Models\Mahasiswa;
@@ -20,11 +21,10 @@ class PengajuanJudulService
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function create(Mahasiswa $mahasiswa, string $judulSkripsi, UploadedFile $fileProposal): PengajuanJudul
+    public function create(Mahasiswa $mahasiswa, Gelombang $gelombang, string $judulSkripsi, UploadedFile $fileProposal): PengajuanJudul
     {
         // 1. Check title similarity
         $similarityResult = $this->textSimilarityService->checkSimilarity($judulSkripsi);
-
         if ($similarityResult['is_similar']) {
             throw \Illuminate\Validation\ValidationException::withMessages([
                 'judul_skripsi' => 'Judul memiliki kemiripan ' . round($similarityResult['percent'], 2) . '% dengan: "' . $similarityResult['matched_title'] . '". Gunakan judul lain.',
@@ -36,10 +36,11 @@ class PengajuanJudulService
 
         // 3. Create record
         return PengajuanJudul::create([
-            'mahasiswa_id' => $mahasiswa->id,
+            'mahasiswa_id'  => $mahasiswa->id,
+            'gelombang_id'  => $gelombang->id,
             'judul_skripsi' => $judulSkripsi,
             'file_proposal' => $filePath,
-            'status' => 'pending',
+            'status'        => 'pending',
         ]);
     }
 
@@ -53,7 +54,6 @@ class PengajuanJudulService
         // 1. Check similarity if title changes
         if (trim($pengajuan->judul_skripsi) !== trim($judulSkripsi)) {
             $similarityResult = $this->textSimilarityService->checkSimilarity($judulSkripsi, $pengajuan->id);
-
             if ($similarityResult['is_similar']) {
                 throw \Illuminate\Validation\ValidationException::withMessages([
                     'judul_skripsi' => 'Judul memiliki kemiripan ' . round($similarityResult['percent'], 2) . '% dengan: "' . $similarityResult['matched_title'] . '". Gunakan judul lain.',
@@ -88,7 +88,6 @@ class PengajuanJudulService
         if ($pengajuan->file_proposal) {
             Storage::disk('public')->delete($pengajuan->file_proposal);
         }
-
         $pengajuan->delete();
     }
 

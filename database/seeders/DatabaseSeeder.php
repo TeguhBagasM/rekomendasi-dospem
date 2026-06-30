@@ -32,11 +32,15 @@ class DatabaseSeeder extends Seeder
         $admin->assignRole('admin');
 
         $this->call([
+            PermissionSeeder::class,
+            PermissionToRoleSeeder::class,
+            KriteriaSeeder::class,
             ProdiSeeder::class,
             DosenSeeder::class,
-            KeahlianDosenSeeder::class,
+            BidangKeahlianSeeder::class,
             MahasiswaSeeder::class,
-            PengajuanSeeder::class,
+            GelombangSeeder::class,
+            // PengajuanSeeder::class,
         ]);
     }
 }
