@@ -54,6 +54,136 @@
                         </div>
                     @endif
 
+                    {{-- Filter --}}
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                        <form action="{{ route('dosen.index') }}" method="GET">
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div class="md:col-span-1">
+                                    <label for="search" class="block text-sm font-medium text-gray-700 mb-1">
+                                        Cari Nama / NIDN
+                                    </label>
+                                    <input type="text"
+                                           id="search"
+                                           name="search"
+                                           value="{{ request('search') }}"
+                                           placeholder="Nama atau NIDN..."
+                                           class="block w-full rounded-md border-gray-300 shadow-sm text-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+
+                                <div>
+                                    <label for="program_studi_id" class="block text-sm font-medium text-gray-700 mb-1">
+                                        Homebase Program Studi
+                                    </label>
+                                    <select id="program_studi_id"
+                                            name="program_studi_id"
+                                            class="block w-full rounded-md border-gray-300 shadow-sm text-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        <option value="">Semua</option>
+                                        @foreach ($programStudis as $programStudi)
+                                            <option value="{{ $programStudi->id }}"
+                                                @selected(request('program_studi_id') == $programStudi->id)>
+                                                {{ $programStudi->program_studi }} {{ $programStudi->jenjang }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label for="jabatan_fungsional" class="block text-sm font-medium text-gray-700 mb-1">
+                                        Jabatan Fungsional
+                                    </label>
+                                    <select id="jabatan_fungsional"
+                                            name="jabatan_fungsional"
+                                            class="block w-full rounded-md border-gray-300 shadow-sm text-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        <option value="">Semua</option>
+                                        @foreach ($jabatanFungsionals as $jabatan)
+                                            <option value="{{ $jabatan }}"
+                                                @selected(request('jabatan_fungsional') == $jabatan)>
+                                                {{ $jabatan }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="relative"
+                                     x-data="{
+                                        query: '{{ $selectedBidangKeahlian->nama ?? '' }}',
+                                        selectedId: '{{ request('bidang_keahlian_id') }}',
+                                        open: false,
+                                        options: @js($bidangKeahlians->map(fn ($item) => ['id' => (string) $item->id, 'nama' => $item->nama])->values()),
+                                        get filtered() {
+                                            if (this.query === '') return this.options;
+                                            return this.options.filter(
+                                                option => option.nama.toLowerCase().includes(this.query.toLowerCase())
+                                            );
+                                        },
+                                        select(option) {
+                                            this.query = option.nama;
+                                            this.selectedId = option.id;
+                                            this.open = false;
+                                        },
+                                        clear() {
+                                            this.query = '';
+                                            this.selectedId = '';
+                                            this.open = false;
+                                        }
+                                     }"
+                                     @click.outside="open = false">
+                                    <label for="bidang_keahlian_search" class="block text-sm font-medium text-gray-700 mb-1">
+                                        Bidang Keahlian
+                                    </label>
+
+                                    <div class="relative">
+                                        <input type="text"
+                                               id="bidang_keahlian_search"
+                                               x-model="query"
+                                               @focus="open = true"
+                                               @input="open = true; if (query === '') selectedId = ''"
+                                               autocomplete="off"
+                                               placeholder="Cari bidang keahlian..."
+                                               class="block w-full rounded-md border-gray-300 shadow-sm text-sm focus:border-indigo-500 focus:ring-indigo-500 pr-8">
+
+                                        <button type="button"
+                                                x-show="query !== ''"
+                                                @click="clear()"
+                                                class="absolute inset-y-0 right-0 flex items-center pr-2 text-gray-400 hover:text-gray-600">
+                                            <i class="fa-solid fa-xmark"></i>
+                                        </button>
+                                    </div>
+
+                                    <input type="hidden" name="bidang_keahlian_id" x-model="selectedId">
+
+                                    <ul x-show="open && filtered.length > 0"
+                                        x-cloak
+                                        class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-sm shadow-lg border border-gray-200">
+                                        <template x-for="option in filtered" :key="option.id">
+                                            <li @click="select(option)"
+                                                class="cursor-pointer px-3 py-2 hover:bg-indigo-50"
+                                                :class="{ 'bg-indigo-50 font-medium': option.id === selectedId }"
+                                                x-text="option.nama"></li>
+                                        </template>
+                                    </ul>
+
+                                    <p x-show="open && query !== '' && filtered.length === 0"
+                                       x-cloak
+                                       class="absolute z-10 mt-1 w-full rounded-md bg-white px-3 py-2 text-sm text-gray-500 shadow-lg border border-gray-200">
+                                        Tidak ditemukan.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mt-4">
+                                <button type="submit"
+                                        class="inline-flex items-center justify-center rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700">
+                                    <i class="fa-solid fa-magnifying-glass mr-2"></i> Cari
+                                </button>
+                                <a href="{{ route('dosen.index') }}"
+                                   class="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                                    <i class="fa-solid fa-rotate-left mr-2"></i> Reset Filter
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+
                     {{-- Tabel --}}
                     <div class="overflow-x-auto rounded-lg border border-gray-200">
                         <table class="min-w-full divide-y divide-gray-200 text-sm">

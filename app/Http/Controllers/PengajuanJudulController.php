@@ -4,15 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\PengajuanJudul;
 use App\Services\GelombangService;
+use App\Services\PengajuanJudulImportService;
 use App\Services\PengajuanJudulService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PengajuanJudulController extends Controller
 {
     public function __construct(
         private readonly PengajuanJudulService $pengajuanJudulService,
-        private readonly GelombangService $gelombangService
+        private readonly GelombangService $gelombangService,
+        private readonly PengajuanJudulImportService $pengajuanJudulImportService,
     ) {}
 
     public function index()
@@ -20,15 +23,14 @@ class PengajuanJudulController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        abort_unless($user, 403);
-        abort_unless($user->isMahasiswa() || $user->isAdmin() || $user->isDosen(), 403);
+        abort_unless($user && $user->isMahasiswa(), 403);
 
-        $pengajuans = PengajuanJudul::with(['mahasiswa.user', 'validator', 'gelombang'])
-            ->when($user->isMahasiswa(), function ($query) use ($user) {
-                $query->whereHas('mahasiswa', function ($mahasiswaQuery) use ($user) {
-                    $mahasiswaQuery->where('user_id', $user->id);
-                });
-            })
+        $mahasiswa = $user->mahasiswa;
+        abort_unless($mahasiswa, 403);
+
+        $pengajuans = PengajuanJudul::query()
+            ->with(['gelombang', 'validator'])
+            ->where('mahasiswa_id', $mahasiswa->id)
             ->latest()
             ->get();
 
@@ -139,38 +141,6 @@ class PengajuanJudulController extends Controller
         return redirect()->route('pengajuan.index')->with('success', 'Pengajuan judul berhasil dihapus.');
     }
 
-    public function approve(PengajuanJudul $pengajuan)
-    {
-        $this->ensureValidator();
-        $this->ensurePending($pengajuan);
-
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-        abort_unless($user, 403);
-
-        $this->pengajuanJudulService->approve($pengajuan, $user);
-
-        return back()->with('success', 'Pengajuan judul berhasil disetujui.');
-    }
-
-    public function reject(Request $request, PengajuanJudul $pengajuan)
-    {
-        $this->ensureValidator();
-        $this->ensurePending($pengajuan);
-
-        $validated = $request->validate([
-            'alasan_penolakan' => ['required', 'string', 'max:1000'],
-        ]);
-
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-        abort_unless($user, 403);
-
-        $this->pengajuanJudulService->reject($pengajuan, $user, $validated['alasan_penolakan']);
-
-        return back()->with('success', 'Pengajuan judul berhasil ditolak.');
-    }
-
     private function currentMahasiswa(): \App\Models\Mahasiswa
     {
         /** @var \App\Models\User $user */
@@ -189,14 +159,6 @@ class PengajuanJudulController extends Controller
         $user = Auth::user();
 
         abort_unless($user && $user->isMahasiswa(), 403);
-    }
-
-    private function ensureValidator(): void
-    {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-
-        abort_unless($user && ($user->isAdmin() || $user->isDosen()), 403);
     }
 
     private function ensureCanView(PengajuanJudul $pengajuan): void

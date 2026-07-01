@@ -19,13 +19,31 @@
 
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            @if (session('success'))
+                <div class="mb-4 rounded-md bg-emerald-50 p-4 text-sm font-medium text-emerald-800 ring-1 ring-inset ring-emerald-200">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="mb-4 rounded-md bg-red-50 p-4 text-sm font-medium text-red-800 ring-1 ring-inset ring-red-200">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             <div class="mb-4 flex flex-wrap items-center justify-end gap-3">
-                <form method="POST" action="{{ route('rekomendasi.generate') }}">
-                    @csrf
-                    <button type="submit" class="inline-flex items-center rounded-md bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700">
-                        Generate Rekomendasi
-                    </button>
-                </form>
+                @if ($pengajuans->isNotEmpty())
+                    <form
+                        method="POST"
+                        action="{{ route('admin.pengajuan.approveAll') }}"
+                        onsubmit="return confirm('Setujui semua {{ $pengajuans->count() }} pengajuan pending? Tindakan ini tidak bisa dibatalkan.');"
+                    >
+                        @csrf
+                        <button type="submit" class="inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700">
+                            Setujui Semua ({{ $pengajuans->count() }})
+                        </button>
+                    </form>
+                @endif
             </div>
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">

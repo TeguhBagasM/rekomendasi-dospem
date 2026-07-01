@@ -125,18 +125,15 @@ class PenetapanDospembingImport implements ToCollection, WithHeadingRow
                 $dospem2 = $item['dospem2'];
                 $catatan = $item['catatan'];
 
-                // Revert previous lecturers' kuota if they were already assigned
+                // Revert previous lecturers' kuota if they were already assigned.
+                // Kuota dospem1 & dospem2 terpisah sesuai skema tabel dosens.
                 if ($pengajuan->dospem1_id) {
                     $oldDospem1 = Dosen::find($pengajuan->dospem1_id);
-                    if ($oldDospem1) {
-                        $oldDospem1->decrement('kuota_terisi');
-                    }
+                    $oldDospem1?->decrement('kuota_terpakai_dospem1');
                 }
                 if ($pengajuan->dospem2_id) {
                     $oldDospem2 = Dosen::find($pengajuan->dospem2_id);
-                    if ($oldDospem2) {
-                        $oldDospem2->decrement('kuota_terisi');
-                    }
+                    $oldDospem2?->decrement('kuota_terpakai_dospem2');
                 }
 
                 // Update PengajuanJudul with finalized lecturers
@@ -159,12 +156,12 @@ class PenetapanDospembingImport implements ToCollection, WithHeadingRow
                     ]
                 );
 
-                // Increment new lecturers' kuota_terisi
+                // Increment new lecturers' kuota terpakai sesuai peran masing-masing
                 if ($dospem1) {
-                    $dospem1->increment('kuota_terisi');
+                    $dospem1->increment('kuota_terpakai_dospem1');
                 }
                 if ($dospem2) {
-                    $dospem2->increment('kuota_terisi');
+                    $dospem2->increment('kuota_terpakai_dospem2');
                 }
             }
 

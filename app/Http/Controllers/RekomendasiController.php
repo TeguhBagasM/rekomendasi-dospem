@@ -2,30 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\RekomendasiDospemExport;
-use App\Imports\PenetapanDospembingImport;
 use App\Models\PengajuanJudul;
 use App\Models\RiwayatRekomendasi;
-use App\Services\ProfileMatchingService;
+use App\Services\RecommendationService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class RekomendasiController extends Controller
 {
     public function __construct(
-        private readonly ProfileMatchingService $profileMatchingService
+        private readonly RecommendationService $recommendationService
     ) {}
 
     public function index(): View
     {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-
-        abort_unless($user && ($user->isAdmin() || $user->isDosen()), 403);
+        $this->authorizeAccess();
 
         $riwayat = RiwayatRekomendasi::with([
             'rekomendasiDospembings.pengajuan.mahasiswa.programStudi',
@@ -47,10 +41,8 @@ class RekomendasiController extends Controller
 
     public function generate(): RedirectResponse
     {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
+        $this->authorizeAccess();
 
-        abort_unless($user && ($user->isAdmin() || $user->isDosen()), 403);
         $pengajuans = PengajuanJudul::with(['mahasiswa.programStudi'])
             ->where('status', 'disetujui')
             ->latest()
@@ -60,43 +52,28 @@ class RekomendasiController extends Controller
             return back()->with('error', 'Tidak ada pengajuan disetujui untuk dihitung.');
         }
 
-        $this->profileMatchingService->generateRecommendationBatch($pengajuans);
+        $this->recommendationService->generateBatch($pengajuans);
 
         return back()->with('success', 'Rekomendasi dospem berhasil dihitung untuk seluruh pengajuan disetujui.');
     }
 
     public function exportExcel(): BinaryFileResponse
     {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
+        $this->authorizeAccess();
 
-        abort_unless($user && ($user->isAdmin() || $user->isDosen()), 403);
-
-        $riwayat = RiwayatRekomendasi::latest()->first();
-
-        abort_unless($riwayat, 404, 'Belum ada batch rekomendasi yang bisa diekspor.');
-
-        $filename = 'rekomendasi-dospem-' . now()->format('Ymd-His') . '.xlsx';
-
-        return Excel::download(
-            new RekomendasiDospemExport($riwayat),
-            $filename
-        );
+        return $this->recommendationService->exportLatestToExcel();
     }
 
     public function importExcel(Request $request): RedirectResponse
     {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-
-        abort_unless($user && ($user->isAdmin() || $user->isDosen()), 403);
+        $this->authorizeAccess();
 
         $validated = $request->validate([
             'file' => ['required', 'file', 'mimes:xlsx,xls,csv'],
         ]);
 
         try {
-            Excel::import(new PenetapanDospembingImport(), $validated['file']);
+            $this->recommendationService->finalizeFromImport($validated['file']);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
@@ -109,5 +86,13 @@ class RekomendasiController extends Controller
     public function export(): BinaryFileResponse
     {
         return $this->exportExcel();
+    }
+
+    private function authorizeAccess(): void
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        abort_unless($user && ($user->isAdmin() || $user->isDosen()), 403);
     }
 }

@@ -1,20 +1,25 @@
 <?php
 
+use App\Http\Controllers\Admin\PengajuanJudulManajemenController;
 use App\Http\Controllers\BidangKeahlianController;
 use App\Http\Controllers\DosenController;
 use App\Http\Controllers\GelombangController;
-// use App\Http\Controllers\KeahlianDosenController;
-// use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\PengajuanJudulController;
 use App\Http\Controllers\PengajuanValidasiController;
 use App\Http\Controllers\ProdiController;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProfileDosenController;
 use App\Http\Controllers\RekomendasiController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Public Routes
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/', function () {
     return view('auth.login');
@@ -24,23 +29,60 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+/*
+|--------------------------------------------------------------------------
+| Authenticated (semua role)
+|--------------------------------------------------------------------------
+*/
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // Riwayat pengajuan judul milik mahasiswa sendiri.
+    // Approve/reject TIDAK ada di sini — eksklusif lewat admin.pengajuan.* (PengajuanValidasiController).
     Route::resource('pengajuan', PengajuanJudulController::class);
-    Route::post('pengajuan/{pengajuan}/approve', [PengajuanJudulController::class, 'approve'])->name('pengajuan.approve');
-    Route::post('pengajuan/{pengajuan}/reject', [PengajuanJudulController::class, 'reject'])->name('pengajuan.reject');
 });
 
+/*
+|--------------------------------------------------------------------------
+| Admin
+|--------------------------------------------------------------------------
+*/
+
 Route::middleware(['auth', 'role:admin'])->group(function () {
+
+    // Manajemen Pengajuan Judul — tabel, filter, import/export
+    Route::prefix('admin/pengajuan-judul')->name('admin.pengajuan-judul.')->group(function () {
+        Route::get('template', [PengajuanJudulManajemenController::class, 'downloadTemplate'])->name('template');
+        Route::get('export', [PengajuanJudulManajemenController::class, 'export'])->name('export');
+        Route::post('import', [PengajuanJudulManajemenController::class, 'import'])->name('import');
+        Route::get('/', [PengajuanJudulManajemenController::class, 'index'])->name('index');
+    });
+
+    // Validasi Pengajuan — antrian pending, approve/reject
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('pengajuan', [PengajuanValidasiController::class, 'index'])->name('pengajuan.index');
+        Route::post('pengajuan/{pengajuan}/approve', [PengajuanValidasiController::class, 'approve'])->name('pengajuan.approve');
+        Route::post('pengajuan/{pengajuan}/reject', [PengajuanValidasiController::class, 'reject'])->name('pengajuan.reject');
+        Route::post('pengajuan/approve-all', [PengajuanValidasiController::class, 'approveAll'])->name('pengajuan.approveAll');
+    });
+
+    // Rekomendasi Dosen Pembimbing
+    Route::prefix('rekomendasi')->name('rekomendasi.')->group(function () {
+        Route::get('/', [RekomendasiController::class, 'index'])->name('index');
+        Route::post('generate', [RekomendasiController::class, 'generate'])->name('generate');
+        Route::get('export', [RekomendasiController::class, 'exportExcel'])->name('export');
+        Route::post('import', [RekomendasiController::class, 'importExcel'])->name('import');
+    });
+
     Route::resource('roles', RoleController::class)->except(['show']);
-    // Route::resource('permissions', PermissionController::class)->except(['show']);
+
     Route::get('mahasiswa/export', [MahasiswaController::class, 'export'])->name('mahasiswa.export');
     Route::post('mahasiswa/import', [MahasiswaController::class, 'import'])->name('mahasiswa.import');
     Route::resource('mahasiswa', MahasiswaController::class)->except(['show']);
-    
+
     Route::resource('users', UserController::class)->only(['index', 'edit', 'update']);
     Route::resource('prodi', ProdiController::class)->except(['show']);
     Route::resource('bidang-keahlian', BidangKeahlianController::class)->except(['show']);
@@ -49,42 +91,21 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('dosen/template', [DosenController::class, 'downloadTemplate'])->name('dosen.template');
     Route::post('dosen/import', [DosenController::class, 'import'])->name('dosen.import');
     Route::resource('dosen', DosenController::class);
+
     Route::resource('gelombang', GelombangController::class);
     Route::patch('gelombang/{gelombang}/toggle-status', [GelombangController::class, 'toggleStatus'])
-    ->name('gelombang.toggle-status');
-    // Route::post('/dosen/{dosen}/keahlian', [KeahlianDosenController::class, 'store'])->name('keahlian.store');
-    
-    // Route::put('/keahlian/{id}', [KeahlianDosenController::class, 'update'])->name('keahlian.update');
-    // Route::delete('/keahlian/{id}', [KeahlianDosenController::class, 'destroy'])->name('keahlian.destroy');
-
-    Route::prefix('admin')->name('admin.')->group(function () {
-        Route::get('pengajuan', [PengajuanValidasiController::class, 'index'])->name('pengajuan.index');
-        Route::post('pengajuan/{pengajuan}/approve', [PengajuanValidasiController::class, 'approve'])->name('pengajuan.approve');
-        Route::post('pengajuan/{pengajuan}/reject', [PengajuanValidasiController::class, 'reject'])->name('pengajuan.reject');
-    });
+        ->name('gelombang.toggle-status');
 });
 
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/rekomendasi', [RekomendasiController::class, 'index'])->name('rekomendasi.index');
-    Route::post('/rekomendasi/generate', [RekomendasiController::class, 'generate'])->name('rekomendasi.generate');
-    Route::get('/rekomendasi/export', [RekomendasiController::class, 'exportExcel'])->name('rekomendasi.export');
-    Route::post('/rekomendasi/import', [RekomendasiController::class, 'importExcel'])->name('rekomendasi.import');
-});
+/*
+|--------------------------------------------------------------------------
+| Dosen
+|--------------------------------------------------------------------------
+*/
 
 Route::middleware(['auth', 'role:dosen'])->group(function () {
     Route::get('profile-saya', [ProfileDosenController::class, 'edit'])->name('profile-dosen.edit');
     Route::put('profile-saya', [ProfileDosenController::class, 'update'])->name('profile-dosen.update');
 });
-
-// Route::middleware(['auth', 'role:mahasiswa'])->group(function () {
-//     Route::get('/mahasiswa/judul', [JudulController::class, 'index'])->name('mahasiswa.judul');
-//     Route::post('/mahasiswa/judul', [JudulController::class, 'store'])->name('mahasiswa.judul.store');
-// });
-
-// Route::middleware(['auth', 'role:admin'])->group(function () {
-//     Route::get('/admin/judul', [JudulController::class, 'adminIndex'])->name('admin.judul');
-//     Route::post('/admin/judul/{id}/approve', [JudulController::class, 'approve'])->name('admin.judul.approve');
-//     Route::post('/admin/judul/{id}/reject', [JudulController::class, 'reject'])->name('admin.judul.reject');
-// });
 
 require __DIR__.'/auth.php';

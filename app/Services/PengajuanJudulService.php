@@ -7,6 +7,8 @@ use App\Models\PengajuanJudul;
 use App\Models\User;
 use App\Models\Mahasiswa;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -88,6 +90,7 @@ class PengajuanJudulService
         if ($pengajuan->file_proposal) {
             Storage::disk('public')->delete($pengajuan->file_proposal);
         }
+
         $pengajuan->delete();
     }
 
@@ -97,6 +100,31 @@ class PengajuanJudulService
     public function approve(PengajuanJudul $pengajuan, User $validator): void
     {
         $pengajuan->approve($validator);
+    }
+
+    /**
+     * Approve seluruh PengajuanJudul yang masih berstatus pending sekaligus.
+     * Hanya baris yang benar-benar masih pending yang diproses (menghindari
+     * race condition jika status berubah di antara fetch dan eksekusi).
+     *
+     * Return jumlah pengajuan yang berhasil disetujui.
+     */
+    public function approveAll(Collection $pengajuans, User $validator): int
+    {
+        $approvedCount = 0;
+
+        DB::transaction(function () use ($pengajuans, $validator, &$approvedCount): void {
+            foreach ($pengajuans as $pengajuan) {
+                if (! $pengajuan->isPending()) {
+                    continue;
+                }
+
+                $pengajuan->approve($validator);
+                $approvedCount++;
+            }
+        });
+
+        return $approvedCount;
     }
 
     /**

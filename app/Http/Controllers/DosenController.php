@@ -23,18 +23,77 @@ class DosenController extends Controller
         private DosenProfileService $dosenProfileService
     ) {}
 
-    public function index()
+    public function index(Request $request)
     {
-        $dosens = Dosen::with([
-            'programStudi',
-            'bidangKeahlians',
-            'profile',
-        ])
-        ->withCount('bidangKeahlians')
-        ->orderBy('nama')
-        ->paginate(10);
+        $filters = $request->validate([
+            'search'              => 'nullable|string|max:255',
+            'program_studi_id'    => 'nullable|integer|exists:program_studis,id',
+            'jabatan_fungsional'  => 'nullable|string|max:255',
+            'bidang_keahlian_id'  => 'nullable|integer|exists:bidang_keahlians,id',
+        ]);
 
-        return view('dosen.index', compact('dosens'));
+        $dosens = Dosen::query()
+            ->with(['programStudi', 'bidangKeahlians', 'profile'])
+            ->withCount('bidangKeahlians')
+            ->when($filters['search'] ?? null, function ($query, $search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('nama', 'like', "%{$search}%")
+                        ->orWhere('nidn', 'like', "%{$search}%");
+                });
+            })
+            ->when($filters['program_studi_id'] ?? null, function ($query, $programStudiId) {
+                $query->where('program_studi_id', $programStudiId);
+            })
+            ->when($filters['jabatan_fungsional'] ?? null, function ($query, $jabatan) {
+                $query->where('jabatan_fungsional', $jabatan);
+            })
+            ->when($filters['bidang_keahlian_id'] ?? null, function ($query, $bidangKeahlianId) {
+                $query->whereHas('bidangKeahlians', function ($query) use ($bidangKeahlianId) {
+                    $query->where('bidang_keahlians.id', $bidangKeahlianId);
+                });
+            })
+            ->orderBy('nama')
+            ->paginate(10)
+            ->withQueryString();
+
+        $bidangKeahlians = $this->filterOptionsBidangKeahlian();
+
+        return view('dosen.index', [
+            'dosens'                  => $dosens,
+            'programStudis'           => $this->filterOptionsProgramStudi(),
+            'jabatanFungsionals'      => $this->filterOptionsJabatanFungsional(),
+            'bidangKeahlians'         => $bidangKeahlians,
+            'selectedBidangKeahlian'  => $bidangKeahlians->firstWhere('id', $filters['bidang_keahlian_id'] ?? null),
+        ]);
+    }
+
+    /**
+     * Opsi dropdown filter Homebase Program Studi.
+     */
+    private function filterOptionsProgramStudi()
+    {
+        return ProgramStudi::orderBy('program_studi')
+            ->get(['id', 'program_studi', 'jenjang']);
+    }
+
+    /**
+     * Opsi dropdown filter Jabatan Fungsional (unik dari data dosens).
+     */
+    private function filterOptionsJabatanFungsional()
+    {
+        return Dosen::query()
+            ->whereNotNull('jabatan_fungsional')
+            ->distinct()
+            ->orderBy('jabatan_fungsional')
+            ->pluck('jabatan_fungsional');
+    }
+
+    /**
+     * Opsi dropdown filter Bidang Keahlian.
+     */
+    private function filterOptionsBidangKeahlian()
+    {
+        return BidangKeahlian::orderBy('nama')->get(['id', 'nama']);
     }
 
     public function create()

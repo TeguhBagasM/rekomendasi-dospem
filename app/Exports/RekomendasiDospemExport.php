@@ -42,8 +42,14 @@ class RekomendasiDospemExport implements FromCollection, WithHeadings, WithStyle
                 'judul_skripsi' => $pengajuan?->judul_skripsi ?? '-',
                 'rekomendasi_dospem1_nama' => $rekomendasi->rekomendasiDospem1?->nama ?? '-',
                 'rekomendasi_dospem1_nidn' => $rekomendasi->rekomendasiDospem1?->nidn ?? '-',
+                'nilai_dospem1' => $rekomendasi->skor_dospem1 !== null
+                    ? round((float) $rekomendasi->skor_dospem1, 4)
+                    : '-',
                 'rekomendasi_dospem2_nama' => $rekomendasi->rekomendasiDospem2?->nama ?? '-',
                 'rekomendasi_dospem2_nidn' => $rekomendasi->rekomendasiDospem2?->nidn ?? '-',
+                'nilai_dospem2' => $rekomendasi->skor_dospem2 !== null
+                    ? round((float) $rekomendasi->skor_dospem2, 4)
+                    : '-',
                 'final_dospem1_nidn' => $penetapan?->dospem1?->nidn ?? $rekomendasi->rekomendasiDospem1?->nidn ?? '-',
                 'final_dospem2_nidn' => $penetapan?->dospem2?->nidn ?? $rekomendasi->rekomendasiDospem2?->nidn ?? '-',
                 'status_final' => $penetapan ? 'finalized' : 'draft',
@@ -63,10 +69,12 @@ class RekomendasiDospemExport implements FromCollection, WithHeadings, WithStyle
             'Nama Mahasiswa',
             'Program Studi',
             'Judul Skripsi',
-            'Rekomendasi Dospem 1',
-            'Rekomendasi NIDN Dospem 1',
-            'Rekomendasi Dospem 2',
-            'Rekomendasi NIDN Dospem 2',
+            'Dospem 1',
+            'NIDN Dospem 1',
+            'Nilai Dospem 1',
+            'Dospem 2',
+            'NIDN Dospem 2',
+            'Nilai Dospem 2',
             'Final NIDN Dospem 1',
             'Final NIDN Dospem 2',
             'Status Final',
@@ -88,5 +96,4 @@ class RekomendasiDospemExport implements FromCollection, WithHeadings, WithStyle
             ],
         ];
     }
-
 }

@@ -118,7 +118,8 @@
                         </x-slot>
                     </x-dropdown>
 
-                    <a href="{{ route('admin.pengajuan.index') }}" class="hover:text-white/80 {{ request()->routeIs('admin.pengajuan.*') ? 'font-bold' : '' }}">Validasi Pengajuan</a>
+                    <a href="{{ route('admin.pengajuan-judul.index') }}" class="hover:text-white/80 {{ request()->routeIs('admin.pengajuan-judul.*') ? 'font-bold' : '' }}">Pengajuan Judul</a>
+                    {{-- <a href="{{ route('admin.pengajuan.index') }}" class="hover:text-white/80 {{ request()->routeIs('admin.pengajuan.*') ? 'font-bold' : '' }}">Validasi Pengajuan</a> --}}
                 @endif
             </div>
 
@@ -190,8 +191,8 @@
                     </div>
                 </div>
 
-                <x-responsive-nav-link :href="route('admin.pengajuan.index')" :active="request()->routeIs('admin.pengajuan.*')" class="text-white hover:bg-white/10 hover:text-white">
-                    {{ __('Validasi Pengajuan') }}
+                <x-responsive-nav-link :href="route('admin.pengajuan-judul.index')" :active="request()->routeIs('admin.pengajuan-judul.*')" class="text-white hover:bg-white/10 hover:text-white">
+                    {{ __('Pengajuan Judul') }}
                 </x-responsive-nav-link>
             @endif
             @if (auth()->check() && auth()->user()->hasRole('dosen'))
