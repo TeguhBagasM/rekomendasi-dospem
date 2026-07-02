@@ -25,7 +25,7 @@ class PengajuanValidasiController extends Controller
         $selectedId = $request->query('id', $pengajuans->first()?->id);
         $selectedPengajuan = $pengajuans->firstWhere('id', (int) $selectedId) ?? $pengajuans->first();
 
-        return view('admin.pengajuan.index', compact('pengajuans', 'selectedPengajuan', 'selectedId'));
+        return view('admin.validasi-pengajuan.index', compact('pengajuans', 'selectedPengajuan', 'selectedId'));
     }
 
     public function approve(PengajuanJudul $pengajuan)
@@ -37,7 +37,7 @@ class PengajuanValidasiController extends Controller
 
         $this->pengajuanJudulService->approve($pengajuan, $user);
 
-        return redirect()->route('admin.pengajuan.index')
+        return redirect()->route('admin.validasi-pengajuan.index')
             ->with('success', 'Pengajuan berhasil disetujui.');
     }
 
@@ -53,13 +53,13 @@ class PengajuanValidasiController extends Controller
         $pengajuans = PengajuanJudul::pending()->get();
 
         if ($pengajuans->isEmpty()) {
-            return redirect()->route('admin.pengajuan.index')
+            return redirect()->route('admin.validasi-pengajuan.index')
                 ->with('error', 'Tidak ada pengajuan pending untuk disetujui.');
         }
 
         $approvedCount = $this->pengajuanJudulService->approveAll($pengajuans, $user);
 
-        return redirect()->route('admin.pengajuan.index')
+        return redirect()->route('admin.validasi-pengajuan.index')
             ->with('success', "{$approvedCount} pengajuan berhasil disetujui.");
     }
 
@@ -76,7 +76,7 @@ class PengajuanValidasiController extends Controller
 
         $this->pengajuanJudulService->reject($pengajuan, $user, $validated['alasan_penolakan']);
 
-        return redirect()->route('admin.pengajuan.index')
+        return redirect()->route('admin.validasi-pengajuan.index')
             ->with('success', 'Pengajuan berhasil ditolak.');
     }
 }

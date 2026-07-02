@@ -5,10 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\Dosen;
-use App\Models\Mahasiswa;
-use App\Models\User;
-// use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class PengajuanJudul extends Model
 {
@@ -23,14 +20,10 @@ class PengajuanJudul extends Model
         'gelombang_id',
         'divalidasi_oleh',
         'validated_at',
-        'dospem1_id',
-        'dospem2_id',
     ];
 
     protected $casts = [
         'validated_at' => 'datetime',
-        'dospem1_generated_at' => 'datetime',
-        'dospem2_generated_at' => 'datetime',
     ];
 
     // ==================== RELATIONS ====================
@@ -38,16 +31,6 @@ class PengajuanJudul extends Model
     public function mahasiswa(): BelongsTo
     {
         return $this->belongsTo(Mahasiswa::class);
-    }
-
-    public function dospem1(): BelongsTo
-    {
-        return $this->belongsTo(Dosen::class, 'dospem1_id');
-    }
-
-    public function dospem2(): BelongsTo
-    {
-        return $this->belongsTo(Dosen::class, 'dospem2_id');
     }
 
     /**
@@ -63,7 +46,7 @@ class PengajuanJudul extends Model
         return $this->hasOne(RekomendasiDospembing::class, 'pengajuan_id');
     }
 
-    public function penetapanDospembing()
+    public function penetapanDospembing(): HasOne
     {
         return $this->hasOne(PenetapanDospembing::class, 'pengajuan_id');
     }
