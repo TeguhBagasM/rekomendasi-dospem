@@ -34,9 +34,9 @@
                 <x-dashboard.empty-state title="Belum ada mahasiswa bimbingan." description="Belum ada penetapan dosen pembimbing final untuk akun ini." icon="fa-solid fa-user-graduate" />
             @else
                 <div class="overflow-hidden rounded-xl border border-gray-200">
-                    <div class="overflow-x-auto">
+                    <div class="max-h-96 overflow-y-auto overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200 text-left text-sm">
-                            <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                            <thead class="sticky top-0 z-10 bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                                 <tr>
                                     <th class="px-4 py-3">NIM</th>
                                     <th class="px-4 py-3">Nama</th>
