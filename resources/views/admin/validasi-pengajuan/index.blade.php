@@ -35,7 +35,7 @@
                 @if ($pengajuans->isNotEmpty())
                     <form
                         method="POST"
-                        action="{{ route('admin.pengajuan.approveAll') }}"
+                        action="{{ route('admin.validasi-pengajuan.approveAll') }}"
                         onsubmit="return confirm('Setujui semua {{ $pengajuans->count() }} pengajuan pending? Tindakan ini tidak bisa dibatalkan.');"
                     >
                         @csrf
@@ -77,10 +77,10 @@
                             this.rejectOpen = false;
                         },
                         approveAction() {
-                            return this.selected ? `/admin/pengajuan/${this.selected.id}/approve` : '#';
+                            return this.selected ? `/admin/validasi-pengajuan/${this.selected.id}/approve` : '#';
                         },
                         rejectAction() {
-                            return this.selected ? `/admin/pengajuan/${this.selected.id}/reject` : '#';
+                            return this.selected ? `/admin/validasi-pengajuan/${this.selected.id}/reject` : '#';
                         }
                     }"
                     x-init="if (!selectedId && pengajuans.length) selectedId = pengajuans[0].id"

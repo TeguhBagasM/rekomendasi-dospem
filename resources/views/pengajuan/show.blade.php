@@ -72,19 +72,23 @@
                             <dd class="mt-1 text-sm text-gray-900">{{ $pengajuan->validated_at?->format('d M Y H:i') ?? '-' }}</dd>
                         </div>
 
-                        @if ($pengajuan->dospem1 || $pengajuan->dospem2)
+                        @php
+                            $penetapan = $pengajuan->penetapanDospembing;
+                        @endphp
+
+                        @if ($penetapan?->dospem1 || $penetapan?->dospem2)
                             <div class="rounded-lg border border-indigo-200 bg-indigo-50 p-4 sm:col-span-2">
                                 <h4 class="text-sm font-semibold text-indigo-900 mb-2">Dosen Pembimbing Final</h4>
                                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 bg-white rounded-md p-3 border border-indigo-100">
                                     <div>
                                         <span class="text-xs font-medium text-indigo-500 block">Dosen Pembimbing 1</span>
-                                        <span class="text-sm font-semibold text-gray-900 block mt-1">{{ $pengajuan->dospem1?->nama ?? '-' }}</span>
-                                        <span class="text-xs text-gray-500 block mt-0.5">NIDN: {{ $pengajuan->dospem1?->nidn ?? '-' }}</span>
+                                        <span class="text-sm font-semibold text-gray-900 block mt-1">{{ $penetapan?->dospem1?->nama ?? '-' }}</span>
+                                        <span class="text-xs text-gray-500 block mt-0.5">NIDN: {{ $penetapan?->dospem1?->nidn ?? '-' }}</span>
                                     </div>
                                     <div>
                                         <span class="text-xs font-medium text-indigo-500 block">Dosen Pembimbing 2</span>
-                                        <span class="text-sm font-semibold text-gray-900 block mt-1">{{ $pengajuan->dospem2?->nama ?? '-' }}</span>
-                                        <span class="text-xs text-gray-500 block mt-0.5">NIDN: {{ $pengajuan->dospem2?->nidn ?? '-' }}</span>
+                                        <span class="text-sm font-semibold text-gray-900 block mt-1">{{ $penetapan?->dospem2?->nama ?? '-' }}</span>
+                                        <span class="text-xs text-gray-500 block mt-0.5">NIDN: {{ $penetapan?->dospem2?->nidn ?? '-' }}</span>
                                     </div>
                                 </div>
                             </div>

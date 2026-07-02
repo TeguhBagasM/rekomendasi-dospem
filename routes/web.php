@@ -58,10 +58,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     // Validasi Pengajuan — antrian pending, approve/reject
     Route::prefix('admin')->name('admin.')->group(function () {
-        Route::get('pengajuan', [PengajuanValidasiController::class, 'index'])->name('pengajuan.index');
-        Route::post('pengajuan/{pengajuan}/approve', [PengajuanValidasiController::class, 'approve'])->name('pengajuan.approve');
-        Route::post('pengajuan/{pengajuan}/reject', [PengajuanValidasiController::class, 'reject'])->name('pengajuan.reject');
-        Route::post('pengajuan/approve-all', [PengajuanValidasiController::class, 'approveAll'])->name('pengajuan.approveAll');
+        Route::get('validasi-pengajuan', [PengajuanValidasiController::class, 'index'])->name('validasi-pengajuan.index');
+        Route::post('validasi-pengajuan/{pengajuan}/approve', [PengajuanValidasiController::class, 'approve'])->name('validasi-pengajuan.approve');
+        Route::post('validasi-pengajuan/{pengajuan}/reject', [PengajuanValidasiController::class, 'reject'])->name('validasi-pengajuan.reject');
+        Route::post('validasi-pengajuan/approve-all', [PengajuanValidasiController::class, 'approveAll'])->name('validasi-pengajuan.approveAll');
     });
 
     // Rekomendasi Dosen Pembimbing

@@ -81,7 +81,7 @@
                     </details>
 
                     {{-- Primary actions --}}
-                    <a href="{{ route('admin.pengajuan.index') }}"
+                    <a href="{{ route('admin.validasi-pengajuan.index') }}"
                        class="inline-flex items-center justify-center gap-2 rounded-md bg-sky-600 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-700">
                         <i class="fa-solid fa-gavel"></i>
                         Validasi Pengajuan
