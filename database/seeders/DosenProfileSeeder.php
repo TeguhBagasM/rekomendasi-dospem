@@ -11,56 +11,92 @@ class DosenProfileSeeder extends Seeder
     public function run(): void
     {
         $profiles = [
-            '11010101' => [
-                'topik_metode' =>
-                    'laravel, php, mysql, rest api, web service, sistem informasi, basis data',
-
-                'judul_penelitian' =>
-                    'Pengembangan Sistem Informasi Akademik Berbasis Web, Implementasi REST API Pada Sistem Informasi Kampus',
+            // Feri Alpiyasin -> klasifikasi & prediksi
+            '0422029205' => [
+                'topik_metode' => 'Data mining, klasifikasi, prediksi, algoritma Naive Bayes, Decision Tree, K-Nearest Neighbor (KNN), Random Forest, evaluasi model menggunakan confusion matrix dan akurasi',
+                'judul_penelitian' => [
+                    'Penerapan Algoritma Naive Bayes untuk Prediksi Kelulusan Mahasiswa Tepat Waktu',
+                    'Klasifikasi Risiko Kredit Nasabah Menggunakan Metode Decision Tree C4.5',
+                    'Implementasi Algoritma K-Nearest Neighbor untuk Prediksi Penyakit Berdasarkan Gejala Klinis',
+                ],
             ],
 
-            '11010102' => [
-                'topik_metode' =>
-                    'sistem informasi akuntansi, spreadsheet, laporan keuangan, audit sistem',
-
-                'judul_penelitian' =>
-                    'Rancang Bangun Sistem Informasi Keuangan Sekolah, Analisis Sistem Informasi Akuntansi',
+            // Hasanah -> kontrol negatif, akuntansi
+            '0429098105' => [
+                'topik_metode' => 'Sistem informasi akuntansi, audit sistem, pengendalian internal, pelaporan keuangan berbasis komputer',
+                'judul_penelitian' => [
+                    'Analisis Sistem Informasi Akuntansi Penggajian Karyawan',
+                    'Perancangan Sistem Audit Internal Berbasis Web',
+                    'Evaluasi Pengendalian Internal Sistem Informasi Keuangan',
+                ],
             ],
 
-            '11010103' => [
-                'topik_metode' =>
-                    'uml, analisis kebutuhan, jaringan komputer, tcp ip, rekayasa perangkat lunak',
-
-                'judul_penelitian' =>
-                    'Analisis Kebutuhan Sistem Akademik, Implementasi Jaringan Komputer Pada Lingkungan Kampus',
+            // Jajat Sudrajat -> SPK, fuzzy, multi-kriteria
+            '0406087303' => [
+                'topik_metode' => 'Sistem pendukung keputusan, multi-criteria decision making, metode Fuzzy Logic, TOPSIS, AHP, SAW, penentuan prioritas dan perankingan alternatif',
+                'judul_penelitian' => [
+                    'Sistem Pendukung Keputusan Pemilihan Supplier Menggunakan Metode TOPSIS',
+                    'Penerapan Metode Fuzzy Logic dalam Penentuan Kelayakan Penerima Bantuan Sosial',
+                    'Implementasi Metode AHP untuk Perankingan Alternatif Lokasi Usaha',
+                ],
             ],
 
-            '11010104' => [
-                'topik_metode' =>
-                    'machine learning, data mining, random forest, naive bayes, cnn, yolo, computer vision',
+            // Toni Kusnandar -> rekomendasi, clustering, association rule
+            '0411126805' => [
+                'topik_metode' => 'Pengembangan sistem berbasis web, sistem rekomendasi produk, Content-Based Filtering, Cosine Similarity, algoritma Apriori association rule, K-Means Clustering segmentasi pelanggan',
+                'judul_penelitian' => [
+                    'Penerapan Content-Based Filtering untuk Sistem Rekomendasi Produk pada Toko Online',
+                    'Implementasi Algoritma Apriori untuk Analisis Pola Pembelian Konsumen pada E-Commerce',
+                    'Penerapan K-Means Clustering untuk Segmentasi Pelanggan dalam Mendukung Strategi Pemasaran Digital',
+                ],
+            ],
 
-                'judul_penelitian' =>
-                    'Implementasi YOLO Untuk Deteksi Objek, Prediksi Menggunakan Random Forest, Analisis Sentimen Menggunakan Machine Learning',
+            // Titi Widaretna -> kontrol negatif, jaringan/cyber
+            '0415038501' => [
+                'topik_metode' => 'Jaringan komputer, keamanan jaringan, Internet of Things, sistem terdistribusi, monitoring infrastruktur jaringan',
+                'judul_penelitian' => [
+                    'Analisis Keamanan Jaringan Menggunakan Metode Intrusion Detection System',
+                    'Rancang Bangun Sistem Monitoring Suhu Berbasis Internet of Things',
+                    'Implementasi VPN untuk Keamanan Jaringan Kantor',
+                ],
+            ],
+
+            // Ahfi Fauka Pranata -> sentimen, NLP, CNN/citra
+            '0408129001' => [
+                'topik_metode' => 'Analisis sentimen, text mining, Support Vector Machine (SVM), Natural Language Processing, Convolutional Neural Network (CNN), klasifikasi citra, ekstraksi fitur TF-IDF',
+                'judul_penelitian' => [
+                    'Analisis Sentimen Ulasan Pengguna Aplikasi E-Commerce Menggunakan Algoritma Support Vector Machine',
+                    'Klasifikasi Citra Digital Menggunakan Metode Convolutional Neural Network (CNN) untuk Deteksi Objek',
+                    'Penerapan Natural Language Processing untuk Analisis Opini Publik di Media Sosial',
+                ],
             ],
         ];
 
-        foreach ($profiles as $nidn => $profile) {
+        foreach ($profiles as $nidn => $data) {
             $dosen = Dosen::where('nidn', $nidn)->first();
 
-            if (!$dosen) {
+            if (! $dosen) {
                 continue;
             }
 
+            $keahlianText = $dosen->bidangKeahlians()
+                ->pluck('nama')
+                ->implode(', ');
+
+            $judulText = implode('. ', $data['judul_penelitian']);
+
+            $dokumenTfidf = implode(' ', array_filter([
+                $keahlianText,
+                $data['topik_metode'],
+                $judulText,
+            ]));
+
             DosenProfile::updateOrCreate(
+                ['dosen_id' => $dosen->id],
                 [
-                    'dosen_id' => $dosen->id,
-                ],
-                [
-                    'topik_metode' => $profile['topik_metode'],
-                    'judul_penelitian' => $profile['judul_penelitian'],
-                    'dokumen_tfidf' =>
-                        $profile['topik_metode'] . ' ' .
-                        $profile['judul_penelitian'],
+                    'topik_metode' => $data['topik_metode'],
+                    'judul_penelitian' => $judulText,
+                    'dokumen_tfidf' => $dokumenTfidf,
                 ]
             );
         }
