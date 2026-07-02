@@ -90,7 +90,7 @@ class PengajuanJudulImport implements ToCollection, WithHeadingRow, SkipsEmptyRo
             } else {
                 $user = User::create([
                     'name' => $nama,
-                    'email' => $nim . '@student.local',
+                    'email' => $nim . '@stmik-mi.ac.id',
                     'password' => $nim, // auto-hashed via cast 'password' => 'hashed' di model User
                 ]);
                 $user->assignRole('mahasiswa');

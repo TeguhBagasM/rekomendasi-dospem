@@ -18,6 +18,12 @@ use App\Models\PengajuanJudul;
  *
  * Kuota dihitung terpisah untuk peran Dospem1 dan Dospem2, sehingga
  * Secondary Factor & Nilai Akhir juga dihitung terpisah per peran.
+ *
+ * CATATAN: quota_scale di sini hanya dipakai untuk KRITERIA SCORING
+ * (nilai profile matching), BUKAN untuk penentuan kuota assignment.
+ * Penentuan kuota assignment yang sebenarnya (agar tidak overload)
+ * dilakukan terpisah oleh RecommendationAssignmentService dengan
+ * state kuota sementara yang berjalan sepanjang batch generate.
  * =========================================================
  */
 class ProfileMatchingService
@@ -133,6 +139,9 @@ class ProfileMatchingService
             'remaining_kuota_dospem2' => $remainingKuotaDospem2,
 
             'eligible_dospem1' => $this->isEligibleForDospem1($dosen),
+
+            // Dipakai oleh RecommendationAssignmentService untuk hard-rule pairing.
+            'jabatan_rank' => $this->jabatanRank($dosen->jabatan_fungsional),
         ];
     }
 

@@ -124,7 +124,7 @@ class DosenController extends Controller
         DB::transaction(function () use ($validated) {
             $user = User::create([
                 'name'     => $validated['nama'],
-                'email'    => $validated['nidn'] . '@dosen.local',
+                'email'    => $validated['nidn'] . '@stmik-mi.ac.id',
                 'password' => Hash::make($validated['nidn']),
             ]);
             $user->assignRole('dosen');
@@ -205,7 +205,7 @@ class DosenController extends Controller
             if ($dosen->user) {
                 $dosen->user->update([
                     'name'  => $validated['nama'],
-                    'email' => $validated['nidn'] . '@dosen.local',
+                    'email' => $validated['nidn'] . '@stmik-mi.ac.id',
                 ]);
             }
 
