@@ -8,48 +8,85 @@ use Illuminate\Database\Seeder;
 
 class DosenBidangKeahlianSeeder extends Seeder
 {
+    /**
+     * Mapping nidn => list nama bidang keahlian.
+     * Nama bidang keahlian harus sesuai dengan yang ada di BidangKeahlianSeeder.
+     */
     public function run(): void
     {
-        $data = [
-            '11010101' => [
-                'Pemrograman Web',
-                'Basis Data',
-                'Sistem Informasi',
-            ],
-
-            '11010102' => [
-                'Akuntansi Komputer',
-                'Audit Sistem',
-                'Sistem Informasi',
-            ],
-
-            '11010103' => [
-                'Analisis Sistem',
-                'Jaringan Komputer',
-                'Rekayasa Perangkat Lunak',
-            ],
-
-            '11010104' => [
+        $mapping = [
+            '0422029205' => [ // Feri Alpiyasin
                 'Machine Learning',
                 'Data Mining',
+                'Data Science',
+                'Sistem Pendukung Keputusan',
+                'Sistem Informasi',
+            ],
+            '0429098105' => [ // Hasanah Tisna Amijaya
+                'Akuntansi Keuangan',
+                'Perpajakan Komputerisasi',
+                'Sistem Informasi',
+            ],
+            '0406087303' => [ // Jajat Sudrajat
+                'Sistem Informasi',
+                'Manajemen',
+                'Analisis Sistem',
+            ],
+            '0411126805' => [ // Toni Kusnandar
+                'Data Science',
+                'Machine Learning',
                 'Deep Learning',
+                'Internet Of Things',
+                'Sistem Informasi',
+                'Data Mining',
                 'Computer Vision',
+                'Image Processing',
+            ],
+            '0420029404' => [ // Titi Widaretna
+                'Data Science',
+                'Machine Learning',
+                'Deep Learning',
+                'Software Development',
+                'Natural Language Processing',
+                'Data Mining',
+                'Database',
+                'Big Data',
+            ],
+            '0409129402' => [ // Ahfi Fauka Pranata
+                'Manajemen',
+                'Data Science',
+                'Machine Learning',
+                'Deep Learning',
+                'Software Development',
+                'Internet Of Things',
+                'Sistem Informasi',
+                'Sistem Pendukung Keputusan',
+                'Data Mining',
+                'Database',
+                'Big Data',
+                'Mobile Development',
+            ],
+            '0408109005' => [ // Asep Ririh Riswaya
+                'Machine Learning',
+                'Deep Learning',
+                'Software Development',
+                'Cyber Security',
             ],
         ];
 
-        foreach ($data as $nidn => $keahlianList) {
+        foreach ($mapping as $nidn => $bidangList) {
             $dosen = Dosen::where('nidn', $nidn)->first();
 
-            if (!$dosen) {
+            if (! $dosen) {
                 continue;
             }
 
-            $ids = BidangKeahlian::whereIn(
-                'nama',
-                $keahlianList
-            )->pluck('id');
+            $bidangIds = BidangKeahlian::whereIn('nama', $bidangList)
+                ->pluck('id')
+                ->toArray();
 
-            $dosen->bidangKeahlians()->syncWithoutDetaching($ids);
+            // sync tanpa detach agar tidak menghapus relasi lain jika seeder dijalankan ulang
+            $dosen->bidangKeahlians()->syncWithoutDetaching($bidangIds);
         }
     }
 }

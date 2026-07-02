@@ -34,6 +34,7 @@ class RekomendasiDospemExport implements FromCollection, WithHeadings, WithStyle
 
             return [
                 'no' => $index + 1,
+                'riwayat_rekomendasi_id' => $rekomendasi->riwayat_rekomendasi_id,
                 'rekomendasi_dospembing_id' => $rekomendasi->id,
                 'pengajuan_id' => $pengajuan?->id,
                 'nim' => $pengajuan?->mahasiswa?->nim ?? '-',
@@ -63,6 +64,7 @@ class RekomendasiDospemExport implements FromCollection, WithHeadings, WithStyle
     {
         return [
             'No',
+            'Riwayat Rekomendasi ID',
             'Rekomendasi ID',
             'Pengajuan ID',
             'NIM',

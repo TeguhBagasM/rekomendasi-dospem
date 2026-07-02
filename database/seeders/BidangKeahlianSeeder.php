@@ -20,15 +20,18 @@ class BidangKeahlianSeeder extends Seeder
             'Natural Language Processing',
             'Sistem Pendukung Keputusan',
             'Pemrograman Web',
-            'Basis Data',
+            'Database',
+            'Big Data',
+            'Software Development',
             'Analisis Sistem',
-            'Rekayasa Perangkat Lunak',
-            'Jaringan Komputer',
+            'Networking',
             'Cyber Security',
             'Internet of Things',
             'Sistem Informasi',
-            'Akuntansi Komputer',
-            'Audit Sistem',
+            'Akuntansi Keuangan',
+            'Perpajakan Komputerisasi',
+            'Mobile Development',
+            'Image Processing',
         ];
 
         foreach ($bidangKeahlian as $nama) {

@@ -95,7 +95,7 @@ class PengajuanJudulController extends Controller
     {
         $this->ensureCanView($pengajuan);
 
-        $pengajuan->load(['mahasiswa.user', 'validator', 'gelombang']);
+        $pengajuan->load(['mahasiswa.user', 'validator', 'gelombang', 'penetapanDospembing.dospem1', 'penetapanDospembing.dospem2']);
 
         return view('pengajuan.show', compact('pengajuan'));
     }

@@ -24,6 +24,7 @@ class RecommendationService
     public function __construct(
         private readonly RecommendationGeneratorService $generatorService,
         private readonly ExcelExportService $excelExportService,
+        private readonly PenetapanDospembingImportService $penetapanDospembingImportService,
     ) {}
 
     /**
@@ -40,7 +41,7 @@ class RecommendationService
                 'generated_by' => $generatedBy,
                 'generated_at' => now(),
                 'status' => 'draft',
-                'keterangan' => 'Batch rekomendasi dospem generated oleh admin/kaprodi.',
+                'keterangan' => 'Batch rekomendasi dospem generated oleh admin.',
             ]);
 
             return $this->generatorService->generateForBatch($pengajuans, $riwayat);
@@ -66,6 +67,6 @@ class RecommendationService
 
     public function finalizeFromImport(UploadedFile $file): void
     {
-        Excel::import(new PenetapanDospembingImport(), $file);
+        Excel::import(new PenetapanDospembingImport($this->penetapanDospembingImportService), $file);
     }
 }
