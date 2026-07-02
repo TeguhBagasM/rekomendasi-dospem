@@ -45,7 +45,7 @@
                 <h3 class="text-lg font-semibold text-gray-900">Data Pengajuan Judul</h3>
 
                 <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-                    {{-- Secondary actions: template / export / import --}}
+                    {{-- Secondary actions: template / export / import pengajuan judul --}}
                     <details class="relative">
                         <summary class="flex list-none items-center justify-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 cursor-pointer">
                             <i class="fa-solid fa-ellipsis-vertical"></i>
@@ -101,6 +101,27 @@
                         <i class="fa-solid fa-file-export"></i>
                         Export Rekomendasi Dospem
                     </a>
+
+                    {{-- Import Finalisasi Rekomendasi Dospem --}}
+                    <details class="relative">
+                        <summary class="flex list-none items-center justify-center gap-2 rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 cursor-pointer w-full sm:w-auto">
+                            <i class="fa-solid fa-file-import"></i>
+                            Import Finalisasi
+                        </summary>
+
+                        <div class="absolute right-0 z-10 mt-2 w-full min-w-[16rem] sm:w-80 rounded-lg bg-white p-2 shadow-lg ring-1 ring-gray-200">
+                            <form action="{{ route('rekomendasi.import') }}" method="POST" enctype="multipart/form-data" class="space-y-2 px-3 py-2">
+                                @csrf
+                                <label class="block text-xs font-medium text-gray-600">Import Hasil Finalisasi (.xlsx/.xls/.csv)</label>
+                                <input type="file" name="file" accept=".xlsx,.xls,.csv" required
+                                       class="block w-full text-xs text-gray-600 file:mr-3 file:rounded-md file:border-0 file:bg-gray-100 file:px-3 file:py-1.5 file:text-xs file:font-medium hover:file:bg-gray-200">
+                                <p class="text-xs text-gray-500">Unggah file rekomendasi yang sudah difinalisasi untuk disimpan sebagai keputusan akhir.</p>
+                                <button type="submit" class="w-full rounded-md bg-emerald-700 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-800">
+                                    Proses Import Finalisasi
+                                </button>
+                            </form>
+                        </div>
+                    </details>
                 </div>
             </div>
 
