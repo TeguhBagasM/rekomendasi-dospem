@@ -20,7 +20,15 @@ class DosenProfileSeeder extends Seeder
                     'Implementasi Algoritma K-Nearest Neighbor untuk Prediksi Penyakit Berdasarkan Gejala Klinis',
                 ],
             ],
-
+            // Asep Ririh -> clustering & segmentasi
+            '0425087101' => [
+                'topik_metode' => 'Data mining, clustering, segmentasi pelanggan, algoritma K-Means, Hierarchical Clustering',
+                'judul_penelitian' => [
+                    'Penerapan Algoritma K-Means untuk Segmentasi Pelanggan pada Perusahaan E-Commerce',
+                    'Analisis Clustering untuk Identifikasi Pola Pembelian Konsumen',
+                    'Implementasi Hierarchical Clustering dalam Pengelompokan Data Transaksi Retail',
+                ],
+            ],
             // Hasanah -> kontrol negatif, akuntansi
             '0429098105' => [
                 'topik_metode' => 'Sistem informasi akuntansi, audit sistem, pengendalian internal, pelaporan keuangan berbasis komputer',
@@ -70,6 +78,7 @@ class DosenProfileSeeder extends Seeder
                     'Penerapan Natural Language Processing untuk Analisis Opini Publik di Media Sosial',
                 ],
             ],
+
         ];
 
         foreach ($profiles as $nidn => $data) {
