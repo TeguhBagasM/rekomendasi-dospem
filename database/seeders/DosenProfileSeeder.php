@@ -22,7 +22,7 @@ class DosenProfileSeeder extends Seeder
             ],
             // Asep Ririh -> clustering & segmentasi
             '0425087101' => [
-                'topik_metode' => 'Data mining, clustering, segmentasi pelanggan, algoritma K-Means, Hierarchical Clustering',
+                'topik_metode' => 'Data mining, clustering, TF-IDF, Profile Matching, algoritma K-Means, Hierarchical Clustering',
                 'judul_penelitian' => [
                     'Penerapan Algoritma K-Means untuk Segmentasi Pelanggan pada Perusahaan E-Commerce',
                     'Analisis Clustering untuk Identifikasi Pola Pembelian Konsumen',
