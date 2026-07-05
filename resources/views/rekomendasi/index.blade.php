@@ -47,7 +47,7 @@
                         <input type="file" name="file" accept=".xlsx,.xls,.csv" class="mt-1 block w-full text-sm text-gray-700" required>
                     </div>
                     <button type="submit" class="rounded-md bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-700">
-                        Import Finalisasi
+                        Import Finalisasi Dospem
                     </button>
                 </form>
             </div>

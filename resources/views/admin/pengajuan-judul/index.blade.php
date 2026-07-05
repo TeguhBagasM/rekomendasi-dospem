@@ -106,7 +106,7 @@
                     <details class="relative">
                         <summary class="flex list-none items-center justify-center gap-2 rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 cursor-pointer w-full sm:w-auto">
                             <i class="fa-solid fa-file-import"></i>
-                            Import Finalisasi
+                            Import Finalisasi Dospem
                         </summary>
 
                         <div class="absolute right-0 z-10 mt-2 w-full min-w-[16rem] sm:w-80 rounded-lg bg-white p-2 shadow-lg ring-1 ring-gray-200">

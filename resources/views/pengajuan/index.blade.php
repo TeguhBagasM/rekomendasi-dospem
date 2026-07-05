@@ -38,7 +38,6 @@
                                     <th class="px-4 py-3">Mahasiswa</th>
                                     <th class="px-4 py-3">Judul</th>
                                     <th class="px-4 py-3">Gelombang</th>
-                                    <th class="px-4 py-3">Status</th>
                                     <th class="px-4 py-3">Tgl Pengajuan</th>
                                     <th class="px-4 py-3">Tgl Validasi</th>
                                     <th class="px-4 py-3">Validator</th>
@@ -56,11 +55,6 @@
                                         <td class="px-4 py-4">
                                             <span class="inline-flex items-center rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold text-sky-700">
                                                 {{ $pengajuan->gelombang?->nama ?? '-' }}
-                                            </span>
-                                        </td>
-                                        <td class="px-4 py-4">
-                                            <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold bg-{{ $pengajuan->status_badge }}-100 text-{{ $pengajuan->status_badge }}-700">
-                                                {{ ucfirst($pengajuan->status) }}
                                             </span>
                                         </td>
                                         <td class="px-4 py-4 whitespace-nowrap">{{ $pengajuan->created_at?->format('d M Y') ?? '-' }}</td>
