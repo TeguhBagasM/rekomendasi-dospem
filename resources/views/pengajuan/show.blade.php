@@ -107,7 +107,7 @@
                         @endif
 
                         @if ((auth()->user()->isAdmin() || auth()->user()->isDosen()) && $pengajuan->isPending())
-                            <form action="{{ route('pengajuan.approve', $pengajuan) }}" method="POST">
+                            <form action="{{ route('admin.validasi-pengajuan.approve', $pengajuan) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700">Approve</button>
                             </form>
@@ -126,7 +126,7 @@
                                     <button type="button" x-on:click="open = false" class="text-gray-500 hover:text-gray-700">&times;</button>
                                 </div>
 
-                                <form action="{{ route('pengajuan.reject', $pengajuan) }}" method="POST" class="mt-4 space-y-4">
+                                <form action="{{ route('admin.validasi-pengajuan.reject', $pengajuan) }}" method="POST" class="mt-4 space-y-4">
                                     @csrf
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Alasan Penolakan</label>

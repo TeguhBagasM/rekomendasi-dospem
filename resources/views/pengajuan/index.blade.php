@@ -81,7 +81,7 @@
                                                 @endif
 
                                                 @if ((auth()->user()->isAdmin() || auth()->user()->isDosen()) && $pengajuan->isPending())
-                                                    <form action="{{ route('pengajuan.approve', $pengajuan) }}" method="POST">
+                                                    <form action="{{ route('admin.validasi-pengajuan.approve', $pengajuan) }}" method="POST">
                                                         @csrf
                                                         <button type="submit" class="inline-flex items-center font-medium text-blue-600 hover:text-blue-800">
                                                             <i class="fa-solid fa-check mr-1"></i> Approve
