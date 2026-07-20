@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('program_studis', function (Blueprint $table) {
             $table->id();
-            $table->string('program_studi');
-            $table->string('kode_prodi')->unique();
-            $table->string('fakultas');
+            $table->string('program_studi', 100); // Nama program studi maks 100 karakter
+            $table->string('kode_prodi', 10)->unique(); // Kode prodi umumnya 5-10 karakter
+            $table->string('fakultas', 100); // Nama fakultas maks 100 karakter
             $table->string('jenjang', 10);
-            $table->string('kaprodi');
+            $table->string('kaprodi', 100); // Nama kaprodi maks 100 karakter
             $table->timestamps();
         });
     }

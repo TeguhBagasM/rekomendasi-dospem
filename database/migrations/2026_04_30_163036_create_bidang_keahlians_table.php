@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('bidang_keahlians', function (Blueprint $table) {
             $table->id();
-            $table->string('nama')->unique();
+            $table->string('nama', 100)->unique(); // Bidang keahlian maks 100 karakter
             $table->timestamps();
         });
     }

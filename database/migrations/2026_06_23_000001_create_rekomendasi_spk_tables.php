@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('kriterias', function (Blueprint $table): void {
             $table->id();
-            $table->string('kode')->unique();
-            $table->string('nama');
+            $table->string('kode', 20)->unique(); // Kode kriteria seperti C1, C2
+            $table->string('nama', 100); // Nama kriteria maks 100 karakter
             $table->enum('jenis', ['core', 'secondary']);
             $table->decimal('bobot', 5, 2)->default(0);
             $table->text('deskripsi')->nullable();
@@ -22,8 +22,8 @@ return new class extends Migration
         Schema::create('sub_kriterias', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('kriteria_id')->constrained('kriterias')->cascadeOnDelete();
-            $table->string('kode');
-            $table->string('nama');
+            $table->string('kode', 20); // Kode sub kriteria seperti C1.1
+            $table->string('nama', 100); // Nama sub kriteria maks 100 karakter
             $table->decimal('nilai_min', 5, 2)->nullable();
             $table->decimal('nilai_max', 5, 2)->nullable();
             $table->decimal('nilai', 5, 2)->default(0);

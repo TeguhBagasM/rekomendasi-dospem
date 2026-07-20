@@ -24,8 +24,8 @@ return new class extends Migration
                 ->constrained('program_studis')
                 ->nullOnDelete();
 
-            $table->string('nidn')->unique();
-            $table->string('nama');
+            $table->string('nidn', 20)->unique(); // NIDN 10 digit
+            $table->string('nama', 100); // Nama dosen maks 100 karakter
 
             $table->string('pendidikan_terakhir', 50)->nullable();
             $table->string('jabatan_fungsional', 50)->nullable();
@@ -42,7 +42,7 @@ return new class extends Migration
             $table->unsignedInteger('kuota_terpakai_dospem2')
                 ->default(0);
 
-            $table->string('no_hp')->nullable();
+            $table->string('no_hp', 20)->nullable(); // Nomor HP maks 15 digit + prefix
 
             $table->timestamps();
         });

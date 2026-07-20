@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('gelombangs', function (Blueprint $table) {
             $table->id();
-            $table->string('nama'); // Gelombang 1
+            $table->string('nama', 100); // Nama gelombang maks 100 karakter
             $table->date('tanggal_mulai');
             $table->date('tanggal_selesai');
             $table->boolean('is_active')->default(false);

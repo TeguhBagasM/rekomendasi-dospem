@@ -11,8 +11,8 @@ return new class extends Migration
         Schema::create('pengajuan_juduls', function (Blueprint $table) {
             $table->id();
             $table->foreignId('mahasiswa_id')->constrained('mahasiswas')->cascadeOnDelete();
-            $table->string('judul_skripsi');
-            $table->string('file_proposal')->nullable()->comment('Path file proposal PDF');
+            $table->string('judul_skripsi', 255); // Judul skripsi maks 200 karakter
+            $table->string('file_proposal', 255)->nullable()->comment('Path file proposal PDF');
             $table->enum('status', ['pending', 'disetujui', 'ditolak'])->default('pending');
             $table->text('alasan_penolakan')->nullable();
             $table->foreignId('gelombang_id')
