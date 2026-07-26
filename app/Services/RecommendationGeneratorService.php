@@ -179,7 +179,6 @@ class RecommendationGeneratorService
                 'jenis_dospem' => $jenisDospem,
                 'topic_similarity' => $row['topic_similarity'],
                 'topic_scale' => $row['topic_scale'],
-                'homebase_scale' => 0, // Vestigial DB field — homebase removed from scoring
                 'quota_scale' => $row[$quotaScaleKey],
                 'jabatan_scale' => $row['jabatan_scale'],
                 'pendidikan_scale' => $row['pendidikan_scale'],

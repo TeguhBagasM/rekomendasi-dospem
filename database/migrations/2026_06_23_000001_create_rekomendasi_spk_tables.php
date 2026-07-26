@@ -64,7 +64,6 @@ return new class extends Migration
             $table->enum('jenis_dospem', ['dospem1', 'dospem2']);
             $table->decimal('topic_similarity', 8, 4)->default(0);
             $table->unsignedTinyInteger('topic_scale')->default(0);
-            $table->unsignedTinyInteger('homebase_scale')->nullable();
             $table->unsignedTinyInteger('quota_scale')->default(0);
             $table->unsignedTinyInteger('jabatan_scale')->default(0);
             $table->unsignedTinyInteger('pendidikan_scale')->default(0);

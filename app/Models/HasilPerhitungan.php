@@ -16,7 +16,6 @@ class HasilPerhitungan extends Model
         'jenis_dospem',
         'topic_similarity',
         'topic_scale',
-        'homebase_scale',
         'quota_scale',
         'jabatan_scale',
         'pendidikan_scale',
@@ -30,7 +29,6 @@ class HasilPerhitungan extends Model
     protected $casts = [
         'topic_similarity' => 'decimal:4',
         'topic_scale' => 'integer',
-        'homebase_scale' => 'integer',
         'quota_scale' => 'integer',
         'jabatan_scale' => 'integer',
         'pendidikan_scale' => 'integer',
