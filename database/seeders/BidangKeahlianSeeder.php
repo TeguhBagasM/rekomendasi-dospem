@@ -11,27 +11,20 @@ class BidangKeahlianSeeder extends Seeder
     {
         $bidangKeahlian = [
             'Manajemen',
-            'Matematika',
             'Data Science',
-            'Machine Learning',
+            'Machine Learning / Deep Learning',
             'Data Mining',
-            'Deep Learning',
-            'Computer Vision',
             'Natural Language Processing',
+            'Computer Vision / Image Processing',
             'Sistem Pendukung Keputusan',
-            'Pemrograman Web',
-            'Database',
-            'Big Data',
             'Software Development',
-            'Analisis Sistem',
-            'Networking',
+            'Database / Big Data',
             'Cyber Security',
-            'Internet of Things',
+            'Internet Of Things',
             'Sistem Informasi',
             'Akuntansi Keuangan',
             'Perpajakan Komputerisasi',
             'Mobile Development',
-            'Image Processing',
         ];
 
         foreach ($bidangKeahlian as $nama) {

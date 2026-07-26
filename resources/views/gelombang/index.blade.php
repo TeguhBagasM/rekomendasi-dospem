@@ -1,3 +1,14 @@
+@php
+    $search = request('search', '');
+    $filteredGelombangs = $gelombangs->when($search, function ($query) use ($search) {
+        $query->filter(fn ($g) =>
+            str_contains(strtolower($g->nama), strtolower($search))
+            || str_contains($g->periode_akademik, $search)
+            || str_contains(strtolower($g->periode_akademik_label), strtolower($search))
+        );
+    });
+@endphp
+
 <x-app-layout>
     <x-page-header
         title="Manajemen Gelombang"
@@ -30,11 +41,33 @@
                         </a>
                     </div>
 
+                    <form method="GET" action="{{ route('gelombang.index') }}" class="flex items-end gap-3">
+                        <div class="flex-1 max-w-xs">
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Cari</label>
+                            <input
+                                type="text"
+                                name="search"
+                                value="{{ $search }}"
+                                placeholder="Nama / Periode Akademik..."
+                                class="block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-gray-900 focus:ring-gray-900"
+                            />
+                        </div>
+                        <button type="submit" class="inline-flex items-center justify-center rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700">
+                            <i class="fa-solid fa-search mr-2"></i> Cari
+                        </button>
+                        @if ($search)
+                            <a href="{{ route('gelombang.index') }}" class="inline-flex items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                                Reset
+                            </a>
+                        @endif
+                    </form>
+
                     <div class="overflow-x-auto">
-                        <table class="{{ $gelombangs->isNotEmpty() ? 'js-datatable' : '' }} min-w-full divide-y divide-gray-200">
+                        <table class="{{ $filteredGelombangs->isNotEmpty() ? 'js-datatable' : '' }} min-w-full divide-y divide-gray-200">
                             <thead>
                                 <tr class="text-left text-xs font-semibold uppercase tracking-wider text-white bg-gray-900">
                                     <th class="px-4 py-3">No</th>
+                                    <th class="px-4 py-3">Periode Akademik</th>
                                     <th class="px-4 py-3">Nama Gelombang</th>
                                     <th class="px-4 py-3">Tanggal Mulai</th>
                                     <th class="px-4 py-3">Tanggal Selesai</th>
@@ -44,9 +77,14 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
-                                @forelse ($gelombangs as $index => $gelombang)
+                                @forelse ($filteredGelombangs as $index => $gelombang)
                                     <tr class="text-sm text-gray-700">
                                         <td class="px-4 py-4">{{ $index + 1 }}</td>
+                                        <td class="px-4 py-4">
+                                            <span class="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700">
+                                                {{ $gelombang->periode_akademik_label }}
+                                            </span>
+                                        </td>
                                         <td class="px-4 py-4 font-medium">{{ $gelombang->nama }}</td>
                                         <td class="px-4 py-4">{{ $gelombang->tanggal_mulai->format('d M Y') }}</td>
                                         <td class="px-4 py-4">{{ $gelombang->tanggal_selesai->format('d M Y') }}</td>

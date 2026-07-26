@@ -1,0 +1,81 @@
+# AGENTS.md
+
+## What this is
+
+Laravel 12 SPK (Sistem Pendukung Keputusan) for recommending thesis advisors (dosen pembimbing). Uses TF-IDF + Cosine Similarity + Profile Matching to rank and assign dosen to student thesis proposals.
+
+## Quick commands
+
+```bash
+composer dev          # Start all: artisan serve, queue:listen, pail, npm run dev (uses concurrently)
+php artisan test     # Run Pest tests (uses in-memory SQLite)
+vendor/bin/pint      # Code style fixer (Laravel Pint)
+npm run dev          # Vite dev server only
+npm run build        # Vite production build
+php artisan migrate:fresh --seed  # Reset DB with seeders
+```
+
+## Dev environment
+
+- **PHP 8.2+**, **MySQL 8** in production, **SQLite** file-based in dev (`database/database.sqlite`)
+- `.env` has MySQL (`DB_CONNECTION=mysql`, db `rekomendasi_dospem`); `.env.example` defaults to SQLite
+- Tests always use in-memory SQLite (`phpunit.xml` overrides `DB_CONNECTION=sqlite`, `DB_DATABASE=:memory:`)
+- Default admin login: `admin@gmail.com` / `111` (seeded by `DatabaseSeeder`)
+
+## Roles & authorization
+
+Three Spatie roles: `admin`, `dosen`, `mahasiswa`. Routes use `role:` middleware. The `User` model exposes `isAdmin()`, `isDosen()`, `isMahasiswa()`. Always check authorization explicitly — controllers abort 403 with `abort_unless`.
+
+## Architecture notes
+
+- **Business logic lives in Services**, not controllers. There are 17 service classes in `app/Services/`. Controllers are thin wrappers that delegate to services.
+- **Recommendation pipeline** (`app/Services/RecommendationGeneratorService.php`):
+  1. TF-IDF (`TfidfService`) → 2. Cosine Similarity (`CosineSimilarityService`) → 3. Profile Matching (`ProfileMatchingService`) → 4. Ranking DESC → 5. Assignment (`RecommendationAssignmentService`)
+- Profile Matching: Core Factor = topic similarity (60%), Secondary Factor = homebase + quota + jabatan (40%)
+- `TextPreprocessingService` handles Indonesian/English stopword removal, case folding, normalization
+- `DocumentSimilarityService` wraps TF-IDF + Cosine for one-to-many comparison (title vs dosen documents)
+- `TextSimilarityService` checks title duplication across student submissions (75% threshold), **not** used in recommendation pipeline
+
+## Domain rules that matter
+
+- **Dospem1** must be from program studi "Teknik Informatika" (hard constraint in `ProfileMatchingService::isEligibleForDospem1`)
+- **Dospem1 jabatan rank >= Dospem2** rank: Lektor(3) > Asisten Ahli(2) > Tenaga Pengajar(1) — enforced in `RecommendationAssignmentService::pickDospem2`
+- Only one `Gelombang` can be active at a time (`GelombangService` enforces this)
+- Mahasiswa cannot submit if they have a pending submission (`Mahasiswa::bolehMengajukanBaru`)
+- Recommendation assignment quota is tracked in-memory during batch generation, **not** written to `kuota_terpakai_*` columns until admin imports finalized results
+
+## Testing
+
+- Pest 3 with `pestphp/pest-plugin-laravel`
+- Feature tests auto-apply `RefreshDatabase` (configured in `tests/Pest.php`)
+- Unit tests exist in `tests/Unit/` (currently just `ExampleTest`)
+- Feature tests in `tests/Feature/` (Auth, Profile, Example)
+- Run a single test: `vendor/bin/pest --filter="test name"`
+- Run a single file: `vendor/bin/pest tests/Feature/ProfileTest.php`
+
+## Code style
+
+- 4-space indent, LF line endings (`.editorconfig`)
+- No custom Pint config — uses Laravel defaults
+- No CI/CD pipeline, no pre-commit hooks configured
+- No lint/typecheck commands beyond Pint
+
+## Gotchas
+
+- `backup.txt` contains an older model version of `Dosen` — ignore it, it's stale reference
+- `.env.example` says SQLite but real `.env` uses MySQL — always verify `.env` exists before running artisan
+- The `composer dev` script runs 4 processes via `npx concurrently` — requires both PHP and Node in PATH
+- `DosenProfile.dokumen_tfidf` stores a pre-computed TF-IDF document string per dosen — if empty, similarity defaults to 0
+- `PenetapanDospembingImport` updates `kuota_terpakai_*` columns — only path that changes actual database quota state
+- Views are Blade with Tailwind CSS; layout is `resources/views/layouts/app.blade.php`
+
+## Key files for orientation
+
+- `routes/web.php` — all route definitions
+- `app/Services/RecommendationGeneratorService.php` — core orchestration
+- `app/Services/ProfileMatchingService.php` — scoring algorithm with business constants
+- `app/Services/RecommendationAssignmentService.php` — dosen assignment rules
+- `app/Models/Dosen.php` — dosen model with quota fields
+- `app/Models/PengajuanJudul.php` — thesis proposal model
+- `database/migrations/2026_06_23_000001_create_rekomendasi_spk_tables.php` — SPK schema
+- `database/seeders/DatabaseSeeder.php` — seeder order and default data

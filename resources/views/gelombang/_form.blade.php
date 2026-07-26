@@ -1,9 +1,31 @@
 @php
     $isEdit      = isset($gelombang) && $gelombang->exists;
     $submitLabel = $isEdit ? 'Update' : 'Simpan';
+    $periodeOptions = \App\Models\Gelombang::periodeAkademikOptions();
 @endphp
 
 <div class="p-6 space-y-6">
+    <div>
+        <x-input-label for="periode_akademik" value="Periode Akademik" />
+        <select
+            id="periode_akademik"
+            name="periode_akademik"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            required
+            autofocus
+        >
+            <option value="">-- Pilih Periode Akademik --</option>
+            @foreach ($periodeOptions as $value => $label)
+                <option
+                    value="{{ $value }}"
+                    @selected(old('periode_akademik', $isEdit ? $gelombang->periode_akademik : '') === $value)
+                >
+                    {{ $label }}
+                </option>
+            @endforeach
+        </select>
+        <x-input-error :messages="$errors->get('periode_akademik')" class="mt-2" />
+    </div>
     <div>
         <x-input-label for="nama" value="Nama Gelombang" />
         <x-text-input
@@ -14,7 +36,6 @@
             :value="old('nama', $isEdit ? $gelombang->nama : '')"
             placeholder="Contoh: Gelombang 1"
             required
-            autofocus
         />
         <x-input-error :messages="$errors->get('nama')" class="mt-2" />
     </div>

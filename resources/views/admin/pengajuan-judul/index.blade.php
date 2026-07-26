@@ -161,7 +161,7 @@
                         <select name="gelombang" class="block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-gray-900 focus:ring-gray-900">
                             <option value="">Semua</option>
                             @foreach ($gelombangs as $gelombang)
-                                <option value="{{ $gelombang->id }}" @selected(($filters['gelombang'] ?? null) == $gelombang->id)>{{ $gelombang->nama }}</option>
+                                <option value="{{ $gelombang->id }}" @selected(($filters['gelombang'] ?? null) == $gelombang->id)>{{ $gelombang->nama }} ({{ $gelombang->periode_akademik_label }})</option>
                             @endforeach
                         </select>
                     </div>

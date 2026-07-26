@@ -13,19 +13,19 @@ class ProdiSeeder extends Seeder
     public function run(): void
     {
         $prodis = [
-            // [
-            //     'program_studi' => 'Teknik Informatika',
-            //     'kode_prodi' => '55401',
-            //     'fakultas' => 'Fakultas Teknik',
-            //     'jenjang' => 'D3',
-            //     'kaprodi' => 'Feri Alpiyasin, M.Kom.',
-            // ],
+            [
+                'program_studi' => 'Teknik Informatika',
+                'kode_prodi' => '55401',
+                'fakultas' => 'Fakultas Teknik',
+                'jenjang' => 'D3',
+                'kaprodi' => 'Deni Sopiyan, S.Kom., M.Kom.',
+            ],
             [
                 'program_studi' => 'Komputerisasi Akuntansi',
                 'kode_prodi' => '57402',
                 'fakultas' => 'Fakultas Teknik',
                 'jenjang' => 'D3',
-                'kaprodi' => 'Hasanah Tisna Amijaya, S.Pd., M.Ak',
+                'kaprodi' => 'Ganjar Nurul Fajar, S.E., M.Ak.',
             ],
             [
                 'program_studi' => 'Manajemen Informatika',

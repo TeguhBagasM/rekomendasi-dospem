@@ -13,6 +13,7 @@ class Gelombang extends Model
 
     protected $fillable = [
         'nama',
+        'periode_akademik',
         'tanggal_mulai',
         'tanggal_selesai',
         'is_active',
@@ -23,6 +24,29 @@ class Gelombang extends Model
         'tanggal_selesai' => 'date',
         'is_active'       => 'boolean',
     ];
+
+    // ==================== ACCESSORS ====================
+
+    /**
+     * Format label periode akademik, contoh: "2025 Ganjil" atau "2026 Genap".
+     */
+    public function getPeriodeAkademikLabelAttribute(): string
+    {
+        $code = (string) $this->periode_akademik;
+
+        if (strlen($code) !== 5) {
+            return $code;
+        }
+
+        $year = substr($code, 0, 4);
+        $semester = match (substr($code, 4, 1)) {
+            '1'     => 'Ganjil',
+            '2'     => 'Genap',
+            default => substr($code, 4, 1),
+        };
+
+        return "{$year} {$semester}";
+    }
 
     // ==================== RELATIONS ====================
 
@@ -67,5 +91,24 @@ class Gelombang extends Model
         return $this->is_active
             && $this->tanggal_mulai?->lte($today)
             && $this->tanggal_selesai?->gte($today);
+    }
+
+    /**
+     * Pilihan periode akademik untuk select dropdown.
+     *
+     * @return array<string, string>
+     */
+    public static function periodeAkademikOptions(): array
+    {
+        $currentYear = (int) date('Y');
+
+        $options = [];
+
+        for ($year = $currentYear - 1; $year <= $currentYear + 1; $year++) {
+            $options["{$year}1"] = "{$year} Ganjil";
+            $options["{$year}2"] = "{$year} Genap";
+        }
+
+        return $options;
     }
 }

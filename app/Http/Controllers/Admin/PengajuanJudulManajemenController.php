@@ -51,7 +51,7 @@ class PengajuanJudulManajemenController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        $gelombangs = Gelombang::orderByDesc('tanggal_mulai')->get(['id', 'nama']);
+        $gelombangs = Gelombang::orderByDesc('tanggal_mulai')->get(['id', 'nama', 'periode_akademik']);
 
         $angkatans = Mahasiswa::query()
             ->select('angkatan')

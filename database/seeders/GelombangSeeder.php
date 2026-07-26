@@ -11,14 +11,32 @@ class GelombangSeeder extends Seeder
      */
     public function run(): void
     {
-        // buatkan gelombang 1 sampai 4
-        for ($i = 1; $i <= 4; $i++) {
-            \App\Models\Gelombang::create([
-                'nama' => 'Gelombang ' . $i,
-                'tanggal_mulai' => now()->addDays($i * 7),
-                'tanggal_selesai' => now()->addDays($i * 7 + 6),
-                'is_active' => $i === 1, // hanya gelombang 1 yang aktif
-            ]);
+        $gelombangs = [
+            [
+                'nama'             => 'Gelombang 1',
+                'periode_akademik' => '20251',
+                'tanggal_mulai'    => now()->addDays(7),
+                'tanggal_selesai'  => now()->addDays(13),
+                'is_active'        => true,
+            ],
+            [
+                'nama'             => 'Gelombang 2',
+                'periode_akademik' => '20252',
+                'tanggal_mulai'    => now()->addDays(14),
+                'tanggal_selesai'  => now()->addDays(20),
+                'is_active'        => false,
+            ],
+            [
+                'nama'             => 'Gelombang 3',
+                'periode_akademik' => '20261',
+                'tanggal_mulai'    => now()->addDays(21),
+                'tanggal_selesai'  => now()->addDays(27),
+                'is_active'        => false,
+            ],
+        ];
+
+        foreach ($gelombangs as $data) {
+            \App\Models\Gelombang::create($data);
         }
     }
 }

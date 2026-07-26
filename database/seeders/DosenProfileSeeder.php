@@ -11,74 +11,74 @@ class DosenProfileSeeder extends Seeder
     public function run(): void
     {
         $profiles = [
-            // Feri Alpiyasin -> klasifikasi & prediksi
-            '0422029205' => [
-                'topik_metode' => 'Data mining, klasifikasi, prediksi, algoritma Naive Bayes, Decision Tree, K-Nearest Neighbor (KNN), Random Forest, evaluasi model menggunakan confusion matrix dan akurasi',
+            '0420029404' => [ // Titi Widaretna
+                'topik_metode' => 'SVM, Doc2Vec, Rocchio, KNN, Classification, web development codeigniter, uml, database',
                 'judul_penelitian' => [
-                    'Penerapan Algoritma Naive Bayes untuk Prediksi Kelulusan Mahasiswa Tepat Waktu',
-                    'Klasifikasi Risiko Kredit Nasabah Menggunakan Metode Decision Tree C4.5',
-                    'Implementasi Algoritma K-Nearest Neighbor untuk Prediksi Penyakit Berdasarkan Gejala Klinis',
+                    'Hoax Identification on Tweets in Indonesia using Doc2Vec',
                 ],
             ],
-            // Asep Ririh -> clustering & segmentasi
-            '0425087101' => [
-                'topik_metode' => 'Data mining, clustering, TF-IDF, Profile Matching, algoritma K-Means, Hierarchical Clustering',
+            '0420078308' => [ // Heri Wahyudi
+                'topik_metode' => 'Cnn, svm',
                 'judul_penelitian' => [
-                    'Penerapan Algoritma K-Means untuk Segmentasi Pelanggan pada Perusahaan E-Commerce',
-                    'Analisis Clustering untuk Identifikasi Pola Pembelian Konsumen',
-                    'Implementasi Hierarchical Clustering dalam Pengelompokan Data Transaksi Retail',
+                    'Klasifikasi multi penyakit tanaman berbasis citra daun pepaya menggunakan convolutional neural network (cnn)',
                 ],
             ],
-            // Hasanah -> kontrol negatif, akuntansi
-            '0429098105' => [
-                'topik_metode' => 'Sistem informasi akuntansi, audit sistem, pengendalian internal, pelaporan keuangan berbasis komputer',
+            '0408109005' => [ // Asep Ririh Riswaya
+                'topik_metode' => 'Pengembangan model random forest untuk deteksi serangan networking',
                 'judul_penelitian' => [
-                    'Analisis Sistem Informasi Akuntansi Penggajian Karyawan',
-                    'Perancangan Sistem Audit Internal Berbasis Web',
-                    'Evaluasi Pengendalian Internal Sistem Informasi Keuangan',
+                    'Pembenagan System-Define Networking menggunakan Machine learning dan Deep Learning',
                 ],
             ],
-
-            // Jajat Sudrajat -> SPK, fuzzy, multi-kriteria
-            '0406087303' => [
-                'topik_metode' => 'Sistem pendukung keputusan, multi-criteria decision making, metode Fuzzy Logic, TOPSIS, AHP, SAW, penentuan prioritas dan perankingan alternatif',
+            '0411126805' => [ // Dr. Toni Kusnandar
+                'topik_metode' => '',
                 'judul_penelitian' => [
-                    'Sistem Pendukung Keputusan Pemilihan Supplier Menggunakan Metode TOPSIS',
-                    'Penerapan Metode Fuzzy Logic dalam Penentuan Kelayakan Penerima Bantuan Sosial',
-                    'Implementasi Metode AHP untuk Perankingan Alternatif Lokasi Usaha',
+                    'A Novel Method for Optimizing Color Selection using the Hadamard Product Technique',
                 ],
             ],
-
-            // Toni Kusnandar -> rekomendasi, clustering, association rule
-            '0411126805' => [
-                'topik_metode' => 'Pengembangan sistem berbasis web, sistem rekomendasi produk, Content-Based Filtering, Cosine Similarity, algoritma Apriori association rule, K-Means Clustering segmentasi pelanggan',
+            '5257780000000000' => [ // Deni Sopiyan
+                'topik_metode' => '',
                 'judul_penelitian' => [
-                    'Penerapan Content-Based Filtering untuk Sistem Rekomendasi Produk pada Toko Online',
-                    'Implementasi Algoritma Apriori untuk Analisis Pola Pembelian Konsumen pada E-Commerce',
-                    'Penerapan K-Means Clustering untuk Segmentasi Pelanggan dalam Mendukung Strategi Pemasaran Digital',
+                    'Masterplan Smart System di Desa Wisata Samida Garut',
                 ],
             ],
-
-            // Titi Widaretna -> kontrol negatif, jaringan/cyber
-            '0415038501' => [
-                'topik_metode' => 'Jaringan komputer, keamanan jaringan, Internet of Things, sistem terdistribusi, monitoring infrastruktur jaringan',
+            '0413048004' => [ // Ganjar Nurul Fajar
+                'topik_metode' => '',
+                'judul_penelitian' => [],
+            ],
+            '0000000001' => [ // Ikbal Jamaludin
+                'topik_metode' => 'Erp',
+                'judul_penelitian' => [],
+            ],
+            '0426068054' => [ // Susanto
+                'topik_metode' => 'sistem informasi manajemen, umi, basis data, erd, perancangan sistem',
                 'judul_penelitian' => [
-                    'Analisis Keamanan Jaringan Menggunakan Metode Intrusion Detection System',
-                    'Rancang Bangun Sistem Monitoring Suhu Berbasis Internet of Things',
-                    'Implementasi VPN untuk Keamanan Jaringan Kantor',
+                    'sistem pendukung keputusan kelayakan pemberian kredit nasabah dengan metode c4.5',
                 ],
             ],
-
-            // Ahfi Fauka Pranata -> sentimen, NLP, CNN/citra
-            '0408129001' => [
-                'topik_metode' => 'Analisis sentimen, text mining, Support Vector Machine (SVM), Natural Language Processing, Convolutional Neural Network (CNN), klasifikasi citra, ekstraksi fitur TF-IDF',
+            '0409129401' => [ // Ahfi Fauka Pranata
+                'topik_metode' => 'Machine Learning: random forest, decision tree, naive bayes, SVM, clustering, K-Means, LSTM, CNN, klasifikasi, prediksi, deteksi, computer vision, YOLOv8',
+                'judul_penelitian' => [],
+            ],
+            '0428057001' => [ // Rohmat Nur Ibrahim
+                'topik_metode' => 'random forest, decision tree, naive bayes, SVM, clustering, K-Means, LSTM, CNN, klasifikasi, prediksi, deteksi, computer vision, YOLOv8',
                 'judul_penelitian' => [
-                    'Analisis Sentimen Ulasan Pengguna Aplikasi E-Commerce Menggunakan Algoritma Support Vector Machine',
-                    'Klasifikasi Citra Digital Menggunakan Metode Convolutional Neural Network (CNN) untuk Deteksi Objek',
-                    'Penerapan Natural Language Processing untuk Analisis Opini Publik di Media Sosial',
+                    'Implementasi YOLOv8 untuk Deteksi Objek Real-Time',
+                    'Sistem Rekomendasi Berbasis Collaborative Filtering',
+                    'Analisis Sentimen Twitter Menggunakan BERT',
                 ],
             ],
-
+            '2349780000000000' => [ // Fitri Rizqiati
+                'topik_metode' => '',
+                'judul_penelitian' => [
+                    'SISTEM REKOMENDASI SENSOR UNTUK ALAT PAKAN IKAN BERBASIS IOT MENGGUNAKAN METODE FUZZY',
+                ],
+            ],
+            '0419067804' => [ // Lilis Emalia
+                'topik_metode' => 'Sistem Informasi Manajemen, basis data, ERD, perancangan sistem, UML, TOPSIS, ELECTRE, SAW',
+                'judul_penelitian' => [
+                    'Sistem Informasi Monitoring Kinerja Karyawan Berbasis Mobile Dengan Menggunakan Framework Flutter Di PT Makerindo Prima Solusi',
+                ],
+            ],
         ];
 
         foreach ($profiles as $nidn => $data) {
