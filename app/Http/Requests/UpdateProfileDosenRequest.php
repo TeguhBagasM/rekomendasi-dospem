@@ -26,11 +26,11 @@ class UpdateProfileDosenRequest extends FormRequest
             'no_hp' => ['nullable', 'string', 'max:20', 'regex:/^[0-9+\-\s]+$/'],
 
             // TAB 2 - bidang keahlian
-            'bidang_keahlian_ids'   => ['nullable', 'array'],
+            'bidang_keahlian_ids' => ['nullable', 'array'],
             'bidang_keahlian_ids.*' => ['exists:bidang_keahlians,id'],
 
             // TAB 3 - profil penelitian
-            'topik_metode'     => ['nullable', 'string', 'max:5000'],
+            'topik_metode' => ['nullable', 'string', 'max:5000'],
             'judul_penelitian' => ['nullable', 'string', 'max:5000'],
         ];
     }

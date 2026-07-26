@@ -22,8 +22,8 @@ class ImportDosenRequest extends FormRequest
     {
         return [
             'file.required' => 'File excel wajib diunggah.',
-            'file.mimes'    => 'File harus berformat xlsx, xls, atau csv.',
-            'file.max'      => 'Ukuran file maksimal 5MB.',
+            'file.mimes' => 'File harus berformat xlsx, xls, atau csv.',
+            'file.max' => 'Ukuran file maksimal 5MB.',
         ];
     }
 }

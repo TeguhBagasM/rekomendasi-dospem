@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Dosen;
+use App\Models\KuotaDosenGelombang;
 use App\Models\PenetapanDospembing;
 use App\Models\PengajuanJudul;
 use App\Models\RekomendasiDospembing;
@@ -10,8 +11,8 @@ use App\Models\RiwayatRekomendasi;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class PenetapanDospembingImportService
 {
@@ -96,7 +97,7 @@ class PenetapanDospembingImportService
                     ]
                 );
 
-                $penetapan->loadMissing(['dospem1', 'dospem2']);
+                $penetapan->loadMissing(['dospem1', 'dospem2', 'pengajuan']);
                 $this->consumeQuota($penetapan);
             }
 
@@ -327,25 +328,53 @@ class PenetapanDospembingImportService
             return;
         }
 
-        $penetapan->loadMissing(['dospem1', 'dospem2']);
+        $penetapan->loadMissing(['dospem1', 'dospem2', 'pengajuan']);
+
+        $gelombangId = $penetapan->pengajuan?->gelombang_id;
 
         if ($penetapan->dospem1) {
             $penetapan->dospem1->decrement('kuota_terpakai_dospem1');
+
+            if ($gelombangId) {
+                KuotaDosenGelombang::where('dosen_id', $penetapan->dospem1_id)
+                    ->where('gelombang_id', $gelombangId)
+                    ->decrement('kuota_terpakai_dospem1');
+            }
         }
 
         if ($penetapan->dospem2) {
             $penetapan->dospem2->decrement('kuota_terpakai_dospem2');
+
+            if ($gelombangId) {
+                KuotaDosenGelombang::where('dosen_id', $penetapan->dospem2_id)
+                    ->where('gelombang_id', $gelombangId)
+                    ->decrement('kuota_terpakai_dospem2');
+            }
         }
     }
 
     private function consumeQuota(PenetapanDospembing $penetapan): void
     {
+        $gelombangId = $penetapan->pengajuan?->gelombang_id;
+
         if ($penetapan->dospem1_id) {
             Dosen::query()->whereKey($penetapan->dospem1_id)->increment('kuota_terpakai_dospem1');
+
+            if ($gelombangId) {
+                KuotaDosenGelombang::where('dosen_id', $penetapan->dospem1_id)
+                    ->where('gelombang_id', $gelombangId)
+                    ->increment('kuota_terpakai_dospem1');
+            }
         }
 
         if ($penetapan->dospem2_id) {
             Dosen::query()->whereKey($penetapan->dospem2_id)->increment('kuota_terpakai_dospem2');
+
+            if ($gelombangId) {
+                KuotaDosenGelombang::where('dosen_id', $penetapan->dospem2_id)
+                    ->where('gelombang_id', $gelombangId)
+                    ->increment('kuota_terpakai_dospem2');
+            }
         }
     }
 
@@ -402,7 +431,7 @@ class PenetapanDospembingImportService
 
         if ($missing->isNotEmpty()) {
             throw ValidationException::withMessages([
-                'file' => ['Format Excel tidak sesuai. Kolom wajib tidak ditemukan: ' . $missing->implode(', ') . '.'],
+                'file' => ['Format Excel tidak sesuai. Kolom wajib tidak ditemukan: '.$missing->implode(', ').'.'],
             ]);
         }
     }
@@ -420,7 +449,7 @@ class PenetapanDospembingImportService
 
     private function buildRecommendationKey(int $riwayatId, int $pengajuanId): string
     {
-        return $riwayatId . '|' . $pengajuanId;
+        return $riwayatId.'|'.$pengajuanId;
     }
 
     private function normalizeCatatan(mixed $value): ?string

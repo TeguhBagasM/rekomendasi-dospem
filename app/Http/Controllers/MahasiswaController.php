@@ -118,13 +118,13 @@ class MahasiswaController extends Controller
             'file' => ['required', 'file', 'mimes:xlsx,xls,csv'],
         ]);
 
-        Excel::import(new MahasiswaImport(), $request->file('file'));
+        Excel::import(new MahasiswaImport, $request->file('file'));
 
         return redirect()->route('mahasiswa.index')->with('success', 'Data mahasiswa berhasil diimport.');
     }
 
     public function export()
     {
-        return Excel::download(new MahasiswaExport(), 'data-mahasiswa.xlsx');
+        return Excel::download(new MahasiswaExport, 'data-mahasiswa.xlsx');
     }
 }

@@ -3,14 +3,15 @@
 namespace App\Services;
 
 use App\Models\Gelombang;
+use App\Models\Mahasiswa;
 use App\Models\PengajuanJudul;
 use App\Models\User;
-use App\Models\Mahasiswa;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class PengajuanJudulService
 {
@@ -21,15 +22,15 @@ class PengajuanJudulService
     /**
      * Store a new PengajuanJudul.
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function create(Mahasiswa $mahasiswa, Gelombang $gelombang, string $judulSkripsi, UploadedFile $fileProposal): PengajuanJudul
     {
         // 1. Check title similarity
         $similarityResult = $this->textSimilarityService->checkSimilarity($judulSkripsi);
         if ($similarityResult['is_similar']) {
-            throw \Illuminate\Validation\ValidationException::withMessages([
-                'judul_skripsi' => 'Judul memiliki kemiripan ' . round($similarityResult['percent'], 2) . '% dengan: "' . $similarityResult['matched_title'] . '". Gunakan judul lain.',
+            throw ValidationException::withMessages([
+                'judul_skripsi' => 'Judul memiliki kemiripan '.round($similarityResult['percent'], 2).'% dengan: "'.$similarityResult['matched_title'].'". Gunakan judul lain.',
             ]);
         }
 
@@ -38,18 +39,18 @@ class PengajuanJudulService
 
         // 3. Create record
         return PengajuanJudul::create([
-            'mahasiswa_id'  => $mahasiswa->id,
-            'gelombang_id'  => $gelombang->id,
+            'mahasiswa_id' => $mahasiswa->id,
+            'gelombang_id' => $gelombang->id,
             'judul_skripsi' => $judulSkripsi,
             'file_proposal' => $filePath,
-            'status'        => 'pending',
+            'status' => 'pending',
         ]);
     }
 
     /**
      * Update an existing PengajuanJudul.
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function update(PengajuanJudul $pengajuan, string $judulSkripsi, ?UploadedFile $fileProposal = null): void
     {
@@ -57,8 +58,8 @@ class PengajuanJudulService
         if (trim($pengajuan->judul_skripsi) !== trim($judulSkripsi)) {
             $similarityResult = $this->textSimilarityService->checkSimilarity($judulSkripsi, $pengajuan->id);
             if ($similarityResult['is_similar']) {
-                throw \Illuminate\Validation\ValidationException::withMessages([
-                    'judul_skripsi' => 'Judul memiliki kemiripan ' . round($similarityResult['percent'], 2) . '% dengan: "' . $similarityResult['matched_title'] . '". Gunakan judul lain.',
+                throw ValidationException::withMessages([
+                    'judul_skripsi' => 'Judul memiliki kemiripan '.round($similarityResult['percent'], 2).'% dengan: "'.$similarityResult['matched_title'].'". Gunakan judul lain.',
                 ]);
             }
         }
@@ -140,8 +141,8 @@ class PengajuanJudulService
      */
     private function storeProposalFile(UploadedFile $file, string $nim, string $nama): string
     {
-        $safeName = Str::slug(trim($nim . ' ' . $nama), '_');
-        $filename = $safeName . '.' . $file->getClientOriginalExtension();
+        $safeName = Str::slug(trim($nim.' '.$nama), '_');
+        $filename = $safeName.'.'.$file->getClientOriginalExtension();
 
         return $file->storeAs('proposal', $filename, 'public');
     }

@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
         Role::firstOrCreate(['name' => 'mahasiswa']);
 
         $admin = User::firstOrCreate(
-            ['email' => 'admin@gmail.com'], 
+            ['email' => 'admin@gmail.com'],
             [
                 'name' => 'Admin',
                 'password' => Hash::make('111'),
@@ -42,6 +42,7 @@ class DatabaseSeeder extends Seeder
             GelombangSeeder::class,
             DosenProfileSeeder::class,
             DosenBidangKeahlianSeeder::class,
+            KuotaDosenGelombangSeeder::class,
             // PengajuanSeeder::class,
         ]);
     }

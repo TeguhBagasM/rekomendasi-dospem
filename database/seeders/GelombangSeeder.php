@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Gelombang;
 use Illuminate\Database\Seeder;
 
 class GelombangSeeder extends Seeder
@@ -13,30 +14,30 @@ class GelombangSeeder extends Seeder
     {
         $gelombangs = [
             [
-                'nama'             => 'Gelombang 1',
+                'nama' => 'Gelombang 1',
                 'periode_akademik' => '20251',
-                'tanggal_mulai'    => now()->addDays(7),
-                'tanggal_selesai'  => now()->addDays(13),
-                'is_active'        => true,
+                'tanggal_mulai' => now()->addDays(7),
+                'tanggal_selesai' => now()->addDays(13),
+                'is_active' => true,
             ],
             [
-                'nama'             => 'Gelombang 2',
+                'nama' => 'Gelombang 2',
                 'periode_akademik' => '20252',
-                'tanggal_mulai'    => now()->addDays(14),
-                'tanggal_selesai'  => now()->addDays(20),
-                'is_active'        => false,
+                'tanggal_mulai' => now()->addDays(14),
+                'tanggal_selesai' => now()->addDays(20),
+                'is_active' => false,
             ],
             [
-                'nama'             => 'Gelombang 3',
+                'nama' => 'Gelombang 3',
                 'periode_akademik' => '20261',
-                'tanggal_mulai'    => now()->addDays(21),
-                'tanggal_selesai'  => now()->addDays(27),
-                'is_active'        => false,
+                'tanggal_mulai' => now()->addDays(21),
+                'tanggal_selesai' => now()->addDays(27),
+                'is_active' => false,
             ],
         ];
 
         foreach ($gelombangs as $data) {
-            \App\Models\Gelombang::create($data);
+            Gelombang::create($data);
         }
     }
 }

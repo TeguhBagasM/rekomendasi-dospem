@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Imports\PenetapanDospembingImport;
-use App\Models\PengajuanJudul;
 use App\Models\RiwayatRekomendasi;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
@@ -16,8 +15,8 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
  * Satu-satunya service yang boleh dipanggil oleh Controller.
  *
  * Business logic perhitungan & assignment dipisah ke:
- * - RecommendationGeneratorService (orkestrasi Tahap 1-7)
- * - RecommendationAssignmentService (khusus Tahap 7: assignment kuota)
+ * - RecommendationGeneratorService (orkestrasi seluruh tahap 1-13)
+ * - RecommendationAssignmentService (khusus tahap 9-12: seleksi + validasi kuota)
  */
 class RecommendationService
 {
@@ -46,18 +45,6 @@ class RecommendationService
 
             return $this->generatorService->generateForBatch($pengajuans, $riwayat);
         });
-    }
-
-    /**
-     * Generate rekomendasi untuk satu pengajuan saja (di luar batch riwayat baru).
-     */
-    public function generateForSingle(PengajuanJudul $pengajuan): array
-    {
-        return $this->generateBatch(collect([$pengajuan]))->first() ?? [
-            'pengajuan_id' => $pengajuan->id,
-            'dospem1' => null,
-            'dospem2' => null,
-        ];
     }
 
     public function exportLatestToExcel(): BinaryFileResponse

@@ -6,8 +6,8 @@ use App\Models\BidangKeahlian;
 use App\Models\Dosen;
 use App\Models\Gelombang;
 use App\Models\Mahasiswa;
-use App\Models\PengajuanJudul;
 use App\Models\PenetapanDospembing;
+use App\Models\PengajuanJudul;
 use App\Models\RiwayatRekomendasi;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -211,7 +211,7 @@ class DashboardService
                 [
                     'label' => 'Sedang divalidasi',
                     'description' => $currentPengajuan
-                        ? 'Status validasi saat ini: ' . ucfirst($currentPengajuan->status)
+                        ? 'Status validasi saat ini: '.ucfirst($currentPengajuan->status)
                         : 'Menunggu pengajuan dibuat.',
                     'done' => $currentPengajuan?->status === 'pending' || $currentPengajuan?->status === 'disetujui' || $currentPengajuan?->status === 'ditolak',
                 ],
@@ -317,7 +317,7 @@ class DashboardService
             ->get();
 
         return [
-            'labels' => $gelombangs->map(fn (Gelombang $gelombang) => $gelombang->nama ?? 'Gelombang ' . $gelombang->id)->all(),
+            'labels' => $gelombangs->map(fn (Gelombang $gelombang) => $gelombang->nama ?? 'Gelombang '.$gelombang->id)->all(),
             'values' => $gelombangs->map(fn (Gelombang $gelombang) => (int) $gelombang->pengajuan_juduls_count)->all(),
         ];
     }
@@ -369,7 +369,7 @@ class DashboardService
         $values = [];
 
         foreach ($topIds as $dosenId) {
-            $labels[] = $dosens[$dosenId]->nama ?? ('Dosen #' . $dosenId);
+            $labels[] = $dosens[$dosenId]->nama ?? ('Dosen #'.$dosenId);
             $values[] = (int) ($merged[$dosenId] ?? 0);
         }
 
@@ -396,7 +396,7 @@ class DashboardService
                         default => 'Generate rekomendasi',
                     },
                     'detail' => $riwayat->keterangan
-                        ?? ('Oleh ' . ($riwayat->generatedBy?->name ?? 'Sistem')),
+                        ?? ('Oleh '.($riwayat->generatedBy?->name ?? 'Sistem')),
                     'date' => $riwayat->generated_at,
                     'icon' => match ($riwayat->status) {
                         'exported' => 'fa-solid fa-file-excel',
@@ -428,10 +428,10 @@ class DashboardService
                 return [
                     'title' => 'Penetapan dosen',
                     'detail' => trim(
-                        ($penetapan->pengajuan?->mahasiswa?->nama ?? 'Mahasiswa') .
-                        ' • ' .
-                        ($penetapan->dospem1?->nama ?? '-') .
-                        ' / ' .
+                        ($penetapan->pengajuan?->mahasiswa?->nama ?? 'Mahasiswa').
+                        ' • '.
+                        ($penetapan->dospem1?->nama ?? '-').
+                        ' / '.
                         ($penetapan->dospem2?->nama ?? '-')
                     ),
                     'date' => $penetapan->ditetapkan_at,

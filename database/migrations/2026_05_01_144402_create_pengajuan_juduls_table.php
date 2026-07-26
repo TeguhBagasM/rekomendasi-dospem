@@ -21,9 +21,9 @@ return new class extends Migration
 
             // Admin/kaprodi yang memvalidasi
             $table->foreignId('divalidasi_oleh')
-                  ->nullable()
-                  ->constrained('users')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
 
             $table->timestamp('validated_at')->nullable();
             $table->timestamps();

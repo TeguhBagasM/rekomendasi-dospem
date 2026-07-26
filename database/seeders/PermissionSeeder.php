@@ -13,17 +13,17 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         $permissions = [
-        'create_judul',
-        'view_judul',
-        'update_judul',
-        'delete_judul',
-        'approve_judul',
-        'reject_judul',
-        'view_all_judul',
-    ];
+            'create_judul',
+            'view_judul',
+            'update_judul',
+            'delete_judul',
+            'approve_judul',
+            'reject_judul',
+            'view_all_judul',
+        ];
 
-    foreach ($permissions as $permission) {
-        Permission::firstOrCreate(['name' => $permission]);
-    }
+        foreach ($permissions as $permission) {
+            Permission::firstOrCreate(['name' => $permission]);
+        }
     }
 }

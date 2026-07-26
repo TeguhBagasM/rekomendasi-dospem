@@ -3,16 +3,17 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles;
+    /** @use HasFactory<UserFactory> */
+    use HasFactory, HasRoles, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -54,34 +55,34 @@ class User extends Authenticatable
         return $this->hasOne(Mahasiswa::class);
     }
 
-     public function dosen(): HasOne
+    public function dosen(): HasOne
     {
         return $this->hasOne(Dosen::class);
     }
- 
+
     public function isMahasiswa(): bool
     {
         return $this->hasRole('mahasiswa');
     }
- 
+
     public function isAdmin(): bool
     {
         return $this->hasRole('admin');
     }
- 
+
     public function isDosen(): bool
     {
         return $this->hasRole('dosen');
     }
 
-        /**
+    /**
      * Pengajuan judul yang divalidasi oleh user ini (admin/kaprodi).
      */
     // public function pengajuanDivalidasi(): HasMany
     // {
     //     return $this->hasMany(PengajuanJudul::class, 'divalidasi_oleh');
     // }
- 
+
     // /**
     //  * Batch rekomendasi yang dibuat oleh user ini (admin/kaprodi).
     //  */
@@ -89,6 +90,6 @@ class User extends Authenticatable
     // {
     //     return $this->hasMany(BatchRekomendasi::class, 'admin_id');
     // }
- 
+
     // ==================== HELPERS ====================
 }

@@ -4,18 +4,16 @@ namespace App\Exports;
 
 use App\Models\PengajuanJudul;
 use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class PengajuanJudulExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize
+class PengajuanJudulExport implements FromQuery, ShouldAutoSize, WithHeadings, WithMapping
 {
     /**
-     * @param array{search?:string,angkatan?:string,status?:string,gelombang?:int} $filters
+     * @param  array{search?:string,angkatan?:string,status?:string,gelombang?:int}  $filters
      */
-    public function __construct(private readonly array $filters = [])
-    {
-    }
+    public function __construct(private readonly array $filters = []) {}
 
     public function query()
     {

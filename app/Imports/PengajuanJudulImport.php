@@ -14,23 +14,27 @@ use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class PengajuanJudulImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
+class PengajuanJudulImport implements SkipsEmptyRows, ToCollection, WithHeadingRow
 {
     use Importable;
 
     public int $mahasiswaCreated = 0;
+
     public int $mahasiswaUpdated = 0;
+
     public int $submissionsCreated = 0;
+
     public int $submissionsUpdated = 0;
+
     public int $submissionsResetPending = 0;
+
     public int $submissionsSkippedApproved = 0;
+
     public array $errors = [];
 
     private Collection $existingPengajuans;
 
-    public function __construct(private readonly Gelombang $gelombang)
-    {
-    }
+    public function __construct(private readonly Gelombang $gelombang) {}
 
     /**
      * Heading row expected: nim | nama_mahasiswa | program_studi | judul_skripsi
@@ -68,6 +72,7 @@ class PengajuanJudulImport implements ToCollection, WithHeadingRow, SkipsEmptyRo
 
             if ($nim === '' || $nama === '' || $namaProdi === '' || $judul === '') {
                 $this->errors[] = "Baris {$rowNumber}: NIM/Nama/Program Studi/Judul ada yang kosong, dilewati.";
+
                 continue;
             }
 
@@ -75,10 +80,11 @@ class PengajuanJudulImport implements ToCollection, WithHeadingRow, SkipsEmptyRo
 
             if (! $programStudiId) {
                 $this->errors[] = "Baris {$rowNumber}: Program Studi '{$namaProdi}' tidak ditemukan, dilewati.";
+
                 continue;
             }
 
-            $angkatan = '20' . substr($nim, 0, 2);
+            $angkatan = '20'.substr($nim, 0, 2);
             $mahasiswa = $existingMahasiswas->get($nim);
 
             if ($mahasiswa) {
@@ -90,7 +96,7 @@ class PengajuanJudulImport implements ToCollection, WithHeadingRow, SkipsEmptyRo
             } else {
                 $user = User::create([
                     'name' => $nama,
-                    'email' => $nim . '@stmik-mi.ac.id',
+                    'email' => $nim.'@stmik-mi.ac.id',
                     'password' => $nim, // auto-hashed via cast 'password' => 'hashed' di model User
                 ]);
                 $user->assignRole('mahasiswa');

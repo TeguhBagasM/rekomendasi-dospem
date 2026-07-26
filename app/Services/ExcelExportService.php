@@ -20,7 +20,7 @@ class ExcelExportService
 
     public function export(RiwayatRekomendasi $riwayat): BinaryFileResponse
     {
-        $filename = 'rekomendasi-dospem-' . now()->format('Ymd-His') . '.xlsx';
+        $filename = 'rekomendasi-dospem-'.now()->format('Ymd-His').'.xlsx';
 
         return Excel::download(new RekomendasiDospemExport($riwayat), $filename);
     }

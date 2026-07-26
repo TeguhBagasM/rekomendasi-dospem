@@ -20,9 +20,9 @@ class Gelombang extends Model
     ];
 
     protected $casts = [
-        'tanggal_mulai'   => 'date',
+        'tanggal_mulai' => 'date',
         'tanggal_selesai' => 'date',
-        'is_active'       => 'boolean',
+        'is_active' => 'boolean',
     ];
 
     // ==================== ACCESSORS ====================
@@ -40,8 +40,8 @@ class Gelombang extends Model
 
         $year = substr($code, 0, 4);
         $semester = match (substr($code, 4, 1)) {
-            '1'     => 'Ganjil',
-            '2'     => 'Genap',
+            '1' => 'Ganjil',
+            '2' => 'Genap',
             default => substr($code, 4, 1),
         };
 
@@ -72,6 +72,11 @@ class Gelombang extends Model
         return $query->where('is_active', true)
             ->whereDate('tanggal_mulai', '<=', $today)
             ->whereDate('tanggal_selesai', '>=', $today);
+    }
+
+    public function kuotaDosens()
+    {
+        return $this->hasMany(KuotaDosenGelombang::class);
     }
 
     // ==================== HELPERS ====================

@@ -11,9 +11,7 @@ use Illuminate\View\View;
 
 class GelombangController extends Controller
 {
-    public function __construct(protected GelombangService $gelombangService)
-    {
-    }
+    public function __construct(protected GelombangService $gelombangService) {}
 
     public function index(): View
     {

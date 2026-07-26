@@ -11,6 +11,7 @@ use App\Models\Mahasiswa;
 use App\Models\PengajuanJudul;
 use App\Services\PengajuanJudulImportService;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 
 class PengajuanJudulManajemenController extends Controller
@@ -64,7 +65,7 @@ class PengajuanJudulManajemenController extends Controller
 
     public function downloadTemplate()
     {
-        return Excel::download(new PengajuanJudulTemplateExport(), 'template_pengajuan_judul.xlsx');
+        return Excel::download(new PengajuanJudulTemplateExport, 'template_pengajuan_judul.xlsx');
     }
 
     public function export(Request $request)
@@ -83,7 +84,7 @@ class PengajuanJudulManajemenController extends Controller
     {
         try {
             $import = $this->pengajuanJudulImportService->import($request->file('file'));
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return back()->withErrors($e->errors());
         }
 

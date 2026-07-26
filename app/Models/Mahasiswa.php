@@ -55,8 +55,8 @@ class Mahasiswa extends Model
     public function sudahMengajukan(): bool
     {
         return $this->pengajuanJuduls()
-                    ->whereIn('status', ['pending', 'disetujui'])
-                    ->exists();
+            ->whereIn('status', ['pending', 'disetujui'])
+            ->exists();
     }
 
     public function punyaPengajuanDisetujui(): bool

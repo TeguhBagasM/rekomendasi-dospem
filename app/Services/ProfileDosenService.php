@@ -37,7 +37,7 @@ class ProfileDosenService
             $dosen->profile()->updateOrCreate(
                 ['dosen_id' => $dosen->id],
                 [
-                    'topik_metode'     => $data['topik_metode'] ?? null,
+                    'topik_metode' => $data['topik_metode'] ?? null,
                     'judul_penelitian' => $data['judul_penelitian'] ?? null,
                 ]
             );

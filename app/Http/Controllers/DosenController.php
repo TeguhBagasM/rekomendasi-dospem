@@ -26,10 +26,10 @@ class DosenController extends Controller
     public function index(Request $request)
     {
         $filters = $request->validate([
-            'search'              => 'nullable|string|max:255',
-            'program_studi_id'    => 'nullable|integer|exists:program_studis,id',
-            'jabatan_fungsional'  => 'nullable|string|max:255',
-            'bidang_keahlian_id'  => 'nullable|integer|exists:bidang_keahlians,id',
+            'search' => 'nullable|string|max:255',
+            'program_studi_id' => 'nullable|integer|exists:program_studis,id',
+            'jabatan_fungsional' => 'nullable|string|max:255',
+            'bidang_keahlian_id' => 'nullable|integer|exists:bidang_keahlians,id',
         ]);
 
         $dosens = Dosen::query()
@@ -59,11 +59,11 @@ class DosenController extends Controller
         $bidangKeahlians = $this->filterOptionsBidangKeahlian();
 
         return view('dosen.index', [
-            'dosens'                  => $dosens,
-            'programStudis'           => $this->filterOptionsProgramStudi(),
-            'jabatanFungsionals'      => $this->filterOptionsJabatanFungsional(),
-            'bidangKeahlians'         => $bidangKeahlians,
-            'selectedBidangKeahlian'  => $bidangKeahlians->firstWhere('id', $filters['bidang_keahlian_id'] ?? null),
+            'dosens' => $dosens,
+            'programStudis' => $this->filterOptionsProgramStudi(),
+            'jabatanFungsionals' => $this->filterOptionsJabatanFungsional(),
+            'bidangKeahlians' => $bidangKeahlians,
+            'selectedBidangKeahlian' => $bidangKeahlians->firstWhere('id', $filters['bidang_keahlian_id'] ?? null),
         ]);
     }
 
@@ -98,8 +98,8 @@ class DosenController extends Controller
 
     public function create()
     {
-        $programStudis    = ProgramStudi::orderBy('program_studi')->get();
-        $bidangKeahlians  = BidangKeahlian::orderBy('nama')->get();
+        $programStudis = ProgramStudi::orderBy('program_studi')->get();
+        $bidangKeahlians = BidangKeahlian::orderBy('nama')->get();
 
         return view('dosen.create', compact('programStudis', 'bidangKeahlians'));
     }
@@ -107,38 +107,38 @@ class DosenController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nidn'                  => 'required|unique:dosens,nidn',
-            'nama'                  => 'required|string|max:255',
-            'program_studi_id'      => 'nullable|exists:program_studis,id',
-            'jabatan_fungsional'    => 'nullable|string|max:255',
-            'pendidikan_terakhir'   => 'nullable|string|max:10',
-            'kuota_dospem1'         => 'required|integer|min:0',
-            'kuota_dospem2'         => 'required|integer|min:0',
-            'no_hp'                 => 'nullable|string|max:20',
-            'bidang_keahlian_ids'   => 'nullable|array',
+            'nidn' => 'required|unique:dosens,nidn',
+            'nama' => 'required|string|max:255',
+            'program_studi_id' => 'nullable|exists:program_studis,id',
+            'jabatan_fungsional' => 'nullable|string|max:255',
+            'pendidikan_terakhir' => 'nullable|string|max:10',
+            'kuota_dospem1' => 'required|integer|min:0',
+            'kuota_dospem2' => 'required|integer|min:0',
+            'no_hp' => 'nullable|string|max:20',
+            'bidang_keahlian_ids' => 'nullable|array',
             'bidang_keahlian_ids.*' => 'exists:bidang_keahlians,id',
-            'topik_metode'          => 'nullable|string',
-            'judul_penelitian'      => 'nullable|string',
+            'topik_metode' => 'nullable|string',
+            'judul_penelitian' => 'nullable|string',
         ]);
 
         DB::transaction(function () use ($validated) {
             $user = User::create([
-                'name'     => $validated['nama'],
-                'email'    => $validated['nidn'] . '@stmik-mi.ac.id',
+                'name' => $validated['nama'],
+                'email' => $validated['nidn'].'@stmik-mi.ac.id',
                 'password' => Hash::make($validated['nidn']),
             ]);
             $user->assignRole('dosen');
 
             $dosen = Dosen::create([
-                'user_id'             => $user->id,
-                'nidn'                => $validated['nidn'],
-                'nama'                => $validated['nama'],
-                'program_studi_id'    => $validated['program_studi_id'] ?? null,
-                'jabatan_fungsional'  => $validated['jabatan_fungsional'] ?? null,
+                'user_id' => $user->id,
+                'nidn' => $validated['nidn'],
+                'nama' => $validated['nama'],
+                'program_studi_id' => $validated['program_studi_id'] ?? null,
+                'jabatan_fungsional' => $validated['jabatan_fungsional'] ?? null,
                 'pendidikan_terakhir' => $validated['pendidikan_terakhir'] ?? null,
-                'kuota_dospem1'       => $validated['kuota_dospem1'],
-                'kuota_dospem2'       => $validated['kuota_dospem2'],
-                'no_hp'               => $validated['no_hp'] ?? null,
+                'kuota_dospem1' => $validated['kuota_dospem1'],
+                'kuota_dospem2' => $validated['kuota_dospem2'],
+                'no_hp' => $validated['no_hp'] ?? null,
             ]);
 
             // Sync bidang keahlian
@@ -149,7 +149,7 @@ class DosenController extends Controller
             $dosen->profile()->updateOrCreate(
                 ['dosen_id' => $dosen->id],
                 [
-                    'topik_metode'     => $validated['topik_metode'] ?? null,
+                    'topik_metode' => $validated['topik_metode'] ?? null,
                     'judul_penelitian' => $validated['judul_penelitian'] ?? null,
                 ]
             );
@@ -167,7 +167,7 @@ class DosenController extends Controller
     {
         $dosen->load(['programStudi', 'bidangKeahlians', 'profile']);
 
-        $programStudis   = ProgramStudi::orderBy('program_studi')->get();
+        $programStudis = ProgramStudi::orderBy('program_studi')->get();
         $bidangKeahlians = BidangKeahlian::orderBy('nama')->get();
 
         return view('dosen.edit', compact('dosen', 'programStudis', 'bidangKeahlians'));
@@ -176,36 +176,36 @@ class DosenController extends Controller
     public function update(Request $request, Dosen $dosen)
     {
         $validated = $request->validate([
-            'nidn'                  => ['required', Rule::unique('dosens')->ignore($dosen->id)],
-            'nama'                  => 'required|string|max:255',
-            'program_studi_id'      => 'nullable|exists:program_studis,id',
-            'jabatan_fungsional'    => 'nullable|string|max:255',
-            'pendidikan_terakhir'   => 'nullable|string|max:10',
-            'kuota_dospem1'         => 'required|integer|min:0',
-            'kuota_dospem2'         => 'required|integer|min:0',
-            'no_hp'                 => 'nullable|string|max:20',
-            'bidang_keahlian_ids'   => 'nullable|array',
+            'nidn' => ['required', Rule::unique('dosens')->ignore($dosen->id)],
+            'nama' => 'required|string|max:255',
+            'program_studi_id' => 'nullable|exists:program_studis,id',
+            'jabatan_fungsional' => 'nullable|string|max:255',
+            'pendidikan_terakhir' => 'nullable|string|max:10',
+            'kuota_dospem1' => 'required|integer|min:0',
+            'kuota_dospem2' => 'required|integer|min:0',
+            'no_hp' => 'nullable|string|max:20',
+            'bidang_keahlian_ids' => 'nullable|array',
             'bidang_keahlian_ids.*' => 'exists:bidang_keahlians,id',
-            'topik_metode'          => 'nullable|string',
-            'judul_penelitian'      => 'nullable|string',
+            'topik_metode' => 'nullable|string',
+            'judul_penelitian' => 'nullable|string',
         ]);
 
         DB::transaction(function () use ($dosen, $validated) {
             $dosen->update([
-                'nidn'                => $validated['nidn'],
-                'nama'                => $validated['nama'],
-                'program_studi_id'    => $validated['program_studi_id'] ?? null,
-                'jabatan_fungsional'  => $validated['jabatan_fungsional'] ?? null,
+                'nidn' => $validated['nidn'],
+                'nama' => $validated['nama'],
+                'program_studi_id' => $validated['program_studi_id'] ?? null,
+                'jabatan_fungsional' => $validated['jabatan_fungsional'] ?? null,
                 'pendidikan_terakhir' => $validated['pendidikan_terakhir'] ?? null,
-                'kuota_dospem1'       => $validated['kuota_dospem1'],
-                'kuota_dospem2'       => $validated['kuota_dospem2'],
-                'no_hp'               => $validated['no_hp'] ?? null,
+                'kuota_dospem1' => $validated['kuota_dospem1'],
+                'kuota_dospem2' => $validated['kuota_dospem2'],
+                'no_hp' => $validated['no_hp'] ?? null,
             ]);
 
             if ($dosen->user) {
                 $dosen->user->update([
-                    'name'  => $validated['nama'],
-                    'email' => $validated['nidn'] . '@stmik-mi.ac.id',
+                    'name' => $validated['nama'],
+                    'email' => $validated['nidn'].'@stmik-mi.ac.id',
                 ]);
             }
 
@@ -216,7 +216,7 @@ class DosenController extends Controller
             $dosen->profile()->updateOrCreate(
                 ['dosen_id' => $dosen->id],
                 [
-                    'topik_metode'     => $validated['topik_metode'] ?? null,
+                    'topik_metode' => $validated['topik_metode'] ?? null,
                     'judul_penelitian' => $validated['judul_penelitian'] ?? null,
                 ]
             );
@@ -253,7 +253,7 @@ class DosenController extends Controller
      */
     public function export()
     {
-        return Excel::download(new DosenExport, 'data-dosen-' . now()->format('Ymd_His') . '.xlsx');
+        return Excel::download(new DosenExport, 'data-dosen-'.now()->format('Ymd_His').'.xlsx');
     }
 
     public function downloadTemplate()
@@ -270,13 +270,13 @@ class DosenController extends Controller
         } catch (\Throwable $e) {
             return redirect()
                 ->route('dosen.index')
-                ->with('error', 'Import gagal: ' . $e->getMessage());
+                ->with('error', 'Import gagal: '.$e->getMessage());
         }
 
         $message = "Import selesai. {$import->created} dosen baru ditambahkan, {$import->updated} dosen diperbarui.";
 
-        if (!empty($import->errors)) {
-            $message .= ' Baris dilewati: ' . implode(' ', $import->errors);
+        if (! empty($import->errors)) {
+            $message .= ' Baris dilewati: '.implode(' ', $import->errors);
         }
 
         return redirect()

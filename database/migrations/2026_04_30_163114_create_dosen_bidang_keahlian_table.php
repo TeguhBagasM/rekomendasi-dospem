@@ -24,7 +24,7 @@ return new class extends Migration
 
             $table->unique([
                 'dosen_id',
-                'bidang_keahlian_id'
+                'bidang_keahlian_id',
             ]);
 
             $table->timestamps();

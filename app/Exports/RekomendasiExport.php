@@ -2,6 +2,4 @@
 
 namespace App\Exports;
 
-class RekomendasiExport extends RekomendasiDospemExport
-{
-}
+class RekomendasiExport extends RekomendasiDospemExport {}

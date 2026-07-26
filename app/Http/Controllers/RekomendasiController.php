@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Gelombang;
 use App\Models\PengajuanJudul;
 use App\Models\RiwayatRekomendasi;
+use App\Models\User;
 use App\Services\RecommendationService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class RekomendasiController extends Controller
@@ -43,18 +46,25 @@ class RekomendasiController extends Controller
     {
         $this->authorizeAccess();
 
+        $gelombang = Gelombang::where('is_active', true)->first();
+
+        if (! $gelombang) {
+            return back()->with('error', 'Tidak ada gelombang yang aktif saat ini.');
+        }
+
         $pengajuans = PengajuanJudul::with(['mahasiswa.programStudi'])
             ->where('status', 'disetujui')
+            ->where('gelombang_id', $gelombang->id)
             ->latest()
             ->get();
 
         if ($pengajuans->isEmpty()) {
-            return back()->with('error', 'Tidak ada pengajuan disetujui untuk dihitung.');
+            return back()->with('error', "Tidak ada pengajuan disetujui untuk {$gelombang->nama}.");
         }
 
         $this->recommendationService->generateBatch($pengajuans);
 
-        return back()->with('success', 'Rekomendasi dospem berhasil dihitung untuk seluruh pengajuan disetujui.');
+        return back()->with('success', "Rekomendasi dospem berhasil dihitung untuk {$gelombang->nama}.");
     }
 
     public function exportExcel(): BinaryFileResponse
@@ -74,23 +84,18 @@ class RekomendasiController extends Controller
 
         try {
             $this->recommendationService->finalizeFromImport($validated['file']);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
 
         return back()->with('success', 'File rekomendasi berhasil diimport, kuota dosen diperbarui, dan status telah difinalisasi.');
     }
 
-    public function export(): BinaryFileResponse
-    {
-        return $this->exportExcel();
-    }
-
     private function authorizeAccess(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         abort_unless($user && ($user->isAdmin() || $user->isDosen()), 403);

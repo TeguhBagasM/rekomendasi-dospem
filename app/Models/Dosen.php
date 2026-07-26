@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+
 // use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Dosen extends Model
@@ -23,7 +24,7 @@ class Dosen extends Model
         'kuota_terpakai_dospem2',
         'no_hp',
     ];
-    
+
     // ==================== RELATIONS ====================
 
     public function user()
@@ -47,5 +48,15 @@ class Dosen extends Model
     public function profile()
     {
         return $this->hasOne(DosenProfile::class);
+    }
+
+    public function kuotaGelombangs()
+    {
+        return $this->hasMany(KuotaDosenGelombang::class);
+    }
+
+    public function kuotaForGelombang(int $gelombangId): ?KuotaDosenGelombang
+    {
+        return $this->kuotaGelombangs()->where('gelombang_id', $gelombangId)->first();
     }
 }

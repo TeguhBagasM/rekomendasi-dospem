@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Mahasiswa;
 use App\Models\PengajuanJudul;
+use App\Models\User;
 use App\Services\GelombangService;
 use App\Services\PengajuanJudulImportService;
 use App\Services\PengajuanJudulService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Validation\ValidationException;
 
 class PengajuanJudulController extends Controller
 {
@@ -20,7 +22,7 @@ class PengajuanJudulController extends Controller
 
     public function index()
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         abort_unless($user && $user->isMahasiswa(), 403);
@@ -84,7 +86,7 @@ class PengajuanJudulController extends Controller
                 $validated['judul_skripsi'],
                 $request->file('file_proposal')
             );
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return back()->withErrors($e->errors())->withInput();
         }
 
@@ -124,7 +126,7 @@ class PengajuanJudulController extends Controller
                 $validated['judul_skripsi'],
                 $request->file('file_proposal')
             );
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return back()->withErrors($e->errors())->withInput();
         }
 
@@ -141,9 +143,9 @@ class PengajuanJudulController extends Controller
         return redirect()->route('pengajuan.index')->with('success', 'Pengajuan judul berhasil dihapus.');
     }
 
-    private function currentMahasiswa(): \App\Models\Mahasiswa
+    private function currentMahasiswa(): Mahasiswa
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
         abort_unless($user, 403);
 
@@ -155,7 +157,7 @@ class PengajuanJudulController extends Controller
 
     private function ensureMahasiswa(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         abort_unless($user && $user->isMahasiswa(), 403);
@@ -163,7 +165,7 @@ class PengajuanJudulController extends Controller
 
     private function ensureCanView(PengajuanJudul $pengajuan): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         abort_unless($user, 403);
@@ -176,7 +178,7 @@ class PengajuanJudulController extends Controller
 
     private function ensureCanManage(PengajuanJudul $pengajuan): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         abort_unless($user, 403);

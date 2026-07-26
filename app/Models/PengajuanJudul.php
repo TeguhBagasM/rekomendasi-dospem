@@ -55,7 +55,7 @@ class PengajuanJudul extends Model
     {
         return $this->belongsTo(Gelombang::class);
     }
-    
+
     /**
      * Hasil rekomendasi dospem untuk pengajuan ini.
      */
@@ -86,20 +86,20 @@ class PengajuanJudul extends Model
     public function approve(User $validator): void
     {
         $this->update([
-            'status'          => 'disetujui',
+            'status' => 'disetujui',
             'alasan_penolakan' => null,
-            'divalidasi_oleh'  => $validator->id,
-            'validated_at'     => now(),
+            'divalidasi_oleh' => $validator->id,
+            'validated_at' => now(),
         ]);
     }
 
     public function reject(User $validator, string $alasan): void
     {
         $this->update([
-            'status'          => 'ditolak',
+            'status' => 'ditolak',
             'alasan_penolakan' => $alasan,
-            'divalidasi_oleh'  => $validator->id,
-            'validated_at'     => now(),
+            'divalidasi_oleh' => $validator->id,
+            'validated_at' => now(),
         ]);
     }
 
@@ -121,10 +121,10 @@ class PengajuanJudul extends Model
     public function getStatusBadgeAttribute(): string
     {
         return match ($this->status) {
-            'pending'   => 'warning',
+            'pending' => 'warning',
             'disetujui' => 'success',
-            'ditolak'   => 'danger',
-            default     => 'secondary',
+            'ditolak' => 'danger',
+            default => 'secondary',
         };
     }
 }

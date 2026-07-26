@@ -21,11 +21,11 @@ class GelombangService
             }
 
             return Gelombang::create([
-                'nama'             => $data['nama'],
+                'nama' => $data['nama'],
                 'periode_akademik' => $data['periode_akademik'],
-                'tanggal_mulai'    => $data['tanggal_mulai'],
-                'tanggal_selesai'  => $data['tanggal_selesai'],
-                'is_active'        => $isActive,
+                'tanggal_mulai' => $data['tanggal_mulai'],
+                'tanggal_selesai' => $data['tanggal_selesai'],
+                'is_active' => $isActive,
             ]);
         });
     }
@@ -43,11 +43,11 @@ class GelombangService
             }
 
             $gelombang->update([
-                'nama'             => $data['nama'],
+                'nama' => $data['nama'],
                 'periode_akademik' => $data['periode_akademik'],
-                'tanggal_mulai'    => $data['tanggal_mulai'],
-                'tanggal_selesai'  => $data['tanggal_selesai'],
-                'is_active'        => $isActive,
+                'tanggal_mulai' => $data['tanggal_mulai'],
+                'tanggal_selesai' => $data['tanggal_selesai'],
+                'is_active' => $isActive,
             ]);
 
             return $gelombang;
@@ -85,14 +85,14 @@ class GelombangService
     public function getOpenGelombang(): ?Gelombang
     {
         $today = Carbon::today();
- 
+
         return Gelombang::query()
             ->where('is_active', true)
             ->whereDate('tanggal_mulai', '<=', $today)
             ->whereDate('tanggal_selesai', '>=', $today)
             ->first();
     }
- 
+
     /**
      * Apakah saat ini ada gelombang yang terbuka untuk pengajuan.
      */

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Dosen;
 use App\Models\HasilPerhitungan;
+use App\Models\KuotaDosenGelombang;
 use App\Models\PengajuanJudul;
 use App\Models\RekomendasiDospembing;
 use App\Models\RiwayatRekomendasi;
@@ -12,13 +13,20 @@ use Illuminate\Support\Collection;
 /**
  * Orkestrator proses generate rekomendasi untuk satu batch (riwayat) sekaligus:
  *
- * Tahap 1 : TF-IDF               -> DocumentSimilarityService (via TfidfService)
- * Tahap 2 : Cosine Similarity    -> DocumentSimilarityService (via CosineSimilarityService)
- * Tahap 3 : Konversi skala       -> ProfileMatchingService
- * Tahap 4 : Profile Matching     -> ProfileMatchingService
- * Tahap 5 : Final Score          -> ProfileMatchingService
- * Tahap 6 : Ranking DESC         -> buildRankedCandidates()
- * Tahap 7 : Assignment kuota     -> RecommendationAssignmentService
+ * Tahap 1-2: Text Preprocessing + TF-IDF + Cosine Similarity
+ *            -> DocumentSimilarityService (via TfidfService, CosineSimilarityService)
+ * Tahap 3  : Konversi similarity → skala 1-5   -> ProfileMatchingService::similarityToScale()
+ * Tahap 4  : Profile Matching (GAP + Bobot GAP) -> ProfileMatchingService
+ * Tahap 5  : Core Factor (60%)                 -> ProfileMatchingService
+ * Tahap 6  : Secondary Factor (40%)            -> ProfileMatchingService
+ * Tahap 7  : Nilai Akhir (CF × 0.6 + SF × 0.4) -> ProfileMatchingService
+ * Tahap 8  : Ranking DESC                      -> buildRankedCandidates()
+ * Tahap 9  : Seleksi Dospem1 (rules: TI, kuota)-> RecommendationAssignmentService
+ * Tahap 10 : Seleksi Dospem2 (rules: non-TI优先, jabatan, kuota)
+ *            -> RecommendationAssignmentService
+ * Tahap 11 : Validasi kuota total (lifetime)    -> RecommendationAssignmentService
+ * Tahap 12 : Validasi kuota per gelombang       -> RecommendationAssignmentService
+ * Tahap 13 : Simpan hasil rekomendasi          -> RekomendasiDospembing::create()
  */
 class RecommendationGeneratorService
 {
@@ -38,15 +46,20 @@ class RecommendationGeneratorService
 
         $dosens = $this->loadDosenCandidates();
 
-        // Tahap 7 - state kuota sementara, dipakai & dikurangi sepanjang batch ini.
-        $quotaState = $this->assignmentService->initializeQuotaState($dosens);
+        $gelombangId = $pengajuans->first()->gelombang_id;
+
+        // Load kuota per-gelombang untuk semua dosen sekaligus (menghindari N+1).
+        $kuotaGelombangMap = $this->loadKuotaGelombangMap($dosens, $gelombangId);
+
+        // Tahap 7 - state kuota sementara per gelombang, dipakai & dikurangi sepanjang batch ini.
+        $quotaState = $this->assignmentService->initializeQuotaState($dosens, $gelombangId);
 
         $hasilPerhitunganRows = [];
         $results = collect();
 
         foreach ($pengajuans as $pengajuan) {
             /** @var PengajuanJudul $pengajuan */
-            [$rankedDospem1, $rankedDospem2] = $this->buildRankedCandidates($pengajuan, $dosens);
+            [$rankedDospem1, $rankedDospem2] = $this->buildRankedCandidates($pengajuan, $dosens, $kuotaGelombangMap);
 
             $assignment = $this->assignmentService->assign($rankedDospem1, $rankedDospem2, $quotaState);
             $dospem1Row = $assignment['dospem1_row'];
@@ -98,11 +111,28 @@ class RecommendationGeneratorService
     }
 
     /**
+     * Load kuota per-gelombang untuk semua dosen, di-index oleh dosen_id.
+     *
+     * @return array<int, KuotaDosenGelombang>
+     */
+    private function loadKuotaGelombangMap(Collection $dosens, int $gelombangId): array
+    {
+        $dosenIds = $dosens->pluck('id')->all();
+
+        return KuotaDosenGelombang::where('gelombang_id', $gelombangId)
+            ->whereIn('dosen_id', $dosenIds)
+            ->get()
+            ->keyBy('dosen_id')
+            ->all();
+    }
+
+    /**
      * Tahap 1-6: TF-IDF -> Cosine Similarity -> Profile Matching -> Ranking DESC.
      *
+     * @param  array<int, KuotaDosenGelombang>  $kuotaGelombangMap
      * @return array{0: Collection, 1: Collection} [rankedDospem1, rankedDospem2]
      */
-    private function buildRankedCandidates(PengajuanJudul $pengajuan, Collection $dosens): array
+    private function buildRankedCandidates(PengajuanJudul $pengajuan, Collection $dosens, array $kuotaGelombangMap): array
     {
         $dokumenTfidfList = $dosens->map(
             fn (Dosen $dosen): string => (string) ($dosen->profile?->dokumen_tfidf ?? '')
@@ -117,7 +147,8 @@ class RecommendationGeneratorService
             fn (Dosen $dosen, int $index) => $this->profileMatchingService->buildScoreRow(
                 $pengajuan,
                 $dosen,
-                $similarities[$index] ?? 0.0
+                $similarities[$index] ?? 0.0,
+                $kuotaGelombangMap[$dosen->id] ?? null,
             )
         );
 
@@ -148,10 +179,10 @@ class RecommendationGeneratorService
                 'jenis_dospem' => $jenisDospem,
                 'topic_similarity' => $row['topic_similarity'],
                 'topic_scale' => $row['topic_scale'],
-                'homebase_scale' => $row['homebase_scale'],
+                'homebase_scale' => 0, // Vestigial DB field — homebase removed from scoring
                 'quota_scale' => $row[$quotaScaleKey],
                 'jabatan_scale' => $row['jabatan_scale'],
-                'pendidikan_scale' => 0,
+                'pendidikan_scale' => $row['pendidikan_scale'],
                 'cf_score' => $row['cf'],
                 'sf_score' => $row[$sfKey],
                 'final_score' => $row[$finalScoreKey],

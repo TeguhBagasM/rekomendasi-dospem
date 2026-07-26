@@ -8,9 +8,10 @@ class TextPreprocessingService
      * Daftar stopword Bahasa Indonesia + Inggris umum.
      */
     private const STOPWORDS = [
-        'dan', 'untuk', 'pada', 'dengan', 'yang', 'menggunakan', 'dalam', 'adalah', 'di', 'ke', 'dari',
-        'ini', 'itu', 'atau', 'juga', 'sudah', 'akan', 'bisa', 'dapat', 'sebagai', 'karena', 'oleh',
-        'tentang', 'antara', 'the', 'a', 'an', 'of', 'to', 'in', 'on', 'for', 'with', 'is', 'are',
+        'yang', 'dan', 'di', 'ke', 'dari', 'untuk', 'pada', 'dengan', 'atau',
+        'ini', 'itu', 'sebagai', 'adalah', 'dalam', 'oleh', 'akan', 'dapat',
+        'tidak', 'juga', 'secara', 'serta', 'para', 'suatu', 'maka', 'agar',
+        'namun', 'sehingga', 'yaitu', 'antara', 'terhadap', 'melalui', 'guna',
     ];
 
     /**

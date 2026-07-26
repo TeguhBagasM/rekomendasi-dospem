@@ -3,10 +3,10 @@
 namespace App\Exports;
 
 use Maatwebsite\Excel\Concerns\FromArray;
-use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class PengajuanJudulTemplateExport implements FromArray, WithHeadings, ShouldAutoSize
+class PengajuanJudulTemplateExport implements FromArray, ShouldAutoSize, WithHeadings
 {
     public function array(): array
     {

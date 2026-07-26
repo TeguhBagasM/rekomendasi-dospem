@@ -12,7 +12,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class RekomendasiDospemExport implements FromCollection, WithHeadings, WithStyles, ShouldAutoSize
+class RekomendasiDospemExport implements FromCollection, ShouldAutoSize, WithHeadings, WithStyles
 {
     public function __construct(
         private readonly RiwayatRekomendasi $riwayatRekomendasi
