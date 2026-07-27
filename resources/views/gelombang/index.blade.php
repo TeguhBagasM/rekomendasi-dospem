@@ -101,22 +101,22 @@
                                         <td class="px-4 py-4">{{ $gelombang->tanggal_selesai->format('d M Y') }}</td>
                                         <td class="px-4 py-4">
                                             <div class="inline-flex flex-col items-start">
-                                                <form action="{{ route('gelombang.toggle-status', $gelombang) }}" method="POST">
+                                                <form id="toggle-gelombang-{{ $gelombang->id }}" action="{{ route('gelombang.toggle-status', $gelombang) }}" method="POST" class="hidden">
                                                     @csrf
                                                     @method('PATCH')
-                                                    <button
-                                                        type="submit"
-                                                        onclick="return confirm('{{ $gelombang->is_active ? 'Nonaktifkan' : 'Aktifkan' }} gelombang \'{{ $gelombang->nama }}\'?')"
-                                                        class="relative inline-flex shrink-0 items-center rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none {{ $gelombang->is_active ? 'bg-green-500' : 'bg-gray-300' }}"
-                                                        style="width: 40px; height: 24px; padding: 0;"
-                                                        title="{{ $gelombang->is_active ? 'Aktif' : 'Tidak Aktif' }}"
-                                                    >
-                                                        <span
-                                                            class="inline-block transform rounded-full bg-white shadow ring-0 transition-transform duration-200 {{ $gelombang->is_active ? 'translate-x-2' : 'translate-x-0' }}"
-                                                            style="width: 20px; height: 20px;"
-                                                        ></span>
-                                                    </button>
                                                 </form>
+                                                <button
+                                                    type="button"
+                                                    @click="$dispatch('open-confirm', { name: 'warning', formId: 'toggle-gelombang-{{ $gelombang->id }}', title: '{{ $gelombang->is_active ? 'Nonaktifkan' : 'Aktifkan' }} Gelombang', description: 'Apakah Anda yakin ingin {{ strtolower($gelombang->is_active ? 'Menonaktifkan' : 'Mengaktifkan') }} gelombang {{ addslashes($gelombang->nama) }}?' })"
+                                                    class="relative inline-flex shrink-0 items-center rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none {{ $gelombang->is_active ? 'bg-green-500' : 'bg-gray-300' }}"
+                                                    style="width: 40px; height: 24px; padding: 0;"
+                                                    title="{{ $gelombang->is_active ? 'Aktif' : 'Tidak Aktif' }}"
+                                                >
+                                                    <span
+                                                        class="inline-block transform rounded-full bg-white shadow ring-0 transition-transform duration-200 {{ $gelombang->is_active ? 'translate-x-2' : 'translate-x-0' }}"
+                                                        style="width: 20px; height: 20px;"
+                                                    ></span>
+                                                </button>
                                                 <span class="mt-1 text-xs font-semibold {{ $gelombang->is_active ? 'text-green-600' : 'text-gray-400' }}">
                                                     {{ $gelombang->is_active ? 'Aktif' : 'Tidak Aktif' }}
                                                 </span>
@@ -133,16 +133,15 @@
                                                    class="inline-flex items-center font-medium text-indigo-600 hover:text-indigo-800">
                                                     <i class="fa-solid fa-pen-to-square mr-1"></i> Edit
                                                 </a>
-                                                <form action="{{ route('gelombang.destroy', $gelombang) }}"
-                                                      method="POST"
-                                                      onsubmit="return confirm('Hapus data gelombang ini?')">
+                                                <form id="delete-gelombang-{{ $gelombang->id }}" action="{{ route('gelombang.destroy', $gelombang) }}" method="POST">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit"
-                                                            class="inline-flex items-center font-medium text-red-600 hover:text-red-800">
-                                                        <i class="fa-solid fa-trash mr-1"></i> Hapus
-                                                    </button>
                                                 </form>
+                                                <button type="button"
+                                                        @click="$dispatch('open-confirm', { name: 'delete', formId: 'delete-gelombang-{{ $gelombang->id }}', title: 'Hapus Gelombang', description: 'Apakah Anda yakin ingin menghapus data gelombang ini? Data yang sudah dihapus tidak dapat dikembalikan.' })"
+                                                        class="inline-flex items-center font-medium text-red-600 hover:text-red-800">
+                                                    <i class="fa-solid fa-trash mr-1"></i> Hapus
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>

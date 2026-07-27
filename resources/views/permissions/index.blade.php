@@ -50,16 +50,15 @@
                                                    class="inline-flex items-center font-medium text-indigo-600 hover:text-indigo-800">
                                                     <i class="fa-solid fa-pen-to-square mr-1"></i> Edit
                                                 </a>
-                                                <form action="{{ route('permissions.destroy', $permission) }}"
-                                                      method="POST"
-                                                      onsubmit="return confirm('Hapus permission ini?')">
+                                                <form id="delete-permission-{{ $permission->id }}" action="{{ route('permissions.destroy', $permission) }}" method="POST">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit"
-                                                            class="inline-flex items-center font-medium text-red-600 hover:text-red-800">
-                                                        <i class="fa-solid fa-trash mr-1"></i> Hapus
-                                                    </button>
                                                 </form>
+                                                <button type="button"
+                                                        @click="$dispatch('open-confirm', { name: 'delete', formId: 'delete-permission-{{ $permission->id }}', title: 'Hapus Permission', description: 'Apakah Anda yakin ingin menghapus permission ini? Data yang sudah dihapus tidak dapat dikembalikan.' })"
+                                                        class="inline-flex items-center font-medium text-red-600 hover:text-red-800">
+                                                    <i class="fa-solid fa-trash mr-1"></i> Hapus
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>

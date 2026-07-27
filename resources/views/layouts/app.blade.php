@@ -48,6 +48,12 @@
             </main>
         </div>
 
+        <x-confirm-modal name="delete" type="danger" />
+        <x-confirm-modal name="warning" type="warning" />
+        <x-confirm-modal name="success" type="success" />
+        <x-confirm-modal name="info" type="info" />
+        <x-confirm-modal name="logout" type="logout" title="Konfirmasi Logout" description="Apakah Anda yakin ingin keluar dari akun Anda?" />
+
         <script>
             window.addEventListener('load', () => {
                 if (!window.jQuery || !$.fn || !$.fn.DataTable) {

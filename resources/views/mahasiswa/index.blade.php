@@ -173,16 +173,15 @@
                                                     <i class="fa-solid fa-pen-to-square mr-1"></i> Edit
                                                 </a>
 
-                                                <form action="{{ route('mahasiswa.destroy', $mahasiswa) }}"
-                                                      method="POST"
-                                                      onsubmit="return confirm('Hapus data mahasiswa {{ addslashes($mahasiswa->nama) }}?')">
+                                                <form id="delete-mahasiswa-{{ $mahasiswa->id }}" action="{{ route('mahasiswa.destroy', $mahasiswa) }}" method="POST">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit"
-                                                            class="inline-flex items-center font-medium text-red-600 hover:text-red-800">
-                                                        <i class="fa-solid fa-trash mr-1"></i> Hapus
-                                                    </button>
                                                 </form>
+                                                <button type="button"
+                                                        @click="$dispatch('open-confirm', { name: 'delete', formId: 'delete-mahasiswa-{{ $mahasiswa->id }}', title: 'Hapus Mahasiswa', description: 'Apakah Anda yakin ingin menghapus data mahasiswa {{ addslashes($mahasiswa->nama) }}? Data yang sudah dihapus tidak dapat dikembalikan.' })"
+                                                        class="inline-flex items-center font-medium text-red-600 hover:text-red-800">
+                                                    <i class="fa-solid fa-trash mr-1"></i> Hapus
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>

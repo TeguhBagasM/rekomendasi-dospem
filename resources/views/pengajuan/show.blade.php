@@ -99,18 +99,26 @@
                         @if ((auth()->user()->isAdmin() || auth()->user()->isDosen() || (auth()->user()->isMahasiswa() && $pengajuan->mahasiswa?->user_id === auth()->id())) && $pengajuan->isPending())
                             <a href="{{ route('pengajuan.edit', $pengajuan) }}" class="inline-flex items-center rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700">Edit</a>
 
-                            <form action="{{ route('pengajuan.destroy', $pengajuan) }}" method="POST" onsubmit="return confirm('Hapus pengajuan ini?')">
+                            <form id="delete-pengajuan-show-{{ $pengajuan->id }}" action="{{ route('pengajuan.destroy', $pengajuan) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="inline-flex items-center rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">Hapus</button>
                             </form>
+                            <button type="button"
+                                    @click="$dispatch('open-confirm', { name: 'delete', formId: 'delete-pengajuan-show-{{ $pengajuan->id }}', title: 'Hapus Pengajuan', description: 'Apakah Anda yakin ingin menghapus pengajuan ini? Data yang sudah dihapus tidak dapat dikembalikan.' })"
+                                    class="inline-flex items-center rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
+                                Hapus
+                            </button>
                         @endif
 
                         @if ((auth()->user()->isAdmin() || auth()->user()->isDosen()) && $pengajuan->isPending())
-                            <form action="{{ route('admin.validasi-pengajuan.approve', $pengajuan) }}" method="POST">
+                            <form id="approve-pengajuan-show-{{ $pengajuan->id }}" action="{{ route('admin.validasi-pengajuan.approve', $pengajuan) }}" method="POST">
                                 @csrf
-                                <button type="submit" class="inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700">Approve</button>
                             </form>
+                            <button type="button"
+                                    @click="$dispatch('open-confirm', { name: 'success', formId: 'approve-pengajuan-show-{{ $pengajuan->id }}', title: 'Setujui Pengajuan', description: 'Apakah Anda yakin ingin menyetujui pengajuan ini?' })"
+                                    class="inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700">
+                                Approve
+                            </button>
 
                             <button type="button" x-data x-on:click="$dispatch('open-reject')" class="inline-flex items-center rounded-md bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600">
                                 Reject

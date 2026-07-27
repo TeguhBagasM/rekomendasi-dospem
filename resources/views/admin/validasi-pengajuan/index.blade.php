@@ -33,16 +33,16 @@
 
             <div class="mb-4 flex flex-wrap items-center justify-end gap-3">
                 @if ($pengajuans->isNotEmpty())
-                    <form
-                        method="POST"
-                        action="{{ route('admin.validasi-pengajuan.approveAll') }}"
-                        onsubmit="return confirm('Setujui semua {{ $pengajuans->count() }} pengajuan pending? Tindakan ini tidak bisa dibatalkan.');"
-                    >
+                    <form id="approve-all-pengajuan"
+                          method="POST"
+                          action="{{ route('admin.validasi-pengajuan.approveAll') }}">
                         @csrf
-                        <button type="submit" class="inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700">
-                            Setujui Semua ({{ $pengajuans->count() }})
-                        </button>
                     </form>
+                    <button type="button"
+                            @click="$dispatch('open-confirm', { name: 'success', formId: 'approve-all-pengajuan', title: 'Setujui Semua Pengajuan', description: 'Setujui semua {{ $pengajuans->count() }} pengajuan pending? Tindakan ini tidak bisa dibatalkan.' })"
+                            class="inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700">
+                        Setujui Semua ({{ $pengajuans->count() }})
+                    </button>
                 @endif
             </div>
 

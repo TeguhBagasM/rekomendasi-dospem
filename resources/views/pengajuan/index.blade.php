@@ -71,13 +71,15 @@
                                                         <i class="fa-solid fa-pen-to-square mr-1"></i>
                                                     </a>
 
-                                                    <form action="{{ route('pengajuan.destroy', $pengajuan) }}" method="POST" onsubmit="return confirm('Hapus pengajuan ini?')">
+                                                    <form id="delete-pengajuan-{{ $pengajuan->id }}" action="{{ route('pengajuan.destroy', $pengajuan) }}" method="POST">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="inline-flex items-center font-medium text-red-600 hover:text-red-800">
-                                                            <i class="fa-solid fa-trash mr-1"></i>
-                                                        </button>
                                                     </form>
+                                                    <button type="button"
+                                                            @click="$dispatch('open-confirm', { name: 'delete', formId: 'delete-pengajuan-{{ $pengajuan->id }}', title: 'Hapus Pengajuan', description: 'Apakah Anda yakin ingin menghapus pengajuan ini? Data yang sudah dihapus tidak dapat dikembalikan.' })"
+                                                            class="inline-flex items-center font-medium text-red-600 hover:text-red-800">
+                                                        <i class="fa-solid fa-trash mr-1"></i>
+                                                    </button>
                                                 @endif
 
                                                 @if ((auth()->user()->isAdmin() || auth()->user()->isDosen()) && $pengajuan->isPending())
