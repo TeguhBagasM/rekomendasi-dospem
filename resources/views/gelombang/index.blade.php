@@ -21,11 +21,11 @@
     />
 
     <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 space-y-6">
-                    <div class="flex items-center justify-between gap-2">
+
+                    <div class="flex flex-wrap items-center justify-between gap-3">
                         <div class="flex items-center gap-3">
                             <div class="flex h-10 w-10 items-center justify-center rounded-full bg-sky-50 text-sky-700 ring-1 ring-sky-100">
                                 <i class="fa-solid fa-list text-sm"></i>
@@ -36,34 +36,45 @@
                             </div>
                         </div>
 
-                        <a href="{{ route('gelombang.create') }}" class="inline-flex items-center rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700">
+                        <a href="{{ route('gelombang.create') }}"
+                           class="inline-flex items-center rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700">
                             <i class="fa-solid fa-plus mr-2"></i> Tambah Data
                         </a>
                     </div>
 
-                    <form method="GET" action="{{ route('gelombang.index') }}" class="flex items-end gap-3">
-                        <div class="flex-1 max-w-xs">
-                            <label class="block text-xs font-medium text-gray-600 mb-1">Cari</label>
-                            <input
-                                type="text"
-                                name="search"
-                                value="{{ $search }}"
-                                placeholder="Nama / Periode Akademik..."
-                                class="block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-gray-900 focus:ring-gray-900"
-                            />
-                        </div>
-                        <button type="submit" class="inline-flex items-center justify-center rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700">
-                            <i class="fa-solid fa-search mr-2"></i> Cari
-                        </button>
-                        @if ($search)
-                            <a href="{{ route('gelombang.index') }}" class="inline-flex items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                                Reset
-                            </a>
-                        @endif
-                    </form>
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                        <form action="{{ route('gelombang.index') }}" method="GET">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="md:col-span-2">
+                                    <label for="search" class="block text-sm font-medium text-gray-700 mb-1">
+                                        Cari Nama / Periode Akademik
+                                    </label>
+                                    <input type="text"
+                                           id="search"
+                                           name="search"
+                                           value="{{ $search }}"
+                                           placeholder="Nama gelombang atau periode akademik..."
+                                           class="block w-full rounded-md border-gray-300 shadow-sm text-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                            </div>
 
-                    <div class="overflow-x-auto">
-                        <table class="{{ $filteredGelombangs->isNotEmpty() ? 'js-datatable' : '' }} min-w-full divide-y divide-gray-200">
+                            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mt-4">
+                                <button type="submit"
+                                        class="inline-flex items-center justify-center rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700">
+                                    <i class="fa-solid fa-magnifying-glass mr-2"></i> Cari
+                                </button>
+                                @if ($search)
+                                    <a href="{{ route('gelombang.index') }}"
+                                       class="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                                        <i class="fa-solid fa-rotate-left mr-2"></i> Reset Filter
+                                    </a>
+                                @endif
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="overflow-x-auto rounded-lg border border-gray-200">
+                        <table class="min-w-full divide-y divide-gray-200 text-sm">
                             <thead>
                                 <tr class="text-left text-xs font-semibold uppercase tracking-wider text-white bg-gray-900">
                                     <th class="px-4 py-3">No</th>
@@ -76,9 +87,9 @@
                                     <th class="px-4 py-3 text-right">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-100">
+                            <tbody class="divide-y divide-gray-100 bg-white">
                                 @forelse ($filteredGelombangs as $index => $gelombang)
-                                    <tr class="text-sm text-gray-700">
+                                    <tr class="text-gray-700 hover:bg-gray-50 transition">
                                         <td class="px-4 py-4">{{ $index + 1 }}</td>
                                         <td class="px-4 py-4">
                                             <span class="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700">
@@ -117,14 +128,18 @@
                                             </span>
                                         </td>
                                         <td class="px-4 py-4">
-                                            <div class="flex justify-end gap-3">
-                                                <a href="{{ route('gelombang.edit', $gelombang) }}" class="inline-flex items-center font-medium text-indigo-600 hover:text-indigo-800">
+                                            <div class="flex justify-end items-center gap-3">
+                                                <a href="{{ route('gelombang.edit', $gelombang) }}"
+                                                   class="inline-flex items-center font-medium text-indigo-600 hover:text-indigo-800">
                                                     <i class="fa-solid fa-pen-to-square mr-1"></i> Edit
                                                 </a>
-                                                <form action="{{ route('gelombang.destroy', $gelombang) }}" method="POST" onsubmit="return confirm('Hapus data gelombang ini?')">
+                                                <form action="{{ route('gelombang.destroy', $gelombang) }}"
+                                                      method="POST"
+                                                      onsubmit="return confirm('Hapus data gelombang ini?')">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="inline-flex items-center font-medium text-red-600 hover:text-red-800">
+                                                    <button type="submit"
+                                                            class="inline-flex items-center font-medium text-red-600 hover:text-red-800">
                                                         <i class="fa-solid fa-trash mr-1"></i> Hapus
                                                     </button>
                                                 </form>
@@ -133,12 +148,16 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="8" class="px-4 py-8 text-center text-sm text-gray-500">Belum ada data gelombang.</td>
+                                        <td colspan="8"
+                                            class="px-4 py-8 text-center text-sm text-gray-500">
+                                            Belum ada data gelombang.
+                                        </td>
                                     </tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
+
                 </div>
             </div>
         </div>

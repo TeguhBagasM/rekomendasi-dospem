@@ -195,9 +195,9 @@
             @endphp
 
             {{-- DATA: TABLE (md and up) --}}
-            <div class="hidden md:block bg-white overflow-hidden shadow-sm rounded-lg">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
+            <div class="hidden md:block bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="overflow-x-auto rounded-lg border border-gray-200">
+                    <table class="min-w-full divide-y divide-gray-200 text-sm">
                         <thead>
                             <tr class="text-left text-xs font-semibold uppercase tracking-wider text-white bg-gray-900">
                                 <th class="px-4 py-3">No</th>
@@ -215,7 +215,7 @@
                         </thead>
                         <tbody class="divide-y divide-gray-100">
                             @forelse ($pengajuans as $pengajuan)
-                                <tr class="text-sm text-gray-700 hover:bg-gray-50">
+                                <tr class="text-gray-700 hover:bg-gray-50 transition">
                                     <td class="px-4 py-4">{{ $pengajuans->firstItem() + $loop->index }}</td>
                                     <td class="px-4 py-4 whitespace-nowrap">{{ $pengajuan->mahasiswa?->nim ?? '-' }}</td>
                                     <td class="px-4 py-4">{{ $pengajuan->mahasiswa?->nama ?? '-' }}</td>

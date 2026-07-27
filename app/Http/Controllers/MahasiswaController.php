@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\MahasiswaExport;
+use App\Exports\MahasiswaTemplateExport;
 use App\Imports\MahasiswaImport;
 use App\Models\Mahasiswa;
 use App\Models\ProgramStudi;
@@ -15,11 +16,30 @@ use Spatie\Permission\Models\Role;
 
 class MahasiswaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $mahasiswas = Mahasiswa::with(['user', 'programStudi'])->orderBy('nama')->get();
+        $query = Mahasiswa::with(['user', 'programStudi']);
 
-        return view('mahasiswa.index', compact('mahasiswas'));
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search): void {
+                $q->where('nama', 'like', "%{$search}%")
+                    ->orWhere('nim', 'like', "%{$search}%");
+            });
+        }
+
+        if ($programStudiId = $request->input('program_studi_id')) {
+            $query->where('program_studi_id', $programStudiId);
+        }
+
+        if ($angkatan = $request->input('angkatan')) {
+            $query->where('angkatan', $angkatan);
+        }
+
+        $mahasiswas = $query->orderBy('nama')->paginate(25)->withQueryString();
+        $programStudis = ProgramStudi::orderBy('program_studi')->get();
+        $angkatans = Mahasiswa::select('angkatan')->distinct()->orderByDesc('angkatan')->pluck('angkatan');
+
+        return view('mahasiswa.index', compact('mahasiswas', 'programStudis', 'angkatans'));
     }
 
     public function create()
@@ -126,5 +146,62 @@ class MahasiswaController extends Controller
     public function export()
     {
         return Excel::download(new MahasiswaExport, 'data-mahasiswa.xlsx');
+    }
+
+    public function downloadTemplate()
+    {
+        return Excel::download(new MahasiswaTemplateExport, 'template-import-mahasiswa.xlsx');
+    }
+
+    public function mahasiswaData(Request $request)
+    {
+        $query = Mahasiswa::with(['user', 'programStudi']);
+
+        if ($search = $request->input('search.value')) {
+            $query->where(function ($q) use ($search): void {
+                $q->where('nama', 'like', "%{$search}%")
+                    ->orWhere('nim', 'like', "%{$search}%");
+            });
+        }
+
+        if ($programStudiId = $request->input('program_studi_id')) {
+            $query->where('program_studi_id', $programStudiId);
+        }
+
+        if ($angkatan = $request->input('angkatan')) {
+            $query->where('angkatan', $angkatan);
+        }
+
+        $total = $query->count();
+
+        $orderColumn = $request->input('order.0.column', 0);
+        $orderDir = $request->input('order.0.dir', 'asc');
+        $columns = ['nim', 'nama', 'program_studi_id', 'angkatan', 'email', 'no_hp'];
+
+        $query->orderBy($columns[$orderColumn] ?? 'nama', $orderDir);
+
+        $start = (int) $request->input('start', 0);
+        $length = (int) $request->input('length', 25);
+        $mahasiswas = $query->skip($start)->take($length)->get();
+
+        $data = $mahasiswas->map(function (Mahasiswa $mahasiswa) {
+            return [
+                'nim' => $mahasiswa->nim,
+                'nama' => $mahasiswa->nama,
+                'program_studi' => $mahasiswa->programStudi?->program_studi.' '.$mahasiswa->programStudi?->jenjang ?? '-',
+                'angkatan' => $mahasiswa->angkatan,
+                'email' => $mahasiswa->user?->email ?? '-',
+                'no_hp' => $mahasiswa->no_hp ?? '-',
+                'edit_url' => route('mahasiswa.edit', $mahasiswa),
+                'delete_url' => route('mahasiswa.destroy', $mahasiswa),
+            ];
+        });
+
+        return response()->json([
+            'draw' => (int) $request->input('draw', 1),
+            'recordsTotal' => Mahasiswa::count(),
+            'recordsFiltered' => $total,
+            'data' => $data,
+        ]);
     }
 }

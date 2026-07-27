@@ -31,8 +31,8 @@
                         @endif
                     </div>
 
-                    <div class="overflow-x-auto">
-                        <table class="{{ $pengajuans->isNotEmpty() ? 'js-datatable' : '' }} min-w-full divide-y divide-gray-200">
+                    <div class="overflow-x-auto rounded-lg border border-gray-200">
+                        <table class="min-w-full divide-y divide-gray-200 text-sm">
                             <thead>
                                 <tr class="text-left text-xs font-semibold uppercase tracking-wider text-white bg-gray-900">
                                     <th class="px-4 py-3">Mahasiswa</th>
@@ -44,9 +44,9 @@
                                     <th class="px-4 py-3 text-right">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-100">
+                            <tbody class="divide-y divide-gray-100 bg-white">
                                 @forelse ($pengajuans as $pengajuan)
-                                    <tr class="text-sm text-gray-700">
+                                    <tr class="text-gray-700 hover:bg-gray-50 transition">
                                         <td class="px-4 py-4">
                                             <div class="font-medium text-gray-900">{{ $pengajuan->mahasiswa?->nama ?? '-' }}</div>
                                             <div class="text-xs text-gray-500">{{ $pengajuan->mahasiswa?->nim ?? '-' }}</div>
@@ -116,7 +116,10 @@
                                     @endif
                                 @empty
                                     <tr>
-                                        <td colspan="8" class="px-4 py-8 text-center text-sm text-gray-500">Belum ada pengajuan.</td>
+                                        <td colspan="7"
+                                            class="px-4 py-8 text-center text-sm text-gray-500">
+                                            Belum ada pengajuan.
+                                        </td>
                                     </tr>
                                 @endforelse
                             </tbody>

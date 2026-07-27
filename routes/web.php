@@ -74,7 +74,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::resource('roles', RoleController::class)->except(['show']);
 
+    Route::get('mahasiswa/template', [MahasiswaController::class, 'downloadTemplate'])->name('mahasiswa.template');
     Route::get('mahasiswa/export', [MahasiswaController::class, 'export'])->name('mahasiswa.export');
+    Route::get('mahasiswa/data', [MahasiswaController::class, 'mahasiswaData'])->name('mahasiswa.data');
     Route::post('mahasiswa/import', [MahasiswaController::class, 'import'])->name('mahasiswa.import');
     Route::resource('mahasiswa', MahasiswaController::class)->except(['show']);
 
