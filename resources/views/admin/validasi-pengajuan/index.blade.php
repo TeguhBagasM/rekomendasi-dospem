@@ -18,7 +18,7 @@
     @endphp
 
     <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8" x-data>
             @if (session('success'))
                 <div class="mb-4 rounded-md bg-emerald-50 p-4 text-sm font-medium text-emerald-800 ring-1 ring-inset ring-emerald-200">
                     {{ session('success') }}
