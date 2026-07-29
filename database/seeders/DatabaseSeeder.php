@@ -40,8 +40,8 @@ class DatabaseSeeder extends Seeder
             BidangKeahlianSeeder::class,
             MahasiswaSeeder::class,
             GelombangSeeder::class,
-            DosenProfileSeeder::class,
             DosenBidangKeahlianSeeder::class,
+            DosenProfileSeeder::class,
             KuotaDosenGelombangSeeder::class,
             // PengajuanSeeder::class,
         ]);

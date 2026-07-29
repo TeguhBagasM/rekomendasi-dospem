@@ -60,7 +60,7 @@ class MahasiswaController extends Controller
             'no_hp' => ['nullable', 'string', 'max:20'],
         ]);
 
-        $email = $validated['email'] ?? $validated['nim'].'@mahasiswa.local';
+        $email = $validated['email'] ?? $validated['nim'].'@stmik-mi.ac.id';
 
         $user = User::create([
             'name' => $validated['nama'],
@@ -100,7 +100,7 @@ class MahasiswaController extends Controller
             'no_hp' => ['nullable', 'string', 'max:20'],
         ]);
 
-        $email = $validated['email'] ?? $validated['nim'].'@mahasiswa.local';
+        $email = $validated['email'] ?? $validated['nim'].'@stmik-mi.ac.id';
 
         $mahasiswa->update([
             'nim' => $validated['nim'],

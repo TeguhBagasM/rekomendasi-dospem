@@ -27,7 +27,7 @@ class MahasiswaImport implements OnEachRow, WithHeadingRow
 
         $email = $data['email'] ?? null;
         if (! $email) {
-            $email = $data['nim'].'@mahasiswa.local';
+            $email = $data['nim'].'@stmik-mi.ac.id';
         }
 
         $user = User::updateOrCreate(

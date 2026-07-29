@@ -17,7 +17,7 @@ class MahasiswaTemplateExport implements FromArray, WithHeadings, WithStyles
                 'Contoh Nama Mahasiswa',
                 1,
                 2023,
-                '2301001@mahasiswa.local',
+                '2301001@stmik-mi.ac.id',
                 '081234567890',
             ],
         ];

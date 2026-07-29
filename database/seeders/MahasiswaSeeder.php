@@ -17,10 +17,8 @@ class MahasiswaSeeder extends Seeder
     public function run(): void
     {
         $mahasiswaList = [
-            ['nim' => '22110397', 'nama' => 'Teguh Bagas', 'program_studi_kode' => '55201', 'angkatan' => '2022', 'email' => 'teguh.bagas@stmik-mi.ac.id', 'no_hp' => '081234560001'],
-            ['nim' => '22010002', 'nama' => 'Siti Aisyah', 'program_studi_kode' => '57402', 'angkatan' => '2022', 'email' => 'siti.aisyah@stmik-mi.ac.id', 'no_hp' => '081234560002'],
-            ['nim' => '23010001', 'nama' => 'Budi Santoso', 'program_studi_kode' => '57401', 'angkatan' => '2023', 'email' => 'budi.santoso@stmik-mi.ac.id', 'no_hp' => '081234560003'],
-            ['nim' => '23010002', 'nama' => 'Nadia Putri', 'program_studi_kode' => '55201', 'angkatan' => '2023', 'email' => 'nadia.putri@stmik-mi.ac.id', 'no_hp' => '081234560004'],
+            ['nim' => '22110397', 'nama' => 'Teguh Bagas Mardiansyah', 'program_studi_kode' => '55201', 'angkatan' => '2022', 'email' => 'teguh.bagas@stmik-mi.ac.id', 'no_hp' => '081234560001'],
+            ['nim' => '22110287', 'nama' => 'Alfi Yudin Raihan', 'program_studi_kode' => '55201', 'angkatan' => '2022', 'email' => 'alfi.yudin@stmik-mi.ac.id', 'no_hp' => '081234560004'],
         ];
 
         foreach ($mahasiswaList as $item) {

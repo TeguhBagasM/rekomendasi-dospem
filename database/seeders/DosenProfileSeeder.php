@@ -30,7 +30,7 @@ class DosenProfileSeeder extends Seeder
                 ],
             ],
             '0411126805' => [ // Dr. Toni Kusnandar
-                'topik_metode' => '',
+                'topik_metode' => 'Color Selection, Image Processing, IoT, Unmanned Aerial Vehicle, Machine Learning ',
                 'judul_penelitian' => [
                     'A Novel Method for Optimizing Color Selection using the Hadamard Product Technique',
                 ],
@@ -50,7 +50,7 @@ class DosenProfileSeeder extends Seeder
                 'judul_penelitian' => [],
             ],
             '0426068054' => [ // Susanto
-                'topik_metode' => 'sistem informasi manajemen, umi, basis data, erd, perancangan sistem',
+                'topik_metode' => 'sistem informasi manajemen, uml, basis data, erd, perancangan sistem',
                 'judul_penelitian' => [
                     'sistem pendukung keputusan kelayakan pemberian kredit nasabah dengan metode c4.5',
                 ],
