@@ -1,10 +1,6 @@
-{{-- Searchable dosen combobox (Alpine.js).
-     Param: $name (name form input), $options (koleksi {id, nama, sisa_kuota, skor}),
-            $initial (id dosen terpilih), $model ('d1'|'d2'), $disabled (bool), $placeholder. --}}
 <div
     x-data="dosenSelect(@js($options), {{ (int) $initial ?: 'null' }}, {{ $disabled ? 'true' : 'false' }})"
-    x-modelable="selectedId"
-    x-model="{{ $model }}"
+    x-init="syncModel(() => $parent.{{ $model }}, (val) => { $parent.{{ $model }} = val })"
     @click.outside="open && close()"
     @scroll.window="open && close()"
     @resize.window="open && close()"

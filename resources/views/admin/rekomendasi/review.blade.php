@@ -197,14 +197,16 @@
 
                                             {{-- Kolom 2: Dospem 1 --}}
                                             <td class="px-6 py-5">
-                                                @include('admin.rekomendasi._dosen-combobox', [
-                                                    'name' => "rows[{$rekomendasi->id}][rekomendasi_dospem1_id]",
-                                                    'options' => $dospem1Options,
-                                                    'initial' => $rekomendasi->rekomendasi_dospem1_id,
-                                                    'model' => 'd1',
-                                                    'disabled' => $isFinalized,
-                                                    'placeholder' => '-- Pilih Dosen Pembimbing 1 --',
-                                                ])
+                                                <select name="rows[{{ $rekomendasi->id }}][rekomendasi_dospem1_id]" x-model="d1"
+                                                        {{ $isFinalized ? 'disabled' : '' }}
+                                                        class="block w-full rounded-xl border-gray-300 text-sm shadow-sm focus:border-gray-900 focus:ring focus:ring-gray-200">
+                                                    <option value="">-- Pilih Dosen Pembimbing 1 --</option>
+                                                    @foreach ($dosensWithQuota as $dosen)
+                                                        <option value="{{ $dosen->id }}" {{ $dosen->sisa_kuota_dospem1 === 0 ? 'class=text-red-600' : '' }}>
+                                                            {{ $dosen->nama }} - Sisa Kuota: {{ $dosen->sisa_kuota_dospem1 }} (Skor Matched: {{ $skorDospem1[$dosen->id] ?? '-' }})
+                                                        </option>
+                                                    @endforeach
+                                                </select>
 
                                                 <div class="mt-2 space-y-1.5" x-show="dosen1">
                                                     <div class="flex flex-wrap items-center gap-1.5">
@@ -231,14 +233,16 @@
 
                                             {{-- Kolom 3: Dospem 2 --}}
                                             <td class="px-6 py-5">
-                                                @include('admin.rekomendasi._dosen-combobox', [
-                                                    'name' => "rows[{$rekomendasi->id}][rekomendasi_dospem2_id]",
-                                                    'options' => $dospem2Options,
-                                                    'initial' => $rekomendasi->rekomendasi_dospem2_id,
-                                                    'model' => 'd2',
-                                                    'disabled' => $isFinalized,
-                                                    'placeholder' => '-- Pilih Dosen Pembimbing 2 --',
-                                                ])
+                                                <select name="rows[{{ $rekomendasi->id }}][rekomendasi_dospem2_id]" x-model="d2"
+                                                        {{ $isFinalized ? 'disabled' : '' }}
+                                                        class="block w-full rounded-xl border-gray-300 text-sm shadow-sm focus:border-gray-900 focus:ring focus:ring-gray-200">
+                                                    <option value="">-- Pilih Dosen Pembimbing 2 --</option>
+                                                    @foreach ($dosensWithQuota as $dosen)
+                                                        <option value="{{ $dosen->id }}" {{ $dosen->sisa_kuota_dospem2 === 0 ? 'class=text-red-600' : '' }}>
+                                                            {{ $dosen->nama }} - Sisa Kuota: {{ $dosen->sisa_kuota_dospem2 }} (Skor Matched: {{ $skorDospem2[$dosen->id] ?? '-' }})
+                                                        </option>
+                                                    @endforeach
+                                                </select>
 
                                                 <div class="mt-2 space-y-1.5" x-show="dosen2">
                                                     <div class="flex flex-wrap items-center gap-1.5">
@@ -485,142 +489,3 @@
         </div>
     @endforeach
 </x-app-layout>
-
-@push('scripts')
-<script>
-    window.dosenSelect = function (options, initial, disabled) {
-        return {
-            options: options,
-            selectedId: initial || null,
-            disabled: disabled === true,
-            open: false,
-            query: '',
-            highlightedId: null,
-            panelX: 0,
-            panelY: 0,
-            panelWidth: 280,
-
-            get selected() {
-                return this.options.find((o) => o.id === this.selectedId) ?? null;
-            },
-
-            get topRanked() {
-                return this.options
-                    .filter((o) => o.skor !== null && o.skor !== undefined)
-                    .slice()
-                    .sort((a, b) => b.skor - a.skor)
-                    .slice(0, 5);
-            },
-
-            get others() {
-                const topIds = new Set(this.topRanked.map((o) => o.id));
-                return this.options
-                    .filter((o) => !topIds.has(o.id))
-                    .slice()
-                    .sort((a, b) => String(a.nama).localeCompare(String(b.nama), 'id'));
-            },
-
-            get matches() {
-                const q = this.query.trim().toLowerCase();
-                if (!q) return [];
-                return this.options
-                    .filter((o) => this.matchesQuery(o, q))
-                    .slice()
-                    .sort((a, b) => (b.skor ?? -1) - (a.skor ?? -1) || String(a.nama).localeCompare(String(b.nama), 'id'));
-            },
-
-            get flatList() {
-                return this.query.trim() ? this.matches.slice(0, 8) : [...this.topRanked, ...this.others.slice(0, 5)];
-            },
-
-            get panelStyle() {
-                return {
-                    left: this.panelX + 'px',
-                    top: this.panelY + 'px',
-                    width: this.panelWidth + 'px',
-                };
-            },
-
-            matchesQuery(o, q) {
-                const nama = String(o.nama || '').toLowerCase();
-                if (nama.includes(q)) return true;
-                const initials = nama.split(/\s+/).map((w) => w.charAt(0)).join('');
-                if (initials.includes(q)) return true;
-                return nama.split(/\s+/).some((w) => w.startsWith(q));
-            },
-
-            openList() {
-                if (this.disabled) return;
-                const rect = this.$refs.trigger.getBoundingClientRect();
-                const width = Math.max(rect.width, 280);
-                const left = Math.min(rect.left, window.innerWidth - width - 8);
-                const estHeight = 360;
-                let top = rect.bottom + 4;
-                if (top + estHeight > window.innerHeight - 8 && rect.top - 8 > estHeight) {
-                    top = rect.top - estHeight - 4;
-                }
-                this.panelX = left;
-                this.panelY = top;
-                this.panelWidth = width;
-                this.highlightedId = null;
-                this.open = true;
-                this.$nextTick(() => this.$refs.searchInput?.focus());
-            },
-
-            close() {
-                this.open = false;
-                this.query = '';
-                this.highlightedId = null;
-            },
-
-            toggle() {
-                this.open ? this.close() : this.openList();
-            },
-
-            select(id) {
-                this.selectedId = id;
-                this.open = false;
-                this.query = '';
-                this.highlightedId = null;
-            },
-
-            clear() {
-                this.selectedId = null;
-                this.open = false;
-                this.query = '';
-            },
-
-            onKeydown(e) {
-                const list = this.flatList;
-                if (list.length === 0) return;
-
-                if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-                    e.preventDefault();
-                    const dir = e.key === 'ArrowDown' ? 1 : -1;
-                    const i = list.findIndex((o) => o.id === this.highlightedId);
-                    const next = i === -1 ? (dir === 1 ? 0 : list.length - 1) : (i + dir + list.length) % list.length;
-                    this.highlightedId = list[next].id;
-                    this.$nextTick(() => this.scrollToHighlighted());
-                } else if (e.key === 'Enter') {
-                    e.preventDefault();
-                    const current = list.find((o) => o.id === this.highlightedId);
-                    if (current) this.select(current.id);
-                } else if (e.key === 'Escape') {
-                    e.preventDefault();
-                    this.close();
-                }
-            },
-
-            scrollToHighlighted() {
-                const list = this.$refs.panelList;
-                const el = list ? list.querySelector('[data-option-id="' + this.highlightedId + '"]') : null;
-                if (!list || !el) return;
-                const lr = list.getBoundingClientRect();
-                const er = el.getBoundingClientRect();
-                if (er.top < lr.top) list.scrollTop += er.top - lr.top;
-                else if (er.bottom > lr.bottom) list.scrollTop += er.bottom - lr.bottom;
-            },
-        };
-    };
-</script>
-@endpush
