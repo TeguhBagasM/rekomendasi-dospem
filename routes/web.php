@@ -70,6 +70,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::post('generate', [RekomendasiController::class, 'generate'])->name('generate');
         Route::get('export', [RekomendasiController::class, 'exportExcel'])->name('export');
         Route::post('import', [RekomendasiController::class, 'importExcel'])->name('import');
+        Route::get('{riwayat}/review', [RekomendasiController::class, 'review'])->name('review');
+        Route::patch('{rekomendasi}/update-draft', [RekomendasiController::class, 'updateDraft'])->name('updateDraft');
+        Route::patch('{riwayat}/bulk-update-draft', [RekomendasiController::class, 'bulkUpdateDraft'])->name('bulkUpdateDraft');
+        Route::get('{riwayat}/export-draft', [RekomendasiController::class, 'exportDraft'])->name('exportDraft');
+        Route::post('{riwayat}/finalize', [RekomendasiController::class, 'finalize'])->name('finalize');
     });
 
     Route::resource('roles', RoleController::class)->except(['show']);

@@ -96,17 +96,25 @@
                         </button>
                     </form>
 
+                    @if ($riwayat)
+                        <a href="{{ route('rekomendasi.review', $riwayat->id) }}"
+                           class="inline-flex items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700">
+                            <i class="fa-solid fa-clipboard-check"></i>
+                            Tinjau Rekomendasi
+                        </a>
+                    @endif
+
                     <a href="{{ route('rekomendasi.export') }}"
                        class="inline-flex w-full items-center justify-center gap-2 rounded-md bg-white px-4 py-2 text-sm font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-300 hover:bg-emerald-50 sm:w-auto">
                         <i class="fa-solid fa-file-export"></i>
-                        Export Rekomendasi Dospem
+                        Export Rekomendasi
                     </a>
 
                     {{-- Import Finalisasi Rekomendasi Dospem --}}
                     <details class="relative">
                         <summary class="flex list-none items-center justify-center gap-2 rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 cursor-pointer w-full sm:w-auto">
                             <i class="fa-solid fa-file-import"></i>
-                            Import Finalisasi Dospem
+                            Import Finalisasi
                         </summary>
 
                         <div class="absolute right-0 z-10 mt-2 w-full min-w-[16rem] sm:w-80 rounded-lg bg-white p-2 shadow-lg ring-1 ring-gray-200">

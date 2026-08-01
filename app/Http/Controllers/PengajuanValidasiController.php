@@ -17,15 +17,47 @@ class PengajuanValidasiController extends Controller
 
     public function index(Request $request)
     {
-        $pengajuans = PengajuanJudul::with(['mahasiswa.user'])
-            ->pending()
+        $filters = $request->validate([
+            'search' => ['nullable', 'string', 'max:100'],
+            'status' => ['nullable', 'in:pending,disetujui,ditolak,all'],
+        ]);
+
+        $search = $filters['search'] ?? null;
+        $status = $filters['status'] ?? 'pending';
+
+        $pengajuans = PengajuanJudul::query()
+            ->with(['mahasiswa.user'])
+            ->when($status !== 'all', fn ($query) => $query->where('status', $status))
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('judul_skripsi', 'like', "%{$search}%")
+                        ->orWhereHas('mahasiswa', function ($mahasiswaQuery) use ($search) {
+                            $mahasiswaQuery->where(fn ($q2) => $q2
+                                ->where('nama', 'like', "%{$search}%")
+                                ->orWhere('nim', 'like', "%{$search}%"));
+                        });
+                });
+            })
             ->latest()
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
-        $selectedId = $request->query('id', $pengajuans->first()?->id);
-        $selectedPengajuan = $pengajuans->firstWhere('id', (int) $selectedId) ?? $pengajuans->first();
+        $selectedId = (int) $request->query('id', $pengajuans->first()?->id ?? 0);
 
-        return view('admin.validasi-pengajuan.index', compact('pengajuans', 'selectedPengajuan', 'selectedId'));
+        $selectedPengajuan = $pengajuans->getCollection()->firstWhere('id', $selectedId)
+            ?? PengajuanJudul::with(['mahasiswa.user'])->find($selectedId)
+            ?? $pengajuans->first();
+
+        $totalPending = PengajuanJudul::pending()->count();
+
+        return view('admin.validasi-pengajuan.index', compact(
+            'pengajuans',
+            'selectedPengajuan',
+            'selectedId',
+            'search',
+            'status',
+            'totalPending'
+        ));
     }
 
     public function approve(PengajuanJudul $pengajuan)

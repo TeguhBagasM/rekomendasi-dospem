@@ -26,8 +26,12 @@ class PengajuanJudulService
      */
     public function create(Mahasiswa $mahasiswa, Gelombang $gelombang, string $judulSkripsi, UploadedFile $fileProposal): PengajuanJudul
     {
-        // 1. Check title similarity
-        $similarityResult = $this->textSimilarityService->checkSimilarity($judulSkripsi);
+        // 1. Check title similarity (abaikan judul milik mahasiswa itu sendiri,
+        //    supaya bisa mengajukan ulang judul yang ditolak / merevisi judul).
+        $similarityResult = $this->textSimilarityService->checkSimilarity(
+            $judulSkripsi,
+            excludeMahasiswaId: $mahasiswa->id
+        );
         if ($similarityResult['is_similar']) {
             throw ValidationException::withMessages([
                 'judul_skripsi' => 'Judul memiliki kemiripan '.round($similarityResult['percent'], 2).'% dengan: "'.$similarityResult['matched_title'].'". Gunakan judul lain.',
@@ -54,9 +58,14 @@ class PengajuanJudulService
      */
     public function update(PengajuanJudul $pengajuan, string $judulSkripsi, ?UploadedFile $fileProposal = null): void
     {
-        // 1. Check similarity if title changes
+        // 1. Check similarity if title changes (abaikan pengajuan itu sendiri
+        //    dan seluruh judul milik mahasiswa yang bersangkutan).
         if (trim($pengajuan->judul_skripsi) !== trim($judulSkripsi)) {
-            $similarityResult = $this->textSimilarityService->checkSimilarity($judulSkripsi, $pengajuan->id);
+            $similarityResult = $this->textSimilarityService->checkSimilarity(
+                $judulSkripsi,
+                $pengajuan->id,
+                $pengajuan->mahasiswa_id
+            );
             if ($similarityResult['is_similar']) {
                 throw ValidationException::withMessages([
                     'judul_skripsi' => 'Judul memiliki kemiripan '.round($similarityResult['percent'], 2).'% dengan: "'.$similarityResult['matched_title'].'". Gunakan judul lain.',

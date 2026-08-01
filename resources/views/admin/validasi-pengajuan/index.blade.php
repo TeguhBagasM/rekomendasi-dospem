@@ -15,6 +15,29 @@
             'disetujui' => 'bg-emerald-100 text-emerald-800 ring-emerald-200',
             'ditolak' => 'bg-red-100 text-red-800 ring-red-200',
         ];
+
+        $pengajuansJs = collect($pengajuans->items())
+            ->when(
+                $selectedPengajuan && ! collect($pengajuans->items())->contains('id', $selectedPengajuan->id),
+                fn ($collection) => $collection->push($selectedPengajuan)
+            )
+            ->map(fn ($pengajuan) => [
+                'id' => $pengajuan->id,
+                'nama_mahasiswa' => $pengajuan->mahasiswa?->nama ?? '-',
+                'nim' => $pengajuan->mahasiswa?->nim ?? '-',
+                'judul_skripsi' => $pengajuan->judul_skripsi,
+                'judul_short' => \Illuminate\Support\Str::limit($pengajuan->judul_skripsi, 72),
+                'status' => $pengajuan->status,
+                'badgeClass' => match ($pengajuan->status) {
+                    'pending' => 'bg-amber-100 text-amber-800 ring-amber-200',
+                    'disetujui' => 'bg-emerald-100 text-emerald-800 ring-emerald-200',
+                    'ditolak' => 'bg-red-100 text-red-800 ring-red-200',
+                    default => 'bg-gray-100 text-gray-700 ring-gray-200',
+                },
+                'file_proposal_url' => $pengajuan->file_proposal ? asset('storage/'.$pengajuan->file_proposal) : null,
+                'alasan_penolakan' => $pengajuan->alasan_penolakan,
+            ])
+            ->values();
     @endphp
 
     <div class="py-8">
@@ -31,42 +54,58 @@
                 </div>
             @endif
 
-            <div class="mb-4 flex flex-wrap items-center justify-end gap-3">
-                @if ($pengajuans->isNotEmpty())
+            <div class="mb-4 flex flex-wrap items-end justify-between gap-4">
+                <form method="GET" action="{{ route('admin.validasi-pengajuan.index') }}" class="flex flex-wrap items-end gap-3">
+                    <div>
+                        <label for="search" class="block text-sm font-medium text-gray-700">Cari</label>
+                        <input type="text" id="search" name="search" value="{{ $search }}"
+                               placeholder="Nama, NIM, atau judul..."
+                               class="mt-1 block w-72 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    </div>
+
+                    <div>
+                        <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                        <select id="status" name="status"
+                                class="mt-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            <option value="pending" @selected($status === 'pending')>Pending</option>
+                            <option value="disetujui" @selected($status === 'disetujui')>Disetujui</option>
+                            <option value="ditolak" @selected($status === 'ditolak')>Ditolak</option>
+                            <option value="all" @selected($status === 'all')>Semua Status</option>
+                        </select>
+                    </div>
+
+                    <button type="submit"
+                            class="inline-flex items-center rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-700">
+                        Cari
+                    </button>
+                    <a href="{{ route('admin.validasi-pengajuan.index') }}"
+                       class="inline-flex items-center rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                        Reset
+                    </a>
+                </form>
+
+                @if ($totalPending > 0 && in_array($status, ['pending', 'all'], true))
                     <form id="approve-all-pengajuan"
                           method="POST"
                           action="{{ route('admin.validasi-pengajuan.approveAll') }}">
                         @csrf
                     </form>
                     <button type="button"
-                            @click="$dispatch('open-confirm', { name: 'success', formId: 'approve-all-pengajuan', title: 'Setujui Semua Pengajuan', description: 'Setujui semua {{ $pengajuans->count() }} pengajuan pending? Tindakan ini tidak bisa dibatalkan.' })"
+                            @click="$dispatch('open-confirm', { name: 'success', formId: 'approve-all-pengajuan', title: 'Setujui Semua Pengajuan', description: 'Setujui semua {{ $totalPending }} pengajuan pending? Tindakan ini tidak bisa dibatalkan.' })"
                             class="inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700">
-                        Setujui Semua ({{ $pengajuans->count() }})
+                        Setujui Semua ({{ $totalPending }})
                     </button>
                 @endif
+                <a href="{{ route('admin.pengajuan-judul.index') }}"
+                    class="inline-flex items-center rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50">
+                    <i class="fa-solid fa-arrow-left mr-2"></i> Kembali
+                </a>
             </div>
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div
                     x-data="{
-                        pengajuans: @js($pengajuans->map(function ($pengajuan) {
-                            return [
-                                'id' => $pengajuan->id,
-                                'nama_mahasiswa' => $pengajuan->mahasiswa?->nama ?? '-',
-                                'nim' => $pengajuan->mahasiswa?->nim ?? '-',
-                                'judul_skripsi' => $pengajuan->judul_skripsi,
-                                'judul_short' => \Illuminate\Support\Str::limit($pengajuan->judul_skripsi, 72),
-                                'status' => $pengajuan->status,
-                                'badgeClass' => match ($pengajuan->status) {
-                                    'pending' => 'bg-amber-100 text-amber-800 ring-amber-200',
-                                    'disetujui' => 'bg-emerald-100 text-emerald-800 ring-emerald-200',
-                                    'ditolak' => 'bg-red-100 text-red-800 ring-red-200',
-                                    default => 'bg-gray-100 text-gray-700 ring-gray-200',
-                                },
-                                'file_proposal_url' => $pengajuan->file_proposal ? asset('storage/' . $pengajuan->file_proposal) : null,
-                                'alasan_penolakan' => $pengajuan->alasan_penolakan,
-                            ];
-                        })->values()),
+                        pengajuans: @js($pengajuansJs),
                         selectedId: @js((int) ($selectedPengajuan?->id ?? 0)),
                         rejectOpen: false,
                         get selected() {
@@ -91,9 +130,9 @@
                             <div class="flex items-center justify-between gap-3">
                                 <div>
                                     <h3 class="text-lg font-semibold text-gray-900">Daftar Pengajuan</h3>
-                                    <p class="text-sm text-gray-500">Pending diutamakan di atas.</p>
+                                    <p class="text-sm text-gray-500">Gunakan pencarian dan filter status di atas.</p>
                                 </div>
-                                <span class="inline-flex items-center rounded-full bg-gray-900 px-3 py-1 text-xs font-semibold text-white">{{ $pengajuans->count() }}</span>
+                                <span class="inline-flex items-center rounded-full bg-gray-900 px-3 py-1 text-xs font-semibold text-white">{{ $pengajuans->total() }}</span>
                             </div>
                         </div>
 
@@ -119,6 +158,12 @@
                                 <div class="p-6 text-sm text-gray-500">Belum ada pengajuan.</div>
                             @endforelse
                         </div>
+
+                        @if ($pengajuans->hasPages())
+                            <div class="border-t border-gray-200 p-3">
+                                {{ $pengajuans->links() }}
+                            </div>
+                        @endif
                     </aside>
 
                     <section class="p-6 lg:p-8">

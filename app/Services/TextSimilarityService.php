@@ -14,13 +14,29 @@ class TextSimilarityService
 {
     private const DUPLICATE_THRESHOLD = 0.75;
 
+    /**
+     * Status pengajuan judul yang dianggap "resmi" sehingga judulnya
+     * wajib dibandingkan untuk mencegah plagiarisme. Pengajuan dengan
+     * status di luar daftar ini (pending/ditolak) diabaikan karena belum
+     * disahkan, sehingga tidak memicu false positive saat mahasiswa
+     * mengajukan ulang judul yang ditolak atau merevisi judulnya sendiri.
+     *
+     * Catatan: pada aplikasi ini status 'finalized'/'ditetapkan' tidak ada
+     * pada tabel pengajuan_juduls — judul yang sudah difinalisasi tetap
+     * berstatus 'disetujui' (ditandai oleh record PenetapanDospembing).
+     */
+    private const OFFICIAL_STATUSES = ['disetujui'];
+
     public function __construct(
         private readonly DocumentSimilarityService $documentSimilarityService,
         private readonly TextPreprocessingService $preprocessingService,
     ) {}
 
-    public function checkSimilarity(string $judulBaru, ?int $excludeId = null): array
-    {
+    public function checkSimilarity(
+        string $judulBaru,
+        ?int $excludePengajuanId = null,
+        ?int $excludeMahasiswaId = null,
+    ): array {
         $judulBaru = trim($judulBaru);
 
         if ($judulBaru === '') {
@@ -28,7 +44,9 @@ class TextSimilarityService
         }
 
         $existingTitles = PengajuanJudul::query()
-            ->when($excludeId, fn ($query) => $query->where('id', '!=', $excludeId))
+            ->whereIn('status', self::OFFICIAL_STATUSES)
+            ->when($excludePengajuanId, fn ($query) => $query->where('id', '!=', $excludePengajuanId))
+            ->when($excludeMahasiswaId, fn ($query) => $query->where('mahasiswa_id', '!=', $excludeMahasiswaId))
             ->pluck('judul_skripsi')
             ->filter()
             ->values();

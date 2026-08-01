@@ -119,7 +119,6 @@
                     </x-dropdown>
 
                     <a href="{{ route('admin.pengajuan-judul.index') }}" class="hover:text-white/80 {{ request()->routeIs('admin.pengajuan-judul.*') ? 'font-bold' : '' }}">Pengajuan Judul</a>
-                    {{-- <a href="{{ route('admin.validasi-pengajuan.index') }}" class="hover:text-white/80 {{ request()->routeIs('admin.pengajuan.*') ? 'font-bold' : '' }}">Validasi Pengajuan</a> --}}
                 @endif
             </div>
 

@@ -35,6 +35,13 @@
                                 </button>
                             </form>
 
+                            @if($riwayat)
+                                <a href="{{ route('rekomendasi.review', $riwayat->id) }}"
+                                   class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
+                                    <i class="fa-solid fa-clipboard-check mr-2"></i> Tinjau & Adjustment
+                                </a>
+                            @endif
+
                             <a href="{{ route('rekomendasi.export') }}"
                                class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
                                 <i class="fa-solid fa-file-export mr-2"></i> Export Excel

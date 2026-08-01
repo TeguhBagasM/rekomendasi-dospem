@@ -74,13 +74,13 @@ class Mahasiswa extends Model
     }
 
     /**
-     * Mahasiswa boleh mengajukan baru selama tidak ada pengajuan
-     * yang masih berstatus pending. Pengajuan disetujui ataupun
-     * ditolak pada gelombang sebelumnya tidak menghalangi pengajuan baru.
+     * Mahasiswa boleh mengajukan baru selama belum memiliki pengajuan
+     * yang masih pending ataupun yang sudah disetujui (ACC). Pengajuan
+     * yang ditolak pada gelombang sebelumnya tidak menghalangi pengajuan baru.
      */
     public function bolehMengajukanBaru(): bool
     {
-        return ! $this->punyaPengajuanPending();
+        return ! $this->punyaPengajuanPending() && ! $this->punyaPengajuanDisetujui();
     }
 
     public function sudahMemilikiPenetapanFinal(): bool

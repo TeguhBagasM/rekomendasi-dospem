@@ -18,7 +18,11 @@
                             <h3 class="text-lg font-semibold text-gray-900">Detail Pengajuan</h3>
                             <p class="text-sm text-gray-500">{{ $pengajuan->mahasiswa?->nama ?? '-' }}</p>
                         </div>
-                        <a href="{{ route('pengajuan.index') }}" class="text-sm font-medium text-gray-600 hover:text-gray-900">Kembali</a>
+                        @if (auth()->user()->isAdmin())
+                            <a href="{{ route('admin.pengajuan-judul.index') }}" class="text-sm font-medium text-gray-600 hover:text-gray-900">Kembali</a>
+                        @else
+                            <a href="{{ route('pengajuan.index') }}" class="text-sm font-medium text-gray-600 hover:text-gray-900">Kembali</a>
+                        @endif
                     </div>
 
                     <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">

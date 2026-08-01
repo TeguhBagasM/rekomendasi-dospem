@@ -17,7 +17,6 @@
                             <h3 class="text-lg font-semibold text-gray-900">Daftar Pengajuan</h3>
                             <p class="text-sm text-gray-500">Total pengajuan: {{ $pengajuans->count() }}</p>
                         </div>
-
                         @if (auth()->user()->isMahasiswa())
                             @if (auth()->user()->mahasiswa?->bolehMengajukanBaru())
                                 <a href="{{ route('pengajuan.create') }}" class="inline-flex items-center rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700">
@@ -25,7 +24,7 @@
                                 </a>
                             @else
                                 <div class="rounded-md bg-amber-50 px-4 py-2 text-sm font-medium text-amber-800 ring-1 ring-inset ring-amber-200">
-                                    Anda masih memiliki pengajuan berstatus pending.
+                                    Anda masih memiliki pengajuan berstatus pending atau telah disetujui.
                                 </div>
                             @endif
                         @endif

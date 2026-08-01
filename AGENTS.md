@@ -9,7 +9,7 @@ Laravel 12 SPK (Sistem Pendukung Keputusan) for recommending thesis advisors (do
 ```bash
 composer dev          # Start all: artisan serve, queue:listen, pail, npm run dev (uses concurrently)
 php artisan test     # Run Pest tests (uses in-memory SQLite)
-vendor/bin/pint      # Code style fixer (Laravel Pint)
+vendor/bin/pint      # Code style fixer (Laravel Pint defaults)
 npm run dev          # Vite dev server only
 npm run build        # Vite production build
 php artisan migrate:fresh --seed  # Reset DB with seeders
@@ -31,7 +31,7 @@ Three Spatie roles: `admin`, `dosen`, `mahasiswa`. Routes use `role:` middleware
 - **Business logic lives in Services**, not controllers. There are 17 service classes in `app/Services/`. Controllers are thin wrappers that delegate to services.
 - **Recommendation pipeline** (`app/Services/RecommendationGeneratorService.php`):
   1. TF-IDF (`TfidfService`) → 2. Cosine Similarity (`CosineSimilarityService`) → 3. Profile Matching (`ProfileMatchingService`) → 4. Ranking DESC → 5. Assignment (`RecommendationAssignmentService`)
-- Profile Matching: Core Factor = topic similarity (60%), Secondary Factor = homebase + quota + jabatan (40%)
+- Profile Matching: Core Factor = topic similarity (60%), Secondary Factor = education + jabatan + quota (40%)
 - `TextPreprocessingService` handles Indonesian/English stopword removal, case folding, normalization
 - `DocumentSimilarityService` wraps TF-IDF + Cosine for one-to-many comparison (title vs dosen documents)
 - `TextSimilarityService` checks title duplication across student submissions (75% threshold), **not** used in recommendation pipeline
@@ -42,7 +42,7 @@ Three Spatie roles: `admin`, `dosen`, `mahasiswa`. Routes use `role:` middleware
 - **Dospem1 jabatan rank >= Dospem2** rank: Lektor(3) > Asisten Ahli(2) > Tenaga Pengajar(1) — enforced in `RecommendationAssignmentService::pickDospem2`
 - Only one `Gelombang` can be active at a time (`GelombangService` enforces this)
 - Mahasiswa cannot submit if they have a pending submission (`Mahasiswa::bolehMengajukanBaru`)
-- Recommendation assignment quota is tracked in-memory during batch generation, **not** written to `kuota_terpakai_*` columns until admin imports finalized results
+- Recommendation assignment quota is tracked in-memory during batch generation, **not** written to `kuota_terpakai_*` columns until admin imports finalized results via `PenetapanDospembingImport`
 
 ## Testing
 
@@ -62,11 +62,10 @@ Three Spatie roles: `admin`, `dosen`, `mahasiswa`. Routes use `role:` middleware
 
 ## Gotchas
 
-- `backup.txt` contains an older model version of `Dosen` — ignore it, it's stale reference
-- `.env.example` says SQLite but real `.env` uses MySQL — always verify `.env` exists before running artisan
+- `.env` has MySQL; `.env.example` defaults to SQLite. Always verify `.env` exists before running artisan
 - The `composer dev` script runs 4 processes via `npx concurrently` — requires both PHP and Node in PATH
 - `DosenProfile.dokumen_tfidf` stores a pre-computed TF-IDF document string per dosen — if empty, similarity defaults to 0
-- `PenetapanDospembingImport` updates `kuota_terpakai_*` columns — only path that changes actual database quota state
+- `PenetapanDospembingImport` is the **only** path that updates `kuota_terpakai_*` columns in database
 - Views are Blade with Tailwind CSS; layout is `resources/views/layouts/app.blade.php`
 
 ## Key files for orientation

@@ -9,6 +9,7 @@ use App\Http\Requests\ImportPengajuanJudulRequest;
 use App\Models\Gelombang;
 use App\Models\Mahasiswa;
 use App\Models\PengajuanJudul;
+use App\Models\RiwayatRekomendasi;
 use App\Services\PengajuanJudulImportService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -60,7 +61,9 @@ class PengajuanJudulManajemenController extends Controller
             ->orderByDesc('angkatan')
             ->pluck('angkatan');
 
-        return view('admin.pengajuan-judul.index', compact('pengajuans', 'filters', 'gelombangs', 'angkatans'));
+        $riwayat = RiwayatRekomendasi::query()->latest()->first();
+
+        return view('admin.pengajuan-judul.index', compact('pengajuans', 'filters', 'gelombangs', 'angkatans', 'riwayat'));
     }
 
     public function downloadTemplate()

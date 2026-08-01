@@ -107,6 +107,73 @@ class PenetapanDospembingImportService
         });
     }
 
+    /**
+     * Finalisasi riwayat draft langsung dari database (tanpa file import).
+     * Seluruh rekomendasi draft pada riwayat disinkronkan ke tabel
+     * penetapan_dospembings lalu status riwayat diubah menjadi 'finalized'.
+     *
+     * Kuota dosen baru dihitung terpakai secara resmi di sini (consumeQuota).
+     */
+    public function finalizeDraft(RiwayatRekomendasi $riwayat): void
+    {
+        if ($riwayat->status === 'finalized') {
+            throw ValidationException::withMessages([
+                'riwayat' => ['Riwayat rekomendasi ini sudah di-finalisasi sebelumnya.'],
+            ]);
+        }
+
+        $rekomendasis = $riwayat->rekomendasiDospembings()
+            ->with(['pengajuan'])
+            ->get();
+
+        if ($rekomendasis->isEmpty()) {
+            throw ValidationException::withMessages([
+                'riwayat' => ['Tidak ada rekomendasi draft untuk di-finalisasi.'],
+            ]);
+        }
+
+        DB::transaction(function () use ($riwayat, $rekomendasis): void {
+            foreach ($rekomendasis as $rekomendasi) {
+                /** @var RekomendasiDospembing $rekomendasi */
+                $pengajuan = $rekomendasi->pengajuan;
+
+                if (! $pengajuan) {
+                    continue;
+                }
+
+                $existingPenetapan = PenetapanDospembing::query()
+                    ->where('pengajuan_id', $pengajuan->id)
+                    ->lockForUpdate()
+                    ->first();
+
+                $this->releaseQuota($existingPenetapan);
+
+                $ringkasan = $rekomendasi->ringkasan ?? [];
+                $catatan = $ringkasan['catatan'] ?? null;
+
+                $penetapan = PenetapanDospembing::updateOrCreate(
+                    ['pengajuan_id' => $pengajuan->id],
+                    [
+                        'rekomendasi_dospembing_id' => $rekomendasi->id,
+                        'dospem1_id' => $rekomendasi->rekomendasi_dospem1_id,
+                        'dospem2_id' => $rekomendasi->rekomendasi_dospem2_id,
+                        'ditetapkan_oleh' => Auth::id(),
+                        'ditetapkan_at' => now(),
+                        'catatan' => $catatan,
+                        'sumber' => 'manual',
+                    ]
+                );
+
+                $penetapan->loadMissing(['dospem1', 'dospem2', 'pengajuan']);
+                $this->consumeQuota($penetapan);
+            }
+
+            $riwayat->update([
+                'status' => 'finalized',
+            ]);
+        });
+    }
+
     private function validateRows(Collection $rows, RiwayatRekomendasi $riwayat): array
     {
         $errors = [];

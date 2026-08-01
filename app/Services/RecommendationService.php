@@ -56,4 +56,22 @@ class RecommendationService
     {
         Excel::import(new PenetapanDospembingImport($this->penetapanDospembingImportService), $file);
     }
+
+    /**
+     * Finalisasi draft riwayat dari halaman tinjau & edit: sinkronkan seluruh
+     * rekomendasi draft ke penetapan_dospembings, lalu kuota dosen dihitung
+     * terpakai secara resmi dan status riwayat menjadi 'finalized'.
+     */
+    public function finalizeDraft(RiwayatRekomendasi $riwayat): void
+    {
+        $this->penetapanDospembingImportService->finalizeDraft($riwayat);
+    }
+
+    /**
+     * Ekspor draft satu riwayat rekomendasi tertentu ke Excel.
+     */
+    public function exportRiwayat(RiwayatRekomendasi $riwayat): BinaryFileResponse
+    {
+        return $this->excelExportService->export($riwayat);
+    }
 }

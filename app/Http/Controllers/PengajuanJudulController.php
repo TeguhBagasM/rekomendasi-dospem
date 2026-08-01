@@ -47,7 +47,7 @@ class PengajuanJudulController extends Controller
 
         if (! $mahasiswa->bolehMengajukanBaru()) {
             return redirect()->route('pengajuan.index')
-                ->with('error', 'Anda masih memiliki pengajuan yang berstatus pending. Tunggu hingga divalidasi sebelum mengajukan judul baru.');
+                ->with('error', 'Anda masih memiliki pengajuan yang berstatus pending atau telah disetujui. Anda tidak dapat mengajukan judul baru.');
         }
 
         $gelombang = $this->gelombangService->getOpenGelombang();
@@ -64,7 +64,7 @@ class PengajuanJudulController extends Controller
 
         if (! $mahasiswa->bolehMengajukanBaru()) {
             return redirect()->route('pengajuan.index')
-                ->with('error', 'Anda masih memiliki pengajuan yang berstatus pending. Tunggu hingga divalidasi sebelum mengajukan judul baru.');
+                ->with('error', 'Anda masih memiliki pengajuan yang berstatus pending atau telah disetujui. Anda tidak dapat mengajukan judul baru.');
         }
 
         $gelombang = $this->gelombangService->getOpenGelombang();
