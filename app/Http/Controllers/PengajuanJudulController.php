@@ -36,7 +36,11 @@ class PengajuanJudulController extends Controller
             ->latest()
             ->get();
 
-        return view('pengajuan.index', compact('pengajuans'));
+        // Hanya menyediakan nilai boolean untuk View — method index() TIDAK
+        // boleh mengirim flash error, agar flash success dari store() tidak tertimpa.
+        $bolehMengajukan = $mahasiswa->bolehMengajukanBaru();
+
+        return view('pengajuan.index', compact('pengajuans', 'bolehMengajukan'));
     }
 
     public function create()

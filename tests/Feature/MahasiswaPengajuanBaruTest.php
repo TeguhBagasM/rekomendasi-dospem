@@ -5,6 +5,7 @@ use App\Models\Mahasiswa;
 use App\Models\PengajuanJudul;
 use App\Models\ProgramStudi;
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
 use Spatie\Permission\Models\Role;
 
 function mahasiswaPengajuanFixtures(?string $status = null): array
@@ -82,4 +83,24 @@ test('mahasiswa dengan judul disetujui tidak dapat mengakses halaman pengajuan b
         ->get(route('pengajuan.create'))
         ->assertRedirect(route('pengajuan.index'))
         ->assertSessionHas('error');
+});
+
+test('store sukses tidak menimpa flash success dengan error saat mengajukan ulang setelah ditolak', function () {
+    $f = mahasiswaPengajuanFixtures('ditolak');
+
+    $this->actingAs($f['user'])
+        ->from(route('pengajuan.create'))
+        ->post(route('pengajuan.store'), [
+            'judul_skripsi' => 'Sistem Informasi Akademik Berbasis Web',
+            'file_proposal' => UploadedFile::fake()->create('proposal.pdf', 100, 'application/pdf'),
+        ])
+        ->assertRedirect(route('pengajuan.index'))
+        ->assertSessionHas('success')
+        ->assertSessionMissing('error');
+
+    $this->assertDatabaseHas('pengajuan_juduls', [
+        'mahasiswa_id' => $f['mahasiswa']->id,
+        'judul_skripsi' => 'Sistem Informasi Akademik Berbasis Web',
+        'status' => 'pending',
+    ]);
 });
