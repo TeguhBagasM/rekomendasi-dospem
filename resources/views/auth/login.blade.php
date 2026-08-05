@@ -44,7 +44,7 @@
                                 required
                                 autofocus
                                 autocomplete="username"
-                                placeholder="you@example.com" />
+                                placeholder="Akun Email" />
                         </div>
                         <x-input-error :messages="$errors->get('email')" class="mt-1" />
                     </div>

@@ -132,6 +132,7 @@
                             <table class="min-w-full divide-y divide-gray-200 text-sm">
                                 <thead>
                                     <tr class="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                                        <th class="px-6 py-3">No</th>
                                         <th class="px-6 py-3">Mahasiswa & Judul</th>
                                         <th class="px-6 py-3">Dospem 1</th>
                                         <th class="px-6 py-3">Dospem 2</th>
@@ -180,6 +181,7 @@
                                                 return this.d2 !== null && orig !== null && this.d2 != orig;
                                             }
                                         }" class="align-top transition hover:bg-gray-50/60">
+                                        <td class="px-6 py-5">{{ $loop->iteration }}</td>
                                             {{-- Kolom 1: Mahasiswa --}}
                                             <td class="px-6 py-5">
                                                 <div class="font-semibold text-gray-900">{{ $mahasiswa?->nama ?? '-' }}</div>
