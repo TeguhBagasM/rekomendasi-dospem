@@ -17,7 +17,7 @@ class DosenSeeder extends Seeder
             [
                 'name' => 'Titi Widaretna',
                 'email' => 'titi.widaretna@stmik-mi.ac.id',
-                'password' => '12345678',
+                'password' => 'mardira2026',
                 'nidn' => '0420029404',
                 'nama' => 'Titi Widaretna, S.T., M.Kom.',
                 'program_studi' => 'Teknik Informatika',
@@ -30,7 +30,7 @@ class DosenSeeder extends Seeder
             [
                 'name' => 'Heri Wahyudi',
                 'email' => 'heri.wahyudi@stmik-mi.ac.id',
-                'password' => '12345678',
+                'password' => 'mardira2026',
                 'nidn' => '0420078308',
                 'nama' => 'Heri Wahyudi, S.T., M.Kom.',
                 'program_studi' => 'Teknik Informatika',
@@ -43,7 +43,7 @@ class DosenSeeder extends Seeder
             [
                 'name' => 'Asep Ririh Riswaya',
                 'email' => 'asep.ririh@stmik-mi.ac.id',
-                'password' => '12345678',
+                'password' => 'mardira2026',
                 'nidn' => '0408109005',
                 'nama' => 'Asep Ririh Riswaya, S.Kom., M.Kom.',
                 'program_studi' => 'Teknik Informatika',
@@ -56,7 +56,7 @@ class DosenSeeder extends Seeder
             [
                 'name' => 'Toni Kusnandar',
                 'email' => 'toni.kusnandar@stmik-mi.ac.id',
-                'password' => '12345678',
+                'password' => 'mardira2026',
                 'nidn' => '0411126805',
                 'nama' => 'Dr. Toni Kusnandar, S.E., M.T., M.T.',
                 'program_studi' => 'Teknik Informatika',
@@ -69,7 +69,7 @@ class DosenSeeder extends Seeder
             [
                 'name' => 'Deni Sopiyan',
                 'email' => 'deni.sopiyan@stmik-mi.ac.id',
-                'password' => '12345678',
+                'password' => 'mardira2026',
                 'nidn' => '5257780000000000',
                 'nama' => 'Deni Sopiyan, S.Kom., M.Kom.',
                 'program_studi' => 'Teknik Informatika',
@@ -82,7 +82,7 @@ class DosenSeeder extends Seeder
             [
                 'name' => 'Ganjar Nurul Fajar',
                 'email' => 'ganjar.fajar@stmik-mi.ac.id',
-                'password' => '12345678',
+                'password' => 'mardira2026',
                 'nidn' => '0413048004',
                 'nama' => 'Ganjar Nurul Fajar, S.E., M.Ak.',
                 'program_studi' => 'Komputerisasi Akuntansi',
@@ -95,7 +95,7 @@ class DosenSeeder extends Seeder
             [
                 'name' => 'Ikbal Jamaludin',
                 'email' => 'ikbal.jamaludin@stmik-mi.ac.id',
-                'password' => '12345678',
+                'password' => 'mardira2026',
                 'nidn' => '0000000001',
                 'nama' => 'Ikbal Jamaludin, M.Kom.',
                 'program_studi' => 'Teknik Informatika',
@@ -108,7 +108,7 @@ class DosenSeeder extends Seeder
             [
                 'name' => 'Susanto',
                 'email' => 'susanto@stmik-mi.ac.id',
-                'password' => '12345678',
+                'password' => 'mardira2026',
                 'nidn' => '0426068054',
                 'nama' => 'Susanto, S.Kom., M.Kom.',
                 'program_studi' => 'Teknik Informatika',
@@ -121,7 +121,7 @@ class DosenSeeder extends Seeder
             [
                 'name' => 'Ahfi Fauka Pranata',
                 'email' => 'ahfi.pranata@stmik-mi.ac.id',
-                'password' => '12345678',
+                'password' => 'mardira2026',
                 'nidn' => '0409129401',
                 'nama' => 'Ahfi Fauka Pranata, S.Kom., M.M.',
                 'program_studi' => 'Teknik Informatika',
@@ -134,7 +134,7 @@ class DosenSeeder extends Seeder
             [
                 'name' => 'Rohmat Nur Ibrahim',
                 'email' => 'rohmat.ibrahim@stmik-mi.ac.id',
-                'password' => '12345678',
+                'password' => 'mardira2026',
                 'nidn' => '0428057001',
                 'nama' => 'Rohmat Nur Ibrahim, S.Kom., M.T.',
                 'program_studi' => 'Teknik Informatika',
@@ -147,7 +147,7 @@ class DosenSeeder extends Seeder
             [
                 'name' => 'Fitri Rizqiati',
                 'email' => 'fitri.rizqiati@stmik-mi.ac.id',
-                'password' => '12345678',
+                'password' => 'mardira2026',
                 'nidn' => '2349780000000000',
                 'nama' => 'Fitri Rizqiati, S.Kom., M.Kom.',
                 'program_studi' => 'Teknik Informatika',
@@ -160,7 +160,7 @@ class DosenSeeder extends Seeder
             [
                 'name' => 'Lilis Emalia',
                 'email' => 'lilis.emalia@stmik-mi.ac.id',
-                'password' => '12345678',
+                'password' => 'mardira2026',
                 'nidn' => '0419067804',
                 'nama' => 'Lilis Emalia, A.Md., S.T., M.Kom.',
                 'program_studi' => 'Teknik Informatika',

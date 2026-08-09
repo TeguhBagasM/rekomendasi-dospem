@@ -17,8 +17,8 @@ class MahasiswaSeeder extends Seeder
     public function run(): void
     {
         $mahasiswaList = [
-            ['nim' => '22110397', 'nama' => 'Teguh Bagas Mardiansyah', 'program_studi_kode' => '55201', 'angkatan' => '2022', 'email' => 'teguh.bagas@stmik-mi.ac.id', 'no_hp' => '081234560001'],
-            ['nim' => '22110287', 'nama' => 'Alfi Yudin Raihan', 'program_studi_kode' => '55201', 'angkatan' => '2022', 'email' => 'alfi.yudin@stmik-mi.ac.id', 'no_hp' => '081234560004'],
+            ['nim' => '22110287', 'nama' => 'Alfi Yudin Raihan', 'program_studi_kode' => '55201', 'angkatan' => '2022', 'email' => 'alfi@stmik-mi.ac.id', 'no_hp' => '081234560004'],
+            ['nim' => '22110382', 'nama' => 'Rinda Tiara', 'program_studi_kode' => '55201', 'angkatan' => '2022', 'email' => 'rinda@stmik-mi.ac.id', 'no_hp' => '081234560002'],
         ];
 
         foreach ($mahasiswaList as $item) {
