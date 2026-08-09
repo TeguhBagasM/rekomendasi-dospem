@@ -49,9 +49,10 @@ Three Spatie roles: `admin`, `dosen`, `mahasiswa`. Routes use `role:` middleware
 - Pest 3 with `pestphp/pest-plugin-laravel`
 - Feature tests auto-apply `RefreshDatabase` (configured in `tests/Pest.php`)
 - Unit tests exist in `tests/Unit/` (currently just `ExampleTest`)
-- Feature tests in `tests/Feature/` (Auth, Profile, Example)
+- Feature tests in `tests/Feature/`: `TextSimilarityTest`, `RekomendasiFinalizeTest`, `MahasiswaPengajuanBaruTest`, plus Breeze `Auth/` and `ProfileTest`
+- Test fixtures create their own data in global helper functions (e.g. `finalisasiFixtures()`, `similarityFixtures()`, `mahasiswaPengajuanFixtures()`) — they do **not** use factory seeders
 - Run a single test: `vendor/bin/pest --filter="test name"`
-- Run a single file: `vendor/bin/pest tests/Feature/ProfileTest.php`
+- Run a single file: `vendor/bin/pest tests/Feature/TextSimilarityTest.php`
 
 ## Code style
 
@@ -64,9 +65,24 @@ Three Spatie roles: `admin`, `dosen`, `mahasiswa`. Routes use `role:` middleware
 
 - `.env` has MySQL; `.env.example` defaults to SQLite. Always verify `.env` exists before running artisan
 - The `composer dev` script runs 4 processes via `npx concurrently` — requires both PHP and Node in PATH
-- `DosenProfile.dokumen_tfidf` stores a pre-computed TF-IDF document string per dosen — if empty, similarity defaults to 0
-- `PenetapanDospembingImport` is the **only** path that updates `kuota_terpakai_*` columns in database
+- `DosenProfile.dokumen_tfidf` stores a pre-computed raw text document per dosen (keahlian + topik_metode + judul_penelitian) — the corpus + IDF are rebuilt fresh on **every** generate call, so no manual re-index step exists despite comments in `ProfileDosenService`
+- `PenetapanDospembingImportService` is the **only** path that updates `kuota_terpakai_*` columns in database (via `consumeQuota`/`releaseQuota`)
 - Views are Blade with Tailwind CSS; layout is `resources/views/layouts/app.blade.php`
+
+### Dead / legacy code (do not build on)
+
+- `KeahlianDosen` model + `KeahlianDosenController` are **dead code**: there is no `keahlian_dosens` migration/table, no route, and `Dosen` has no `keahlian()` relation (the controller calls it and would error)
+- `kriterias` / `sub_kriterias` tables exist and are seeded by `KriteriaSeeder`, but **no service reads them** — `ProfileMatchingService` hardcodes its own weights (CF 60% / SF 40%) and scale tables. The seeder weights (TOPIK 0.35, etc.) are stale/display-only
+- `KeahlianDosen::isCoreFactor()` / `tipe_faktor` is unused by the pipeline
+
+### Behavioral quirks
+
+- `RiwayatRekomendasi.status` enum is `['draft','exported','imported','finalized']` (migration), but code only ever writes `draft` (on generate) and `finalized` (on finalize); `exported`/`imported` labels exist only in `DashboardService::adminActivities()`
+- `POST rekomendasi/generate` creates a **new** `RiwayatRekomendasi` on every click — there is no idempotency; quota is NOT consumed at generate time (only in-memory state)
+- Rekomendasi routes sit behind `role:admin` middleware; `RekomendasiController::authorizeAccess()` also allows dosen but is unreachable for them via routing
+- `RekomendasiController::review()`/`updateDraft()`/`finalize()`/`exportDraft()` accept `int $riwayatId`/`int $rekomendasiId` — the route param `{riwayat}` is NOT route-model-bound
+- `RecommendationGeneratorService` preloads `kuota_dosen_gelombangs` via `loadKuotaGelombangMap()` (one query), but `RecommendationAssignmentService::initializeQuotaState()` re-queries the table per dosen (N+1-ish) — acceptable but inconsistent
+- Dospem1 must be from program studi **exactly** "Teknik Informatika" (`ProfileMatchingService::isEligibleForDospem1` does a case-insensitive compare of the prodi name string)
 
 ## Key files for orientation
 
