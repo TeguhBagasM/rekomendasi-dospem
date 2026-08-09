@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('gelombangs', function (Blueprint $table) {
             $table->id();
             $table->string('nama', 100); // Nama gelombang maks 100 karakter
-            $table->string('periode_akademik', 5)->unique(); // Format: YYYY1/Ganjil, YYYY2/Genap
+            $table->string('periode_akademik', 5); // Format: YYYY1/Ganjil, YYYY2/Genap
             $table->date('tanggal_mulai');
             $table->date('tanggal_selesai');
             $table->boolean('is_active')->default(false);
