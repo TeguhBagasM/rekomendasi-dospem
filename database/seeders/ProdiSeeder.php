@@ -16,28 +16,24 @@ class ProdiSeeder extends Seeder
             [
                 'program_studi' => 'Teknik Informatika',
                 'kode_prodi' => '55401',
-                'fakultas' => 'Fakultas Teknik',
                 'jenjang' => 'D3',
                 'kaprodi' => 'Deni Sopiyan, S.Kom., M.Kom.',
             ],
             [
                 'program_studi' => 'Komputerisasi Akuntansi',
                 'kode_prodi' => '57402',
-                'fakultas' => 'Fakultas Teknik',
                 'jenjang' => 'D3',
                 'kaprodi' => 'Ganjar Nurul Fajar, S.E., M.Ak.',
             ],
             [
                 'program_studi' => 'Manajemen Informatika',
                 'kode_prodi' => '57401',
-                'fakultas' => 'Fakultas Teknik',
                 'jenjang' => 'D3',
                 'kaprodi' => 'Jajat Sudrajat, M.Kom.',
             ],
             [
                 'program_studi' => 'Teknik Informatika',
                 'kode_prodi' => '55201',
-                'fakultas' => 'Fakultas Teknik',
                 'jenjang' => 'S1',
                 'kaprodi' => 'Dr. Toni Kusnandar, M.T.',
             ],

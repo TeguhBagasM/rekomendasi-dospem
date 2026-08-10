@@ -42,12 +42,6 @@
                         </div>
 
                         <div>
-                            <x-input-label for="fakultas" value="Fakultas" />
-                            <x-text-input id="fakultas" name="fakultas" type="text" class="mt-1 block w-full" :value="old('fakultas', $prodi->fakultas)" required />
-                            <x-input-error :messages="$errors->get('fakultas')" class="mt-2" />
-                        </div>
-
-                        <div>
                             <x-input-label for="jenjang" value="Jenjang" />
                             <select id="jenjang" name="jenjang" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                                 <option value="">Pilih Jenjang</option>

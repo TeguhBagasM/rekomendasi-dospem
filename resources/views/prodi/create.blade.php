@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-page-header
         title="Tambah Program Studi"
-        description="Tambahkan data program studi, kode prodi, fakultas, jenjang, dan kaprodi."
+        description="Tambahkan data program studi, kode prodi, jenjang, dan kaprodi."
         icon="fa-circle-plus"
         :breadcrumbs="[
             ['label' => 'Home', 'url' => route('dashboard')],
@@ -38,12 +38,6 @@
                             <x-input-label for="kode_prodi" value="Kode Prodi" />
                             <x-text-input id="kode_prodi" name="kode_prodi" type="text" class="mt-1 block w-full" :value="old('kode_prodi')" required />
                             <x-input-error :messages="$errors->get('kode_prodi')" class="mt-2" />
-                        </div>
-
-                        <div>
-                            <x-input-label for="fakultas" value="Fakultas" />
-                            <x-text-input id="fakultas" name="fakultas" type="text" class="mt-1 block w-full" :value="old('fakultas')" required />
-                            <x-input-error :messages="$errors->get('fakultas')" class="mt-2" />
                         </div>
 
                         <div>

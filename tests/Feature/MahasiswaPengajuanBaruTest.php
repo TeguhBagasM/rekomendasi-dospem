@@ -15,7 +15,6 @@ function mahasiswaPengajuanFixtures(?string $status = null): array
     $prodi = ProgramStudi::create([
         'program_studi' => 'Teknik Informatika',
         'kode_prodi' => 'TI',
-        'fakultas' => 'FTIK',
         'jenjang' => 'S1',
         'kaprodi' => 'Kaprodi',
     ]);

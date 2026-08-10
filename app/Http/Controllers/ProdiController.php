@@ -25,7 +25,6 @@ class ProdiController extends Controller
         $validated = $request->validate([
             'program_studi' => ['required', 'string', 'max:255'],
             'kode_prodi' => ['required', 'string', 'max:50', 'unique:program_studis,kode_prodi'],
-            'fakultas' => ['required', 'string', 'max:255'],
             'jenjang' => ['required', 'string', 'max:10', Rule::in(['D3', 'S1', 'S2', 'S3'])],
             'kaprodi' => ['required', 'string', 'max:255'],
         ]);
@@ -45,7 +44,6 @@ class ProdiController extends Controller
         $validated = $request->validate([
             'program_studi' => ['required', 'string', 'max:255'],
             'kode_prodi' => ['required', 'string', 'max:50', Rule::unique('program_studis', 'kode_prodi')->ignore($prodi->id)],
-            'fakultas' => ['required', 'string', 'max:255'],
             'jenjang' => ['required', 'string', 'max:10', Rule::in(['D3', 'S1', 'S2', 'S3'])],
             'kaprodi' => ['required', 'string', 'max:255'],
         ]);

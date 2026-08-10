@@ -12,7 +12,6 @@ function similarityFixtures(): array
     $prodi = ProgramStudi::create([
         'program_studi' => 'Teknik Informatika',
         'kode_prodi' => 'TI',
-        'fakultas' => 'FTIK',
         'jenjang' => 'S1',
         'kaprodi' => 'Kaprodi',
     ]);

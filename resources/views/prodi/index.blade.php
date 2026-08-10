@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-page-header
         title="Data Program Studi"
-        description="Kelola daftar program studi, fakultas, jenjang, dan kaprodi."
+        description="Kelola daftar program studi, jenjang, dan kaprodi."
         icon="fa-graduation-cap"
         :breadcrumbs="[
             ['label' => 'Home', 'url' => route('dashboard')],
@@ -38,7 +38,6 @@
                                 <tr class="text-left text-xs font-semibold uppercase tracking-wider text-white bg-gray-900">
                                     <th class="px-4 py-3">Program Studi</th>
                                     <th class="px-4 py-3">Kode Prodi</th>
-                                    <th class="px-4 py-3">Fakultas</th>
                                     <th class="px-4 py-3">Jenjang</th>
                                     <th class="px-4 py-3">Kaprodi</th>
                                     <th class="px-4 py-3 text-right">Aksi</th>
@@ -49,7 +48,6 @@
                                     <tr class="text-gray-700 hover:bg-gray-50 transition">
                                         <td class="px-4 py-4 font-medium">{{ $prodi->program_studi }}</td>
                                         <td class="px-4 py-4">{{ $prodi->kode_prodi }}</td>
-                                        <td class="px-4 py-4">{{ $prodi->fakultas }}</td>
                                         <td class="px-4 py-4">{{ $prodi->jenjang }}</td>
                                         <td class="px-4 py-4">{{ $prodi->kaprodi }}</td>
                                         <td class="px-4 py-4">
