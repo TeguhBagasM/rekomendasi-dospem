@@ -23,8 +23,10 @@ class BidangKeahlianSeeder extends Seeder
             'Internet Of Things',
             'Sistem Informasi',
             'Akuntansi Keuangan',
+            'Akuntansi',
             'Perpajakan Komputerisasi',
             'Mobile Development',
+            'Matematika',
         ];
 
         foreach ($bidangKeahlian as $nama) {

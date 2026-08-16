@@ -79,6 +79,100 @@ class DosenProfileSeeder extends Seeder
                     'Sistem Informasi Monitoring Kinerja Karyawan Berbasis Mobile Dengan Menggunakan Framework Flutter Di PT Makerindo Prima Solusi',
                 ],
             ],
+            '0000000013' => [ // RR. Isni Puspowati H
+                'topik_metode' => '',
+                'judul_penelitian' => [],
+            ],
+            '0000000014' => [ // Oktavia
+                'topik_metode' => '',
+                'judul_penelitian' => [],
+            ],
+            '0000000015' => [ // H. Dadi Rosadi
+                'topik_metode' => '',
+                'judul_penelitian' => [],
+            ],
+            '0000000016' => [ // Nono Sudarsono
+                'topik_metode' => '',
+                'judul_penelitian' => [],
+            ],
+            '0000000017' => [ // Adi Raharjo
+                'topik_metode' => '',
+                'judul_penelitian' => [],
+            ],
+            '0000000018' => [ // Jajat Sudrajat
+                'topik_metode' => '',
+                'judul_penelitian' => [],
+            ],
+            '0000000019' => [ // Asep Suherman
+                'topik_metode' => '',
+                'judul_penelitian' => [
+                    'SmartHydro AI: Pengembangan Sistem Hidroponik Cerdas Berbasis IoT dan Kecerdasan Buatan',
+                ],
+            ],
+            '0000000020' => [ // Adi Suwarno
+                'topik_metode' => '',
+                'judul_penelitian' => [],
+            ],
+            '0000000021' => [ // Dheni Apriantsani Budiman
+                'topik_metode' => '',
+                'judul_penelitian' => [],
+            ],
+            '0000000022' => [ // Cahyo Hermanto
+                'topik_metode' => '',
+                'judul_penelitian' => [],
+            ],
+            '0000000023' => [ // Muhammad Syukri
+                'topik_metode' => '',
+                'judul_penelitian' => [
+                    'Analisis Forensik Keamanan Data Pribadi pada Mode Privasi Browser Menggunakan Metode National Institute of Standards and Technology (NIST)',
+                ],
+            ],
+            '0000000024' => [ // En Tay
+                'topik_metode' => '',
+                'judul_penelitian' => [],
+            ],
+            '0000000025' => [ // Solihin
+                'topik_metode' => '',
+                'judul_penelitian' => [],
+            ],
+            '0000000026' => [ // Resti Aulia Damayanti
+                'topik_metode' => '',
+                'judul_penelitian' => [],
+            ],
+            '0000000027' => [ // Dr. Rini Risanti
+                'topik_metode' => '',
+                'judul_penelitian' => [
+                    'How Iot Through Artificial Intelegence Improving Economic Value Added On Coffee Plantation',
+                ],
+            ],
+            '0000000028' => [ // Ikbal Jamaludin (2)
+                'topik_metode' => '',
+                'judul_penelitian' => [
+                    'Model perspektif pembelajaran adaptif basis deep knowledge tracing untuk memetakan evolusi pemahaman kognitif siswa pada platform SPI',
+                ],
+            ],
+            '0000000029' => [ // Dr. Dian Kencana
+                'topik_metode' => '',
+                'judul_penelitian' => [],
+            ],
+            '0000000030' => [ // Aisah Nur Endah Sari
+                'topik_metode' => '',
+                'judul_penelitian' => [],
+            ],
+            '0000000031' => [ // Rizal Parghani
+                'topik_metode' => '',
+                'judul_penelitian' => [],
+            ],
+            '0000000032' => [ // Haris Supriatna
+                'topik_metode' => '',
+                'judul_penelitian' => [
+                    'SISTEM REKOMENDASI SENSOR UNTUK ALAT PAKAN IKAN BERBASIS IOT MENGGUNAKAN METODE FUZZY',
+                ],
+            ],
+            '0422029205' => [ // Feri Aalpiyasin
+                'topik_metode' => 'CNN, ResNet V2, EfficientNet, Naive Bayes, SVM, K-Means, Decision Tree, Fuzzy Mamdani',
+                'judul_penelitian' => [],
+            ],
         ];
 
         foreach ($profiles as $nidn => $data) {
