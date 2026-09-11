@@ -112,6 +112,8 @@ class RekomendasiController extends Controller
 
         $recommendations = $riwayat->rekomendasiDospembings()->with([
             'hasilPerhitungans.dosen',
+            'rekomendasiDospem1',
+            'rekomendasiDospem2',
             'pengajuan.mahasiswa.programStudi',
             'pengajuan.gelombang',
             'penetapanDospembing.dospem1',

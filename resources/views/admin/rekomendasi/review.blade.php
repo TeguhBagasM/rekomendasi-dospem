@@ -114,18 +114,47 @@
                     @csrf
                     @method('PATCH')
 
-                    <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+                    <div x-data="{
+                        query: '',
+                        searchRows() {
+                            const q = this.query.trim().toLowerCase();
+                            let visible = 0;
+                            this.$root.querySelectorAll('[data-rekomendasi-row]').forEach((row) => {
+                                const match = q === '' || (row.dataset.search ?? '').includes(q);
+                                row.classList.toggle('hidden', !match);
+                                if (match) visible++;
+                            });
+                            const empty = this.$root.querySelector('[data-rekomendasi-empty]');
+                            if (empty) empty.classList.toggle('hidden', visible !== 0);
+                        }
+                    }" class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
                         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-gray-200 px-6 py-4">
                             <div>
                                 <h3 class="text-base font-semibold text-gray-900">Daftar Draft Rekomendasi</h3>
                                 <p class="text-sm text-gray-500">Ubah dropdown untuk menyesuaikan pilihan dosen, lalu simpan.</p>
                             </div>
-                            @if (! $isFinalized)
-                                <button type="submit"
-                                        class="inline-flex items-center rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-700">
-                                    <i class="fa-solid fa-floppy-disk mr-2"></i> Simpan Semua Perubahan
-                                </button>
-                            @endif
+                            <div class="flex flex-wrap items-center gap-2">
+                                <div class="relative">
+                                    <i class="fa-solid fa-magnifying-glass pointer-events-none absolute left-3 top-1/2 -translate-y-1/4 text-sm text-gray-400"></i>
+                                    <input type="text"
+                                           x-model="query"
+                                           x-on:input="searchRows()"
+                                           placeholder="Cari mahasiswa, NIM..."
+                                           class="w-64 rounded-xl border-gray-300 py-2 pl-9 pr-8 text-sm shadow-sm focus:border-gray-900 focus:ring focus:ring-gray-200">
+                                    <button type="button"
+                                            x-show="query"
+                                            x-on:click="query = ''; searchRows()"
+                                            class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-gray-400 transition hover:text-gray-600">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+                                @if (! $isFinalized)
+                                    <button type="submit"
+                                            class="inline-flex items-center rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-700">
+                                        <i class="fa-solid fa-floppy-disk mr-2"></i> Simpan Semua Perubahan
+                                    </button>
+                                @endif
+                            </div>
                         </div>
 
                         <div class="overflow-x-auto">
@@ -166,7 +195,16 @@
                                             ])->values();
                                         @endphp
 
-                                        <tr x-data="{
+                                        <tr data-rekomendasi-row
+                                        data-search="{{ implode(' ', array_filter([
+                                            $mahasiswa?->nama ?? '',
+                                            $mahasiswa?->nim ?? '',
+                                            $mahasiswa?->programStudi?->program_studi ?? '',
+                                            $pengajuan?->judul_skripsi ?? '',
+                                            $rekomendasi->rekomendasiDospem1?->nama ?? '',
+                                            $rekomendasi->rekomendasiDospem2?->nama ?? '',
+                                        ])) }}"
+                                        x-data="{
                                             dosens: JSON.parse(document.getElementById('dosen-options-data').textContent),
                                             d1: {{ $rekomendasi->rekomendasi_dospem1_id ?? 'null' }},
                                             d2: {{ $rekomendasi->rekomendasi_dospem2_id ?? 'null' }},
@@ -286,6 +324,12 @@
                                             </td>
                                         </tr>
                                     @endforelse
+
+                                    <tr data-rekomendasi-empty hidden>
+                                        <td colspan="4" class="px-6 py-12 text-center text-sm text-gray-500">
+                                            Tidak ditemukan rekomendasi yang cocok dengan pencarian.
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
